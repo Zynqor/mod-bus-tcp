@@ -37,3 +37,11 @@ class FileUtil:
                 dirs.append(full_path)
         return files, dirs
 
+    # 定义一个方法，接受文件名和字符串作为参数
+    @staticmethod
+    def write_to_txt(filename, string):
+        # 以写模式打开文件，如果文件不存在，则创建文件
+        with open(filename, "w") as f:
+            # 把字符串写入文件
+            f.write(string)
+
