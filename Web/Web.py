@@ -53,9 +53,10 @@ class IpHandler(tornado.web.RequestHandler):
 class SlaveHandler(tornado.web.RequestHandler):
     def get(self):
         # 读取本地配置文件
-        with open("config.json", "r") as f:
+        with open("slave.json", "r") as f:
             config_data = json.load(f)
         # to be continue
+        print(config_data[0])
         self.render("slave.html", data=config_data)
 
 
@@ -73,6 +74,24 @@ class MasterHandler(tornado.web.RequestHandler):
         with open("config.json", "r") as f:
             config_data = json.load(f)
         self.render("master.html", data=config_data)
+
+
+class AddSlaveHandler(tornado.web.RequestHandler):
+    def post(self):
+        data = json.loads(self.request.body)
+        print(data)
+        # # 获取参数
+        # param1 = data.get("param1")
+        # param2 = data.get("param2")
+        #
+        # # 处理参数
+        # # ...
+        #
+        # # 返回响应
+        # self.write("Received param1: {} and param2: {}".format(param1, param2))
+        # # 读取本地配置文件
+        # with open("config.json", "r") as f:
+        #     config_data = json.load(f)
 
 
 class FormSubmitHandler(tornado.web.RequestHandler):
@@ -109,6 +128,7 @@ class FormSubmitHandler(tornado.web.RequestHandler):
         print("处理serial")
 
     def slave_handle(self):
+
         print("处理slave")
 
     def master_handle(self):
@@ -134,6 +154,7 @@ def make_app():
         (r"/serial", SerialHandler),
         (r"/slave", SlaveHandler),
         (r"/master", MasterHandler),
+        (r"/addSlave", AddSlaveHandler),
     ], debug=True)
 
 

@@ -62,6 +62,26 @@
         .btn-group button:last-child {
             margin-left: 5px;
         }
+
+        #home {
+            display: block; /* 按钮块级显示 */
+            width: 80%; /* 按钮宽度 */
+            margin: 20px auto 0; /* 上方间距、水平居中 */
+            padding: 10px; /* 内边距 */
+            border: none; /* 去除边框 */
+            background-color: #007bff; /* 按钮背景色 */
+            color: #fff; /* 按钮文字颜色 */
+            cursor: pointer; /* 鼠标悬停样式 */
+            border-radius: 4px; /* 圆角边框 */
+        }
+
+        #home:hover {
+            background-color: #0056b3; /* 悬停时背景色 */
+        }
+
+        .input-short {
+            width: 80px; /* 设置输入框宽度为100像素，你可以根据需要调整宽度 */
+        }
     </style>
 </head>
 <body>
@@ -69,9 +89,15 @@
 <table id="myTable" class="table">
     <thead>
     <tr>
-        <th>标签1</th>
-        <th>标签2</th>
-        <th>标签3</th>
+        <th>IP</th>
+        <th>端口</th>
+        <th>id</th>
+        <th>读取寄存器</th>
+        <th>读取长度</th>
+        <th>读取地址</th>
+        <th>保存地址</th>
+        <th>保存位数</th>
+        <th>查询频率</th>
         <th>操作</th>
     </tr>
     </thead>
@@ -79,7 +105,7 @@
     <!-- 这里是动态生成的表格内容 -->
     </tbody>
 </table>
-<button onclick="goToMain()">回主页</button>
+<button onclick="goToMain()" id="home">回主页</button>
 
 
 <script>
@@ -89,18 +115,15 @@
     configData = JSON.parse(configData);
 
     // 访问data
-    console.log(configData.ip1);
+    console.log(configData);
+
     //to be continue
 
     function goToSlave() {
         window.location.href = "/slave";
-
     }
 
-    var dataFromBackend = [
-        {label1: "值1", label2: "值2", label3: "值3"},
-        {label1: "值4", label2: "值5", label3: "值6"}
-    ];
+    var dataFromBackend = configData;
 
     window.onload = function () {
 
@@ -119,6 +142,7 @@
                 var input = document.createElement("input");
                 input.type = "text";
                 input.value = data[key];
+                input.classList.add("input-short"); // 添加新的类
                 cell.appendChild(input);
                 row.appendChild(cell);
             });
@@ -158,6 +182,7 @@
             var input = document.createElement("input");
             input.type = "text";
             input.name = "empty_content";
+            input.classList.add("input-short"); // 添加新的类
             cell.appendChild(input);
             emptyRow.appendChild(cell);
         }
@@ -170,8 +195,26 @@
             emptyRow.querySelectorAll("input").forEach(function (input) {
                 newRowData.push(input.value);
             });
+            // 设置要发送的数据
+
+
+            // 发送POST请求
+            fetch('/addSlave', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newRowData),
+            }).then(response => response.text())
+                .then(newRowData => {
+                    console.log('Response:', newRowData);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+
             console.log("新增按钮点击，当前行的值为：" + newRowData.join(", "));
-            goToSlave()
+            // goToSlave()
         };
         var cancelButton = document.createElement("button");
         cancelButton.textContent = "取消";
