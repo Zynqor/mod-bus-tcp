@@ -13,7 +13,7 @@ class ExcelUtil:
     # 读取Excel文件
     @staticmethod
     def read_all_lines(filename, sheet="Sheet1"):
-        df = pd.read_excel(filename, sheet_name=sheet)
+        df = pd.read_excel(filename, sheet_name=sheet, dtype=str)
         # 将读取的数据按行转换成list
         rows = df.values.tolist()
         return rows
@@ -32,7 +32,7 @@ class ExcelUtil:
         """
         # 使用skiprows参数跳过前面的行数
         # 使用nrows参数读取指定的行数
-        df = pd.read_excel(filename, skiprows=start - 1, nrows=num, sheet_name=sheet)
+        df = pd.read_excel(filename, skiprows=start - 1, nrows=num, sheet_name=sheet, dtype=str)
         # 将读取的数据按行转换成list
         rows = df.values.tolist()
         return rows
@@ -45,7 +45,7 @@ class ExcelUtil:
         :param sheet:
         :return:
         """
-        df = pd.read_excel(filename, sheet_name=sheet)
+        df = pd.read_excel(filename, sheet_name=sheet, dtype=str)
         columns = df.columns.tolist()
         return columns
 
@@ -57,7 +57,7 @@ class ExcelUtil:
         :param sheet:
         :return:
         """
-        df = pd.read_excel(filename, sheet_name=sheet)
+        df = pd.read_excel(filename, sheet_name=sheet, dtype=str)
         columns = df[columnName].values.tolist()
         return columns
 
@@ -77,9 +77,21 @@ class ExcelUtil:
             indices.append(index)
         if isinstance(index, list):
             indices = index
-        df = pd.read_excel(filename, sheet_name=sheet)
+        df = pd.read_excel(filename, sheet_name=sheet, dtype=str)
         columns = df.iloc[:, indices].transpose()
         return columns.values.tolist()
+
+    @staticmethod
+    def list_to_excel(data,name):
+        """
+        将前面读出来的数据输出到表格中
+        :param name:
+        :param data:
+        :return:
+        """
+
+        df = pd.DataFrame(data)
+        df.to_excel(name)
 
     @staticmethod
     def del_row_by_index(filename, index, sheet="Sheet1"):
@@ -93,7 +105,7 @@ class ExcelUtil:
 
         if not isinstance(index, int):
             raise TypeError("Parameter index must be an int.")
-        df = pd.read_excel(filename, sheet_name=sheet)
+        df = pd.read_excel(filename, sheet_name=sheet, dtype=str)
         df.drop(index, inplace=True)
         if "xls" in filename and "xlsx" not in filename:
             filename = filename + "x"
@@ -110,27 +122,9 @@ class ExcelUtil:
         """
         if not isinstance(index, int):
             raise TypeError("Parameter index must be an int.")
-        df = pd.read_excel(filename, sheet_name=sheet)
+        df = pd.read_excel(filename, sheet_name=sheet, dtype=str)
         df.drop(df.columns[index], axis=1, inplace=True)
         # 不支持xls写出
         if "xls" in filename and "xlsx" not in filename:
             filename = filename + "x"
         df.to_excel(filename, index=False)
-
-    # 读取Excel文件
-    @staticmethod
-    def read_lines(filename, start, num, sheet="Sheet1"):
-        """
-        读取第start行开始,之后的num行
-        :param filename: 文件名
-        :param start: 起始行
-        :param num: 读取行数
-        :param sheet: 表单,默认为sheet1
-        :return:
-        """
-        # 使用skiprows参数跳过前面的行数
-        # 使用nrows参数读取指定的行数
-        df = pd.read_excel(filename, skiprows=start - 1, nrows=num, sheet_name=sheet)
-        # 将读取的数据按行转换成list
-        rows = df.values.tolist()
-        return rows

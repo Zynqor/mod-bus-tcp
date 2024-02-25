@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index 1</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif; /* 使用 Arial 字体以确保兼容性 */
+            margin: 0; /* 去除默认边距 */
+            padding: 0; /* 去除默认内边距 */
+            background-color: #f0f0f0; /* 设置背景颜色 */
+        }
+
+        h1 {
+            text-align: center; /* 标题居中显示 */
+            margin-top: 50px; /* 设置标题顶部间距 */
+        }
+
+        form {
+            width: 80%; /* 表单宽度 */
+            margin: 0 auto; /* 水平居中显示 */
+            background-color: #fff; /* 表单背景色 */
+            padding: 20px; /* 内边距 */
+            border-radius: 8px; /* 圆角边框 */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+        }
+
+        label {
+            display: block; /* 每行显示一个标签 */
+            font-weight: bold; /* 加粗标签文字 */
+            margin-bottom: 10px; /* 标签下方间距 */
+        }
+
+        input[type="text"] {
+            width: calc(100% - 20px); /* 输入框宽度 */
+            padding: 10px; /* 内边距 */
+            margin-bottom: 20px; /* 底部间距 */
+            border: 1px solid #ccc; /* 边框样式 */
+            border-radius: 4px; /* 圆角边框 */
+        }
+
+        input[type="submit"] {
+            width: 100%; /* 提交按钮宽度 */
+            padding: 10px; /* 内边距 */
+            border: none; /* 去除边框 */
+            background-color: #007bff; /* 按钮背景色 */
+            color: #fff; /* 按钮文字颜色 */
+            cursor: pointer; /* 鼠标悬停样式 */
+            border-radius: 4px; /* 圆角边框 */
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3; /* 悬停时背景色 */
+        }
+
+        button {
+            display: block; /* 按钮块级显示 */
+            width: 80%; /* 按钮宽度 */
+            margin: 20px auto 0; /* 上方间距、水平居中 */
+            padding: 10px; /* 内边距 */
+            border: none; /* 去除边框 */
+            background-color: #007bff; /* 按钮背景色 */
+            color: #fff; /* 按钮文字颜色 */
+            cursor: pointer; /* 鼠标悬停样式 */
+            border-radius: 4px; /* 圆角边框 */
+        }
+
+        button:hover {
+            background-color: #0056b3; /* 悬停时背景色 */
+        }
+    </style>
+</head>
+<body>
+<h1>主页</h1>
+
+<button onclick="goToIp()">修改本机IP</button>
+<button onclick="goToSlave()">添加ModbusTcp从机</button>
+<button onclick="goToSerial()">添加串口</button>
+<button onclick="goToMaster()">设置ModbusTcp主机</button>
+<script>
+
+
+    function goToIp() {
+        window.location.href = "/ip";
+    }
+
+    function goToSlave() {
+        window.location.href = "/slave";
+    }
+
+    function goToSerial() {
+        window.location.href = "/serial";
+    }
+
+    function goToMaster() {
+        window.location.href = "/master";
+    }
+</script>
+</body>
+</html>

@@ -1,37 +1,51 @@
 # ModBusTcp
 
-#### 介绍
-modbustcp开发
+## 配置文件
 
-#### 软件架构
-软件架构说明
+### As Slave
 
+> 是指本系统作为modbustcp作为从机供其他modbustcp主机访问的设置
 
-#### 安装教程
+#### 内容介绍
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1. ip:本机作为modbustcp从机的ip
+2. port: 作为modbustcp从机的端口
+3. id: 作为modbustcp从机的id
+4. 线圈（co）：1个字节,co_len代表对应类型的有几个
+5. 离散输入（di）：1个字节,di_len代表对应类型的有几个
+6. 保持寄存器（hr）：2个字节,hr_len代表对应类型的有几个
+7. 输入寄存器（ir）：2个字节,ir_len代表对应类型的有几个
 
-#### 使用说明
+### Serial
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+> 针对本系统串口资源的设置
 
-#### 参与贡献
+#### 内容介绍
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+1. COM:本系统自带的串口号,和linux串口文件内容对应,无需修改
+2. band:波特率
+3. activate:是否开启该串口,1为开启,0为不开启
+4. save_reg: 存放在As Slave的哪种寄存器中,可选co,di,hr,ir
+5. cmd:串口轮询访问的命令(不含crc部分)
+6. read_start:返回的指令读取起始位,从0开始计数
+7. read_len:读取长度
+8. save_start: 存放起始地址
+9. save_len: 数据长度
+10. freq:查询频率
 
+### As Master
 
-#### 特技
+> 针对本系作为主机,连接的其他modbustcp从机的设置
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+#### 内容介绍
+
+1. ip:从机ip
+2. port:从机端口
+3. id:从机id
+4. save_reg: 存放在As Slave的哪种寄存器中,可选co,di,hr,ir,如有多个英文逗号分割,建议与reg一致
+5. save_start: 存放起始地址
+6. save_len: 数据长度
+7. reg:取目标的哪些寄存器,英文逗号分割,可选co,di,hr,ir
+8. reg_len:读取目标寄存器的长度,英文逗号分割,长度与reg对应
+9. freq:查询频率
+10. reg_addr:读取目标寄存器的起始地址,英文逗号分割,长度与reg对应
