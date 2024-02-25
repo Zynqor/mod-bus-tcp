@@ -1,108 +1,191 @@
-<!-- index2.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>添加从机</title>
     <style>
         body {
-            font-family: Arial, sans-serif; /* 使用 Arial 字体以确保兼容性 */
-            margin: 0; /* 去除默认边距 */
-            padding: 0; /* 去除默认内边距 */
-            background-color: #f0f0f0; /* 设置背景颜色 */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
         }
 
         h1 {
-            text-align: center; /* 标题居中显示 */
-            margin-top: 50px; /* 设置标题顶部间距 */
+            text-align: center;
+            margin-top: 50px;
         }
 
-        form {
-            width: 80%; /* 表单宽度 */
-            margin: 0 auto; /* 水平居中显示 */
-            background-color: #fff; /* 表单背景色 */
-            padding: 20px; /* 内边距 */
-            border-radius: 8px; /* 圆角边框 */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+        .table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        label {
-            display: block; /* 每行显示一个标签 */
-            font-weight: bold; /* 加粗标签文字 */
-            margin-bottom: 10px; /* 标签下方间距 */
+        .table th,
+        .table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
         }
 
-        input[type="text"] {
-            width: calc(100% - 20px); /* 输入框宽度 */
-            padding: 10px; /* 内边距 */
-            margin-bottom: 20px; /* 底部间距 */
-            border: 1px solid #ccc; /* 边框样式 */
-            border-radius: 4px; /* 圆角边框 */
+        .table th {
+            background-color: #f2f2f2;
         }
 
-        input[type="submit"] {
-            width: 100%; /* 提交按钮宽度 */
-            padding: 10px; /* 内边距 */
-            border: none; /* 去除边框 */
-            background-color: #007bff; /* 按钮背景色 */
-            color: #fff; /* 按钮文字颜色 */
-            cursor: pointer; /* 鼠标悬停样式 */
-            border-radius: 4px; /* 圆角边框 */
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
         }
 
-        input[type="submit"]:hover {
-            background-color: #0056b3; /* 悬停时背景色 */
+        .btn-group button {
+            padding: 5px 10px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 4px;
         }
 
-        button {
-            display: block; /* 按钮块级显示 */
-            width: 80%; /* 按钮宽度 */
-            margin: 20px auto 0; /* 上方间距、水平居中 */
-            padding: 10px; /* 内边距 */
-            border: none; /* 去除边框 */
-            background-color: #007bff; /* 按钮背景色 */
-            color: #fff; /* 按钮文字颜色 */
-            cursor: pointer; /* 鼠标悬停样式 */
-            border-radius: 4px; /* 圆角边框 */
+        .btn-group button:hover {
+            background-color: #0056b3;
         }
 
-        button:hover {
-            background-color: #0056b3; /* 悬停时背景色 */
+        .btn-group button:first-child {
+            margin-right: 5px;
+        }
+
+        .btn-group button:last-child {
+            margin-left: 5px;
         }
     </style>
 </head>
 <body>
 <h1>添加从机</h1>
-<form id="myForm" action="/submit" method="post">
-    <label for="ip">IP:</label><br>
-    <input type="hidden" name="type" value="ip"/>
-    <!-- 在这里使用从后端传递过来的默认数据渲染表单的默认值 -->
-    <input type="text" id="ip" name="ip" value="{{ data['default_value'] }}">
-    <br><br>
-    <input type="submit" value="修改IP">
-</form>
+<table id="myTable" class="table">
+    <thead>
+    <tr>
+        <th>标签1</th>
+        <th>标签2</th>
+        <th>标签3</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- 这里是动态生成的表格内容 -->
+    </tbody>
+</table>
 <button onclick="goToMain()">回主页</button>
 
+
 <script>
-    // 监听表单提交事件
-    document.getElementById("myForm").addEventListener("submit", function (event) {
-        // 阻止表单的默认提交行为
-        event.preventDefault();
-        // 发送异步请求
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/submit");
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                // 表单提交成功，弹出提示框
-                alert("提交成功");
-            }
+    let configData = `{{data}}`; // 将已经编码为json的data赋值给变量
+    configData = configData.replace(/&#x27;/g, "\"");
+
+    configData = JSON.parse(configData);
+
+    // 访问data
+    console.log(configData.ip1);
+    //to be continue
+
+    function goToSlave() {
+        window.location.href = "/slave";
+
+    }
+
+    var dataFromBackend = [
+        {label1: "值1", label2: "值2", label3: "值3"},
+        {label1: "值4", label2: "值5", label3: "值6"}
+    ];
+
+    window.onload = function () {
+
+        renderTable(dataFromBackend);
+    };
+
+    function renderTable(data) {
+        var tableBody = document.querySelector("#myTable tbody");
+        tableBody.innerHTML = "";
+
+        data.forEach(function (data) {
+            var row = document.createElement("tr");
+
+            Object.keys(data).forEach(function (key) {
+                var cell = document.createElement("td");
+                var input = document.createElement("input");
+                input.type = "text";
+                input.value = data[key];
+                cell.appendChild(input);
+                row.appendChild(cell);
+            });
+
+            var btnGroupCell = document.createElement("td");
+            btnGroupCell.className = "btn-group";
+            var editButton = document.createElement("button");
+            editButton.textContent = "修改";
+            editButton.onclick = function () {
+                var rowData = [];
+                row.querySelectorAll("input").forEach(function (input) {
+                    rowData.push(input.value);
+                });
+                console.log("修改按钮点击，当前行的值为：" + rowData.join(", "));
+                goToSlave()
+            };
+            var deleteButton = document.createElement("button");
+            deleteButton.textContent = "删除";
+            deleteButton.onclick = function () {
+                var rowData = [];
+                row.querySelectorAll("input").forEach(function (input) {
+                    rowData.push(input.value);
+                });
+                console.log("删除按钮点击，当前行的值为：" + rowData.join(", "));
+                goToSlave()
+            };
+            btnGroupCell.appendChild(editButton);
+            btnGroupCell.appendChild(deleteButton);
+            row.appendChild(btnGroupCell);
+
+            tableBody.appendChild(row);
+        });
+
+        var emptyRow = document.createElement("tr");
+        for (var i = 0; i < Object.keys(dataFromBackend[0]).length; i++) {
+            var cell = document.createElement("td");
+            var input = document.createElement("input");
+            input.type = "text";
+            input.name = "empty_content";
+            cell.appendChild(input);
+            emptyRow.appendChild(cell);
+        }
+        var btnGroupCell = document.createElement("td");
+        btnGroupCell.className = "btn-group";
+        var addButton = document.createElement("button");
+        addButton.textContent = "新增";
+        addButton.onclick = function () {
+            var newRowData = [];
+            emptyRow.querySelectorAll("input").forEach(function (input) {
+                newRowData.push(input.value);
+            });
+            console.log("新增按钮点击，当前行的值为：" + newRowData.join(", "));
+            goToSlave()
         };
-        // 将表单数据序列化并发送
-        var formData = new FormData(document.getElementById("myForm"));
-        xhr.send(new URLSearchParams(formData).toString());
-    });
+        var cancelButton = document.createElement("button");
+        cancelButton.textContent = "取消";
+        cancelButton.onclick = function () {
+            emptyRow.querySelectorAll("input").forEach(function (input) {
+                input.value = ""; // 清空文本框的值
+            });
+        };
+        btnGroupCell.appendChild(addButton);
+        btnGroupCell.appendChild(cancelButton);
+        emptyRow.appendChild(btnGroupCell);
+
+        tableBody.appendChild(emptyRow);
+    }
 
     function goToMain() {
         window.location.href = "/";

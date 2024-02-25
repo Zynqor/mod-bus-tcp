@@ -55,6 +55,7 @@ class SlaveHandler(tornado.web.RequestHandler):
         # 读取本地配置文件
         with open("config.json", "r") as f:
             config_data = json.load(f)
+        # to be continue
         self.render("slave.html", data=config_data)
 
 
