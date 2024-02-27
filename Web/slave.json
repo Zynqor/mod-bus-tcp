@@ -1,24 +1,24 @@
 [
-  {
-    "ip": "127.0.0.1",
-    "port": 10086,
-    "id": "0x01",
-    "reg": "co",
-    "reg_len": 8,
-    "reg_addr": "0x00",
-    "save_start": "0x0F",
-    "save_len": 5,
-    "freq": 0.2
-  },
-  {
-    "ip": "127.0.0.1",
-    "port": 10086,
-    "id": "0x01",
-    "reg": "co",
-    "reg_len": 8,
-    "reg_addr": "0x00",
-    "save_start": "0x0F",
-    "save_len": 5,
-    "freq": 0.2
-  }
+    {
+        "ip": "127.0.0.1",
+        "port": 10086,
+        "id": "0x01",
+        "reg": "co",
+        "reg_len": 8,
+        "reg_addr": "0x00",
+        "save_start": "0x0F",
+        "save_len": 5,
+        "freq": 0.2
+    },
+    {
+        "ip": "127.0.0.1",
+        "port": 10086,
+        "id": "0x01",
+        "reg": "co",
+        "reg_len": 8,
+        "reg_addr": "0x00",
+        "save_start": "0x0F",
+        "save_len": 5,
+        "freq": 0.2
+    }
 ]

@@ -120,7 +120,21 @@
     //to be continue
 
     function goToSlave() {
-        window.location.href = "/slave";
+        input_data = {"type": "slave"}
+        fetch('/refresh', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(input_data),
+        }).then(response => response.text())
+            .then(newRowData => {
+                var tmp = JSON.parse(newRowData);
+                renderTable(tmp['data']);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     }
 
     var dataFromBackend = configData;
@@ -130,7 +144,25 @@
         renderTable(dataFromBackend);
     };
 
+    function submit(input_data) {
+        // 发送POST请求
+        fetch('/subSlave', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(input_data),
+        }).then(response => response.text())
+            .then(newRowData => {
+                console.log('Response:', newRowData);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
     function renderTable(data) {
+        console.log(data)
         var tableBody = document.querySelector("#myTable tbody");
         tableBody.innerHTML = "";
 
@@ -164,8 +196,15 @@
             deleteButton.onclick = function () {
                 var rowData = [];
                 row.querySelectorAll("input").forEach(function (input) {
+
                     rowData.push(input.value);
                 });
+                var input_data = {
+                    "type": "del",
+                    "data": rowData
+                };
+
+                submit(input_data)
                 console.log("删除按钮点击，当前行的值为：" + rowData.join(", "));
                 goToSlave()
             };
@@ -193,28 +232,24 @@
         addButton.onclick = function () {
             var newRowData = [];
             emptyRow.querySelectorAll("input").forEach(function (input) {
-                newRowData.push(input.value);
+                console.log(input)
+                if (input.value !== '') {
+                    newRowData.push(input.value);
+                }
             });
             // 设置要发送的数据
+            if (newRowData.length < 9) {
+                return
+            }
+            var input_data = {
+                "type": "add",
+                "data": newRowData
+            };
 
-
-            // 发送POST请求
-            fetch('/addSlave', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(newRowData),
-            }).then(response => response.text())
-                .then(newRowData => {
-                    console.log('Response:', newRowData);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
+            submit(input_data)
 
             console.log("新增按钮点击，当前行的值为：" + newRowData.join(", "));
-            // goToSlave()
+            goToSlave()
         };
         var cancelButton = document.createElement("button");
         cancelButton.textContent = "取消";

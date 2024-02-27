@@ -1,0 +1,6 @@
+pip install pandas -i https://pypi.douban.com/simple
+pip install pyserial -i https://pypi.douban.com/simple
+pip install crcmod -i https://pypi.douban.com/simple
+pip install xlsxwriter -i https://pypi.douban.com/simple
+pip install openpyxl -i https://pypi.douban.com/simple
+pip install tornado -i https://pypi.douban.com/simple
