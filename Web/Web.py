@@ -53,6 +53,10 @@ class RefreshHandler(tornado.web.RequestHandler):
             # 读取本地配置文件
             with open("serial.json", "r") as f:
                 config_data = json.load(f)
+        if data['type'] == 'master':
+            # 读取本地配置文件
+            with open("master.json", "r") as f:
+                config_data = json.load(f)
 
         info = {"data": config_data}
         self.write(info)
@@ -86,7 +90,7 @@ class SerialHandler(tornado.web.RequestHandler):
 class MasterHandler(tornado.web.RequestHandler):
     def get(self):
         # 读取本地配置文件
-        with open("config.json", "r") as f:
+        with open("master.json", "r") as f:
             config_data = json.load(f)
         self.render("master.html", data=config_data)
 
@@ -205,7 +209,6 @@ class SubmitSerialHandler(tornado.web.RequestHandler):
         with open("serial.json", 'w') as json_file:
             json.dump(config_data, json_file, indent=4)
 
-
     def edit(self, datas):
         info = datas['data']
 
@@ -266,15 +269,42 @@ class SubmitSerialHandler(tornado.web.RequestHandler):
             self.delete(data)
         elif data['type'] == 'edit':
             self.edit(data)
-    # # 获取参数
-    # param1 = data.get("param1")
-    # param2 = data.get("param2")
-    #
-    # # 处理参数
-    # # ...
-    #
-    # # 返回响应
-    # self.write("Received param1: {} and param2: {}".format(param1, param2))
+
+
+class SubmitMasterHandler(tornado.web.RequestHandler):
+
+    def edit(self, datas):
+        info = datas['data']
+        # 读取本地配置文件
+        with open("master.json", "r") as f:
+            config_data = json.load(f)
+        data = {
+            "reg": info[0],
+            "reg_addr": info[1],
+            "len": info[2],
+        }
+        reg = config_data['reg']
+
+        res = []
+        for i in range(0, len(config_data)):
+            tmp = reg[i]
+            if str(tmp['reg']) == str(info[0]):
+                res.append(data)
+            else:
+                res.append(reg[i])
+        config_data['reg'] = res
+        with open("master.json", 'w') as json_file:
+            json.dump(config_data, json_file, indent=4)
+        # config_data.append(data)
+        # # 写入JSON文件
+        # with open("slave.json", 'w') as json_file:
+        #     json.dump(config_data, json_file, indent=4)
+
+    def post(self):
+        data = json.loads(self.request.body)
+
+        if data['type'] == 'edit':
+            self.edit(data)
 
 
 class FormSubmitHandler(tornado.web.RequestHandler):
@@ -339,6 +369,7 @@ def make_app():
         (r"/master", MasterHandler),
         (r"/subSlave", SubmitSlaveHandler),
         (r"/subSerial", SubmitSerialHandler),
+        (r"/subMaster", SubmitMasterHandler),
         (r"/refresh", RefreshHandler)
     ], debug=True)
 

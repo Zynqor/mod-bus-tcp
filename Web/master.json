@@ -1,0 +1,27 @@
+{
+    "reg": [
+        {
+            "reg": "co",
+            "reg_addr": "0x00",
+            "len": "12"
+        },
+        {
+            "reg": "di",
+            "reg_addr": "0x00",
+            "len": "12"
+        },
+        {
+            "reg": "ir",
+            "reg_addr": "0x00",
+            "len": "124"
+        },
+        {
+            "reg": "hr",
+            "reg_addr": "0x00",
+            "len": "10"
+        }
+    ],
+    "ip": "",
+    "port": "",
+    "id": ""
+}
