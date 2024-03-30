@@ -49,6 +49,11 @@ class RefreshHandler(tornado.web.RequestHandler):
             # 读取本地配置文件
             with open("slave.json", "r") as f:
                 config_data = json.load(f)
+        if data['type'] == 'serial':
+            # 读取本地配置文件
+            with open("serial.json", "r") as f:
+                config_data = json.load(f)
+
         info = {"data": config_data}
         self.write(info)
 
@@ -73,7 +78,7 @@ class SlaveHandler(tornado.web.RequestHandler):
 class SerialHandler(tornado.web.RequestHandler):
     def get(self):
         # 读取本地配置文件
-        with open("config.json", "r") as f:
+        with open("serial.json", "r") as f:
             config_data = json.load(f)
         self.render("serial.html", data=config_data)
 
@@ -127,12 +132,140 @@ class SubmitSlaveHandler(tornado.web.RequestHandler):
         with open("slave.json", 'w') as json_file:
             json.dump(res, json_file, indent=4)
 
+    def edit(self, datas):
+        info = datas['data']
+
+        # 读取本地配置文件
+        with open("slave.json", "r") as f:
+            config_data = json.load(f)
+        data = {
+            "ip": info[0],
+            "port": info[1],
+            "id": info[2],
+            "reg": info[3],
+            "reg_len": info[4],
+            "reg_addr": info[5],
+            "save_start": info[6],
+            "save_len": info[7],
+            "freq": info[8]
+        }
+        res = []
+        for i in range(0, len(config_data)):
+            tmp = config_data[i]
+            if str(tmp['ip']) == str(info[0]) and str(tmp['port']) == str(info[1]) and str(tmp['id']) == str(info[2]):
+                res.append(data)
+            else:
+                res.append(config_data[i])
+        with open("slave.json", 'w') as json_file:
+            json.dump(res, json_file, indent=4)
+        # config_data.append(data)
+        # # 写入JSON文件
+        # with open("slave.json", 'w') as json_file:
+        #     json.dump(config_data, json_file, indent=4)
+
     def post(self):
         data = json.loads(self.request.body)
         if data['type'] == 'add':
             self.add(data)
         elif data['type'] == 'del':
             self.delete(data)
+        elif data['type'] == 'edit':
+            self.edit(data)
+    # # 获取参数
+    # param1 = data.get("param1")
+    # param2 = data.get("param2")
+    #
+    # # 处理参数
+    # # ...
+    #
+    # # 返回响应
+    # self.write("Received param1: {} and param2: {}".format(param1, param2))
+
+
+class SubmitSerialHandler(tornado.web.RequestHandler):
+    def add(self, datas):
+        info = datas['data']
+        # 读取本地配置文件
+        with open("serial.json", "r") as f:
+            config_data = json.load(f)
+        data = {
+            "com": info[0],
+            "band": info[1],
+            "activate": info[2],
+            "save_reg": info[3],
+            "cmd": info[4],
+            "read_start": info[5],
+            "read_len": info[6],
+            "save_start": info[7],
+            "save_len": info[8],
+            "freq": info[9]
+        }
+        config_data.append(data)
+        # 写入JSON文件
+        with open("serial.json", 'w') as json_file:
+            json.dump(config_data, json_file, indent=4)
+
+
+    def edit(self, datas):
+        info = datas['data']
+
+        # 读取本地配置文件
+        with open("serial.json", "r") as f:
+            config_data = json.load(f)
+        data = {
+            "com": info[0],
+            "band": info[1],
+            "activate": info[2],
+            "save_reg": info[3],
+            "cmd": info[4],
+            "read_start": info[5],
+            "read_len": info[6],
+            "save_start": info[7],
+            "save_len": info[8],
+            "freq": info[9]
+        }
+
+        res = []
+        for i in range(0, len(config_data)):
+            tmp = config_data[i]
+            if str(tmp['com']) == str(info[0]):
+                res.append(data)
+            else:
+                res.append(config_data[i])
+        with open("serial.json", 'w') as json_file:
+            json.dump(res, json_file, indent=4)
+        # config_data.append(data)
+        # # 写入JSON文件
+        # with open("slave.json", 'w') as json_file:
+        #     json.dump(config_data, json_file, indent=4)
+
+    def delete(self, datas):
+        info = datas['data']
+        # 读取本地配置文件
+        with open("slave.json", "r") as f:
+            config_data = json.load(f)
+        res = []
+        for i in range(0, len(config_data)):
+            tmp = config_data[i]
+            if str(tmp['ip']) == str(info[0]) and str(tmp['port']) == str(info[1]) and str(tmp['id']) == str(info[2]):
+
+                print("删除成功")
+            else:
+                res.append(config_data[i])
+        if len(res) == 0:
+            res = config_data
+        # 写入JSON文件
+        with open("slave.json", 'w') as json_file:
+            json.dump(res, json_file, indent=4)
+
+    def post(self):
+        data = json.loads(self.request.body)
+        if data['type'] == 'add':
+            self.add(data)
+        elif data['type'] == 'del':
+            self.delete(data)
+        elif data['type'] == 'edit':
+            self.edit(data)
     # # 获取参数
     # param1 = data.get("param1")
     # param2 = data.get("param2")
@@ -205,6 +338,7 @@ def make_app():
         (r"/slave", SlaveHandler),
         (r"/master", MasterHandler),
         (r"/subSlave", SubmitSlaveHandler),
+        (r"/subSerial", SubmitSerialHandler),
         (r"/refresh", RefreshHandler)
     ], debug=True)
 

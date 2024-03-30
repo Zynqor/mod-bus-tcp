@@ -184,10 +184,22 @@
             var editButton = document.createElement("button");
             editButton.textContent = "修改";
             editButton.onclick = function () {
+
                 var rowData = [];
                 row.querySelectorAll("input").forEach(function (input) {
                     rowData.push(input.value);
                 });
+
+                // 设置要发送的数据
+                if (rowData.length < 9) {
+                    return
+                }
+                var input_data = {
+                    "type": "edit",
+                    "data": rowData
+                };
+
+                submit(input_data)
                 console.log("修改按钮点击，当前行的值为：" + rowData.join(", "));
                 goToSlave()
             };
