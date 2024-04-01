@@ -302,9 +302,25 @@ class SubmitMasterHandler(tornado.web.RequestHandler):
 
     def post(self):
         data = json.loads(self.request.body)
-
         if data['type'] == 'edit':
             self.edit(data)
+class SubmitMasterHandler1(tornado.web.RequestHandler):
+
+
+    def post(self):
+        ip = self.get_body_argument("ip")
+        port = self.get_body_argument("port")
+        id = self.get_body_argument("id")
+
+        # 读取本地配置文件
+        with open("master.json", "r") as f:
+            config_data = json.load(f)
+        config_data['ip'] = ip
+        config_data['port'] = port
+        config_data['id'] = id
+        with open("master.json", 'w') as json_file:
+            json.dump(config_data, json_file, indent=4)
+        self.render("master.html", data=config_data)
 
 
 class FormSubmitHandler(tornado.web.RequestHandler):
@@ -370,6 +386,7 @@ def make_app():
         (r"/subSlave", SubmitSlaveHandler),
         (r"/subSerial", SubmitSerialHandler),
         (r"/subMaster", SubmitMasterHandler),
+        (r"/subMaster1", SubmitMasterHandler1),
         (r"/refresh", RefreshHandler)
     ], debug=True)
 
