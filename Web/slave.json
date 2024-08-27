@@ -9,16 +9,5 @@
         "save_start": "0x0F",
         "save_len": "5",
         "freq": "0.2"
-    },
-    {
-        "ip": "10.128.245.186",
-        "port": "1111",
-        "id": "0x02",
-        "reg": "ir",
-        "reg_len": "11",
-        "reg_addr": "0x11",
-        "save_start": "0xFF",
-        "save_len": "10",
-        "freq": "0.3"
     }
 ]

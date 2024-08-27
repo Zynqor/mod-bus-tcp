@@ -78,6 +78,7 @@
 <button onclick="goToSlave()">添加ModbusTcp从机</button>
 <button onclick="goToSerial()">串口设置</button>
 <button onclick="goToMaster()">设置ModbusTcp主机</button>
+<button onclick="restartService()">重启串口服务</button>
 <script>
 
 
@@ -95,6 +96,11 @@
 
     function goToMaster() {
         window.location.href = "/master";
+    }
+
+    function restartService() {
+        window.location.href = "/restartService";
+        alert("服务已重启");
     }
 </script>
 </body>

@@ -1,5 +1,16 @@
 # ModBusTcp
 
+## 环境配置
+
+1. python版本：3.8
+2. 依赖包
+   ```shell
+    pip install pymodbus -i https://pypi.doubanio.com/simple/
+    pip install pyserial -i https://pypi.doubanio.com/simple/
+    pip install pandas -i https://pypi.doubanio.com/simple/
+    pip install tornado -i https://pypi.doubanio.com/simple/
+    ```
+
 ## 配置文件
 
 ### As Slave

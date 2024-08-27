@@ -1,8 +1,11 @@
+import os
+
 import tornado.ioloop
 import tornado.web
 import subprocess
 from tornado import httpserver, ioloop
 import json
+import subprocess
 
 
 def append_to_json(file_path, new_data):
@@ -35,11 +38,33 @@ def append_to_json(file_path, new_data):
 
 
 class MainHandler(tornado.web.RequestHandler):
+    process = None
+
     def get(self):
         # 读取本地配置文件
         with open("config.json", "r") as f:
             config_data = json.load(f)
         self.render("index.html", data=config_data)
+
+    @staticmethod
+    def run_script():
+        if MainHandler.process != None:
+            # 检查是否有正在运行的进程，如果没有或已结束，则启动新的Python脚本
+            print("已有一个脚本在运行")
+            return
+        # 启动新的Python脚本
+        MainHandler.process = subprocess.Popen(['python', 'test_script.py'])
+        print("已启动脚本")
+
+    @staticmethod
+    def restart_script():
+
+        if MainHandler.process is not None:
+            MainHandler.process.terminate()
+            # 启动新的Python脚本
+            MainHandler.process = subprocess.Popen(['python', 'test_script.py'])
+        else:
+            print("没有找到正在运行的进程，无法重启。")
 
 
 class RefreshHandler(tornado.web.RequestHandler):
@@ -93,6 +118,13 @@ class MasterHandler(tornado.web.RequestHandler):
         with open("master.json", "r") as f:
             config_data = json.load(f)
         self.render("master.html", data=config_data)
+
+
+class RestartHandler(tornado.web.RequestHandler):
+    def get(self):
+        print("重启服务")
+        MainHandler.restart_script()
+        self.render("index.html", data=config_data)
 
 
 class SubmitSlaveHandler(tornado.web.RequestHandler):
@@ -304,8 +336,9 @@ class SubmitMasterHandler(tornado.web.RequestHandler):
         data = json.loads(self.request.body)
         if data['type'] == 'edit':
             self.edit(data)
-class SubmitMasterHandler1(tornado.web.RequestHandler):
 
+
+class SubmitMasterHandler1(tornado.web.RequestHandler):
 
     def post(self):
         ip = self.get_body_argument("ip")
@@ -383,6 +416,7 @@ def make_app():
         (r"/serial", SerialHandler),
         (r"/slave", SlaveHandler),
         (r"/master", MasterHandler),
+        (r"/restartService", RestartHandler),
         (r"/subSlave", SubmitSlaveHandler),
         (r"/subSerial", SubmitSerialHandler),
         (r"/subMaster", SubmitMasterHandler),
@@ -391,9 +425,75 @@ def make_app():
     ], debug=True)
 
 
+def default_json_data():
+    # 默认的config
+    config = {"ip1": "192.168.1.230", "mask1": "255.255.255.0", "gate1": "192.168.0.10", "ip2": "192.168.0.230",
+              "mask2": "255.255.255.0", "gate2": "", "ip": "127.0.0.1", "port": 8889}
+    # 检查文件是否存在
+    if not os.path.exists('config.json'):
+        # 文件不存在，创建并写入默认值
+        with open('config.json', 'w') as file:
+            json.dump(config, file)
+        print(f"File '{'config.json'}' created and initialized with default values.")
+    else:
+        # 文件已存在，不执行任何操作
+        print(f"File '{'config.json'}' already exists. No action taken.")
+
+    # 默认的serial
+    serial = [{"com": "/dev/ttyS1", "band": "115200", "activate": "1", "save_reg": "co", "cmd": "FF0103000002",
+               "read_start": "2", "read_len": "8", "save_start": "0x00", "save_len": "0x0F", "freq": "5"},
+              {"com": "/dev/ttyS2", "band": "9600", "activate": "0", "save_reg": "co", "cmd": "FF0103000002",
+               "read_start": "2", "read_len": "8", "save_start": "0x00", "save_len": "0x0F", "freq": "5"},
+              {"com": "/dev/ttyS3", "band": "9600", "activate": "0", "save_reg": "co", "cmd": "FF0103000002",
+               "read_start": "2", "read_len": "8", "save_start": "0x00", "save_len": "0x0F", "freq": "5"},
+              {"com": "/dev/ttyS4", "band": 9600, "activate": "1", "save_reg": "co", "cmd": "FF0103000002",
+               "read_start": "2", "read_len": 8, "save_start": "0x00", "save_len": "0x0F", "freq": 5}]
+    # 检查文件是否存在
+    if not os.path.exists('serial.json'):
+        # 文件不存在，创建并写入默认值
+        with open('serial.json', 'w') as file:
+            json.dump(serial, file)
+        print(f"File '{'serial.json'}' created and initialized with default values.")
+    else:
+        # 文件已存在，不执行任何操作
+        print(f"File '{'serial.json'}' already exists. No action taken.")
+
+    # 默认的slave
+    slave = [{"ip": "127.0.0.1", "port": "10086", "id": "0x01", "reg": "co", "reg_len": "1012", "reg_addr": "0x00",
+              "save_start": "0x0F", "save_len": "5", "freq": "0.2"},
+             {"ip": "10.128.245.186", "port": "1111", "id": "0x02", "reg": "ir", "reg_len": "11", "reg_addr": "0x11",
+              "save_start": "0xFF", "save_len": "10", "freq": "0.3"}]
+    # 检查文件是否存在
+    if not os.path.exists('slave.json'):
+        # 文件不存在，创建并写入默认值
+        with open('slave.json', 'w') as file:
+            json.dump(slave, file)
+        print(f"File '{'slave.json'}' created and initialized with default values.")
+    else:
+        # 文件已存在，不执行任何操作
+        print(f"File '{'slave.json'}' already exists. No action taken.")
+
+    # 默认的master
+    master = {"reg": [{"reg": "co", "reg_addr": "0x00", "len": "12"}, {"reg": "di", "reg_addr": "0x00", "len": "12"},
+                      {"reg": "ir", "reg_addr": "0x00", "len": "124"}, {"reg": "hr", "reg_addr": "0x00", "len": "10"}],
+              "ip": "111.1.1.1", "port": "20000", "id": "0x0a"}
+    # 检查文件是否存在
+    if not os.path.exists('master.json'):
+        # 文件不存在，创建并写入默认值
+        with open('master.json', 'w') as file:
+            json.dump(master, file)
+        print(f"File '{'master.json'}' created and initialized with default values.")
+    else:
+        # 文件已存在，不执行任何操作
+        print(f"File '{'master.json'}' already exists. No action taken.")
+
+
 if __name__ == "__main__":
+    default_json_data()
     with open("config.json", "r") as f:
         config_data = json.load(f)
+
+    MainHandler.run_script()
     app = make_app()
     address = config_data['ip']
     port = config_data['port']
