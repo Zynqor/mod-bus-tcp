@@ -41,7 +41,7 @@ class RuleUtil:
         for data in data_list:
             tmp.append(abs(data - avg))
 
-        return max(tmp) / avg * 100
+        return max(tmp) / avg
 
     @staticmethod
     def avgdiff(data_list):
@@ -56,11 +56,11 @@ class RuleUtil:
     @staticmethod
     def max_min(data_list):
         '''
-        最大值和最小值的差
+        最大值和最小值的比值
         :param data_list:
         :return:
         '''
-        return max(data_list) - min(data_list)
+        return max(data_list) / min(data_list)
 
     @staticmethod
     def diff(arg1, arg2):
@@ -92,13 +92,16 @@ class RuleUtil:
             result_save_index = item['result_save_index']
             calculate_desc = item['calculate_desc']
 
-            log4p.logs(f"data_index: {data_index}\t" +f"calculate: {calculate}" + f"data_save_index: {data_save_index}\t" + f"result_save_index: {result_save_index}\t" + f"calculate_desc: {calculate_desc}")
+            log4p.logs(
+                f"data_index: {data_index}\t" + f"calculate: {calculate}" + f"data_save_index: {data_save_index}\t" + f"result_save_index: {result_save_index}\t" + f"calculate_desc: {calculate_desc}")
             if isinstance(data_index, list) and isinstance(data_save_index, list):
                 if len(data_index) < len(data_save_index):
                     log4p.logs("data_index的长度不能小于data_save_index的长度,错误数据为:\t" + str(item))
                     return res
                 else:
-                    res_len = res_len + len(data_save_index)
+                    for i in data_save_index:
+                        if int(i) > res_len:
+                            res_len = int(i)
             else:
                 log4p.logs("data_index和data_save_index必须为list,错误数据为:\t" + str(item))
                 return res
@@ -107,8 +110,8 @@ class RuleUtil:
                 return res
             else:
                 if calculate != "None":
-                    # 有计算那么结果集长度就要加1存放结果
-                    res_len += 1
+                    if int(result_save_index) > res_len:
+                        res_len = int(result_save_index)
 
             if isinstance(int(result_save_index), int):
                 log4p.logs("result_save_index必须为整数,错误数据为:\t" + str(item))
@@ -122,6 +125,47 @@ class RuleUtil:
             data_save_index = item['data_save_index']
             result_save_index = item['result_save_index']
             calculate_desc = item['calculate_desc']
+            tmp_data_list = []
+
+            for i in range(0, len(data_save_index)):
+                # 把
+                result[int(result_save_index[i])] = history_data[-1][int(data_index[i])]
+                tmp_data_list.append(history_data[-1][int(data_index[i])])
+
+            if calculate == "None":
+                pass
+            elif calculate == RuleUtil.calculate_type[0]:
+                result[int(result_save_index)] = RuleUtil.avg(tmp_data_list)
+            elif calculate == RuleUtil.calculate_type[1]:
+                result[int(result_save_index)] = RuleUtil.ratio(tmp_data_list[0], tmp_data_list[1])
+            elif calculate == RuleUtil.calculate_type[2]:
+                # MAX50
+                tmp_history = []
+                for tmp_data in history_data:
+                    tmp_history.append(tmp_data[int(data_index[i])])
+
+                result[int(result_save_index)] = max(tmp_history)
+            elif calculate == RuleUtil.calculate_type[3]:
+                # MIN50
+                tmp_history = []
+                for tmp_data in history_data:
+                    tmp_history.append(tmp_data[int(data_index[i])])
+                result[int(result_save_index)] = min(tmp_history)
+            elif calculate == RuleUtil.calculate_type[4]:
+                # UBALA
+                result[int(result_save_index)] = RuleUtil.ubala(tmp_data_list)
+            elif calculate == RuleUtil.calculate_type[5]:
+                # AVGDIFF
+                result[int(result_save_index)] = RuleUtil.avgdiff(tmp_data_list)
+            elif calculate == RuleUtil.calculate_type[6]:
+                # MAX/MIN50
+                tmp_history = []
+                for tmp_data in history_data:
+                    tmp_history.append(tmp_data[int(data_index[i])])
+                result[int(result_save_index)] = RuleUtil.max_min(tmp_history)
+            elif calculate == RuleUtil.calculate_type[7]:
+                # DIFF
+                result[int(result_save_index)] = RuleUtil.diff(tmp_data_list[0], tmp_data_list[1])
 
 
 if __name__ == '__main__':
