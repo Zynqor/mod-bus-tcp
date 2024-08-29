@@ -21,3 +21,4 @@ echo "GATEWAY=$gateway" >> /etc/net2.conf
 echo "Restarting system..."
 reboot
 
+

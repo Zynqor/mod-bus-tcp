@@ -21,3 +21,4 @@ echo "GATEWAY=$gateway" >> /etc/net.conf
 echo "Restarting system..."
 reboot
 
+
