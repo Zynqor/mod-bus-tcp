@@ -3,6 +3,9 @@ from pymodbus.client import ModbusTcpClient
 import threading
 import time
 
+from Util.RuleUtil import RuleUtil
+from Util.log4p import log4p
+
 
 class TcpSlave(threading.Thread):
     def __init__(self, slave, server, as_slave_id):
@@ -13,33 +16,33 @@ class TcpSlave(threading.Thread):
         self.port = int(slave['port'])
         self.as_slave_id = as_slave_id
         self.id = slave['id']
-        if ',' in str(slave['reg']):
-            self.reg_type = slave['reg'].split(',')
+        if ';' in str(slave['reg']):
+            self.reg_type = slave['reg'].split(';')
         else:
             self.reg_type = []
             self.reg_type.append(slave['reg'])
 
-        if ',' in str(slave['reg_len']):
-            self.reg_len = slave['reg_len'].split(',')
+        if ';' in str(slave['reg_len']):
+            self.reg_len = slave['reg_len'].split(';')
         else:
             self.reg_len = []
             self.reg_len.append(slave['reg_len'])
 
-        if ',' in str(slave['reg_addr']):
-            self.reg_addr = slave['reg_addr'].split(',')
+        if ';' in str(slave['reg_addr']):
+            self.reg_addr = slave['reg_addr'].split(';')
         else:
             self.reg_addr = []
             self.reg_addr.append(slave['reg_addr'])
 
         # 保存寄存器与长度
-        if ',' in str(slave['save_start']):
-            self.save_start = slave['save_start'].split(',')
+        if ';' in str(slave['save_start']):
+            self.save_start = slave['save_start'].split(';')
         else:
             self.save_start = []
             self.save_start.append(slave['save_start'])
 
-        if ',' in str(slave['save_rule']):
-            self.save_rule = slave['save_rule'].split(',')
+        if ';' in str(slave['save_rule']):
+            self.save_rule = slave['save_rule'].split(';')
         else:
             self.save_rule = []
             self.save_rule.append(slave['save_rule'])
@@ -51,6 +54,10 @@ class TcpSlave(threading.Thread):
         self.hr = None
         self.ir = None
         self.client = ModbusTcpClient(host=self.host, port=self.port)
+        self.history_data_co = []
+        self.history_data_ir = []
+        self.history_data_di = []
+        self.history_data_hr = []
 
     def get_slave_data(self):
         co = self.co if self.co is not None else ''
@@ -67,35 +74,56 @@ class TcpSlave(threading.Thread):
     def close_slave(self):
         self.client.close()
 
+    def add_data(self, new_data, history_data):
+        history_data.append(new_data)
+        if len(history_data) > 50:
+            history_data.pop(0)
+
     def run(self):
         while self.running:
-            # for i in range(0, len(self.reg_type)):
-            #     reg = self.reg_type[i]
-            #     if reg == 'co':
-            #         self.co = self.client.read_coils(address=int(self.reg_addr[i], 16), count=int(self.reg_len[i]),
-            #                                          slave=int(self.id, 16)).bits
-            #         self.server.context[self.as_slave_id].setValues(1, int(self.save_start[i], 16),
-            #                                                         self.co[0:int(self.save_rule[i])])
-            #
-            #     elif reg == 'di':
-            #         self.di = self.client.read_discrete_inputs(address=int(self.reg_addr[i], 16),
-            #                                                    count=int(self.reg_len[i]), slave=int(self.id, 16)).bits
-            #         self.server.context[self.as_slave_id].setValues(2, int(self.save_start[i], 16),
-            #                                                         self.di[0:int(self.save_rule[i])])
-            #
-            #     elif reg == 'hr':
-            #         self.hr = self.client.read_holding_registers(address=int(self.reg_addr[i], 16),
-            #                                                      count=int(self.reg_len[i]),
-            #                                                      slave=int(self.id, 16)).registers
-            #         self.server.context[self.as_slave_id].setValues(3, int(self.save_start[i], 16),
-            #                                                         self.hr[0:int(self.save_rule[i])])
-            #
-            #     elif reg == 'ir':
-            #         self.ir = self.client.read_input_registers(address=int(self.reg_addr[i], 16),
-            #                                                    count=int(self.reg_len[i]),
-            #                                                    slave=int(self.id, 16)).registers
-            #         self.server.context[self.as_slave_id].setValues(4, int(self.save_start[i], 16),
-            #                                                         self.ir[0:int(self.save_rule[i])])
+            for i in range(0, len(self.reg_type)):
+                reg = self.reg_type[i]
+                if reg == 'co':
+                    self.co = self.client.read_coils(address=int(self.reg_addr[i], 16), count=int(self.reg_len[i]),
+                                                     slave=int(self.id, 16)).bits
+                    log4p.logs("接收到的co数据:\t" + str(self.co))
+                    if self.save_rule[i] == '[]':
+                        self.server.context[self.as_slave_id].setValues(1, int(self.save_start[i], 16), self.co)
+                    else:
+                        self.add_data(self.co, self.history_data_co)
+                        RuleUtil.handle_rule(self.history_data_co, self.save_rule)
+
+                elif reg == 'di':
+                    self.di = self.client.read_discrete_inputs(address=int(self.reg_addr[i], 16),
+                                                               count=int(self.reg_len[i]), slave=int(self.id, 16)).bits
+                    log4p.logs("接收到的di数据:\t" + str(self.di))
+                    if self.save_rule[i] == '[]':
+                        self.server.context[self.as_slave_id].setValues(2, int(self.save_start[i], 16), self.di)
+                    else:
+                        self.add_data(self.di, self.history_data_di)
+                        RuleUtil.handle_rule(self.history_data_di, self.save_rule)
+
+                elif reg == 'hr':
+                    self.hr = self.client.read_holding_registers(address=int(self.reg_addr[i], 16),
+                                                                 count=int(self.reg_len[i]),
+                                                                 slave=int(self.id, 16)).registers
+                    log4p.logs("接收到的hr数据:\t" + str(self.hr))
+                    if self.save_rule[i] == '[]':
+                        self.server.context[self.as_slave_id].setValues(3, int(self.save_start[i], 16), self.hr)
+                    else:
+                        self.add_data(self.hr, self.history_data_hr)
+                        RuleUtil.handle_rule(self.history_data_hr, self.save_rule)
+
+                elif reg == 'ir':
+                    self.ir = self.client.read_input_registers(address=int(self.reg_addr[i], 16),
+                                                               count=int(self.reg_len[i]),
+                                                               slave=int(self.id, 16)).registers
+                    log4p.logs("接收到的ir数据:\t" + str(self.ir))
+                    if self.save_rule[i] == '[]':
+                        self.server.context[self.as_slave_id].setValues(4, int(self.save_start[i], 16), self.ir)
+                    else:
+                        self.add_data(self.ir, self.history_data_ir)
+                        RuleUtil.handle_rule(self.history_data_ir, self.save_rule)
 
             time.sleep(float(self.freq))
         print("slave thread stopped.")

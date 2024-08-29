@@ -1,7 +1,11 @@
 import json
 
+from Util.DataUtil import DataUtil
+from Util.log4p import log4p
+
 
 class RuleUtil:
+    calculate_type = ['AVG', 'RATIO', 'MAX50', 'MIN50', 'UBALA', 'AVGDIFF', 'MAX/MIN50', 'DIFF', 'None']
 
     @staticmethod
     def avg(data_list):
@@ -13,7 +17,7 @@ class RuleUtil:
         return sum(data_list) / len(data_list)
 
     @staticmethod
-    def ratio(data1,data2):
+    def ratio(data1, data2):
         """
         计算比率
         :param data1: 被除数
@@ -59,7 +63,7 @@ class RuleUtil:
         return max(data_list) - min(data_list)
 
     @staticmethod
-    def diff(arg1,arg2):
+    def diff(arg1, arg2):
         """
         相减
         :param arg1: 参数1
@@ -68,27 +72,68 @@ class RuleUtil:
         """
         return arg1 - arg2
 
-    
     @staticmethod
-    def handle_rule(history_data,save_rule):
+    def handle_rule(history_data, save_rule):
         """
         处理规则
         :param history_data: 历史数据
         :param save_rule: 保存的规则
         :return:
         """
-        res = []
+        res = {
+            'status': False
+        }
+        res_len = 0
         rule = json.loads(save_rule)
         for item in rule:
-            print(f"data_index: {item['data_index']}")
-            print(f"calculate: {item['calculate']}")
-            print(f"data_save_index: {item['data_save_index']}")
-            print(f"result_save_index: {item['result_save_index']}")
-            print(f"calculate_desc: {item['calculate_desc']}")
-            print()
+            data_index = item['data_index']
+            calculate = item['calculate']
+            data_save_index = item['data_save_index']
+            result_save_index = item['result_save_index']
+            calculate_desc = item['calculate_desc']
+
+            log4p.logs(f"data_index: {data_index}\t" +f"calculate: {calculate}" + f"data_save_index: {data_save_index}\t" + f"result_save_index: {result_save_index}\t" + f"calculate_desc: {calculate_desc}")
+            if isinstance(data_index, list) and isinstance(data_save_index, list):
+                if len(data_index) < len(data_save_index):
+                    log4p.logs("data_index的长度不能小于data_save_index的长度,错误数据为:\t" + str(item))
+                    return res
+                else:
+                    res_len = res_len + len(data_save_index)
+            else:
+                log4p.logs("data_index和data_save_index必须为list,错误数据为:\t" + str(item))
+                return res
+            if calculate not in RuleUtil.calculate_type:
+                log4p.logs("calculate类型有误,错误数据为:\t" + str(item))
+                return res
+            else:
+                if calculate != "None":
+                    # 有计算那么结果集长度就要加1存放结果
+                    res_len += 1
+
+            if isinstance(int(result_save_index), int):
+                log4p.logs("result_save_index必须为整数,错误数据为:\t" + str(item))
+                return res
+        result = [0] * res_len
+        res['data'] = result
+
+        for item in rule:
+            data_index = item['data_index']
+            calculate = item['calculate']
+            data_save_index = item['data_save_index']
+            result_save_index = item['result_save_index']
+            calculate_desc = item['calculate_desc']
+
 
 if __name__ == '__main__':
-    history_data = [[50, 100, 150], [51, 102, 153], [52, 104, 156], [53, 106, 159], [54, 108, 162], [55, 110, 165], [56, 112, 168], [57, 114, 171], [58, 116, 174], [59, 118, 177], [60, 120, 180], [61, 122, 183], [62, 124, 186], [63, 126, 189], [64, 128, 192], [65, 130, 195], [66, 132, 198], [67, 134, 201], [68, 136, 204], [69, 138, 207], [70, 140, 210], [71, 142, 213], [72, 144, 216], [73, 146, 219], [74, 148, 222], [75, 150, 225], [76, 152, 228], [77, 154, 231], [78, 156, 234], [79, 158, 237], [80, 160, 240], [81, 162, 243], [82, 164, 246], [83, 166, 249], [84, 168, 252], [85, 170, 255], [86, 172, 258], [87, 174, 261], [88, 176, 264], [89, 178, 267], [90, 180, 270], [91, 182, 273], [92, 184, 276], [93, 186, 279], [94, 188, 282], [95, 190, 285], [96, 192, 288], [97, 194, 291], [98, 196, 294], [99, 198, 297]]
+    history_data = [[50, 100, 150], [51, 102, 153], [52, 104, 156], [53, 106, 159], [54, 108, 162], [55, 110, 165],
+                    [56, 112, 168], [57, 114, 171], [58, 116, 174], [59, 118, 177], [60, 120, 180], [61, 122, 183],
+                    [62, 124, 186], [63, 126, 189], [64, 128, 192], [65, 130, 195], [66, 132, 198], [67, 134, 201],
+                    [68, 136, 204], [69, 138, 207], [70, 140, 210], [71, 142, 213], [72, 144, 216], [73, 146, 219],
+                    [74, 148, 222], [75, 150, 225], [76, 152, 228], [77, 154, 231], [78, 156, 234], [79, 158, 237],
+                    [80, 160, 240], [81, 162, 243], [82, 164, 246], [83, 166, 249], [84, 168, 252], [85, 170, 255],
+                    [86, 172, 258], [87, 174, 261], [88, 176, 264], [89, 178, 267], [90, 180, 270], [91, 182, 273],
+                    [92, 184, 276], [93, 186, 279], [94, 188, 282], [95, 190, 285], [96, 192, 288], [97, 194, 291],
+                    [98, 196, 294], [99, 198, 297]]
     with open("../exec/serial.json", "r") as f:
         config_data = json.load(f)
     save_rule = config_data[1]['save_rule']

@@ -1,3 +1,5 @@
+from turtledemo.clock import datum
+
 import serial.tools.list_ports
 import time
 import threading
@@ -6,6 +8,7 @@ from crcmod import *
 import struct
 
 from Util.RuleUtil import RuleUtil
+from Util.log4p import log4p
 
 
 class Serial(threading.Thread):
@@ -39,6 +42,7 @@ class Serial(threading.Thread):
     def read_serial(self):
         if self.serial.in_waiting:
             data = self.serial.read(self.serial.in_waiting)
+            log4p.logs("收到串口数据:\t" + data)
             info = self.bytes_to_hex_string(data).upper().replace(" ", "")
             if self.check_crc(info):
                 self.handle_res(info)
@@ -68,12 +72,12 @@ class Serial(threading.Thread):
         return binary_result
 
     def handle_res(self, result):
-        print("接收到的数据：", result)
+        log4p.logs("接收到的数据：" + str(result))
         reg = self.save_reg
         result = result[self.read_start:self.read_start + self.read_len]
         if reg == 'co':
             res = self.convert_each_digit(result)
-            if (self.save_rule == "[]"):
+            if self.save_rule == "[]":
                 self.server.context[self.as_slave_id].setValues(1, self.save_start, res)
             else:
                 self.add_data(res)
@@ -81,21 +85,21 @@ class Serial(threading.Thread):
 
         elif reg == 'di':
             res = self.convert_each_digit(result)
-            if (self.save_rule == "[]"):
+            if self.save_rule == "[]":
                 self.server.context[self.as_slave_id].setValues(2, self.save_start, res)
             else:
                 self.add_data(res)
                 RuleUtil.handle_rule(self.history_data, self.save_rule)
         elif reg == 'hr':
             res = self.convert_two_byte(result)
-            if (self.save_rule == "[]"):
+            if self.save_rule == "[]":
                 self.server.context[self.as_slave_id].setValues(3, self.save_start, res)
             else:
                 self.add_data(res)
                 RuleUtil.handle_rule(self.history_data, self.save_rule)
         elif reg == 'ir':
             res = self.convert_two_byte(result)
-            if (self.save_rule == "[]"):
+            if self.save_rule == "[]":
                 self.server.context[self.as_slave_id].setValues(4, self.save_start, res)
             else:
                 self.add_data(res)

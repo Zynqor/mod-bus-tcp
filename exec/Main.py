@@ -8,13 +8,7 @@ from TcpServer import TcpServer
 from TcpSlave import TcpSlave
 import time
 
-
-def logs(string):
-    # 以写模式打开文件，如果文件不存在，则创建文件
-    with open('logs.txt', "a") as f:
-        # 把字符串写入文件
-        f.write(str(time.asctime()) + '\t' + string + "\n")
-        f.flush()
+from Util.log4p import log4p
 
 
 def config_handle():
@@ -27,10 +21,10 @@ def config_handle():
     with open("master.json", "r") as f:
         Sheet1 = json.load(f)
 
-    logs('read config successfully!')
-    logs("As Slave Read Success!\t" + str(Sheet1))
-    logs("Serial Read Success!\t" + str(Sheet2))
-    logs("As Master Read Success!\t" + str(Sheet3))
+    log4p.logs('Config Read Success!')
+    log4p.logs("As Slave Read Success!\t" + str(Sheet1))
+    log4p.logs("Serial Read Success!\t" + str(Sheet2))
+    log4p.logs("As Master Read Success!\t" + str(Sheet3))
     return Sheet1, Sheet2, Sheet3
 
 
@@ -70,7 +64,6 @@ if __name__ == '__main__':
     # server.context[0x01].setValues(1, 0x11, [00] * 8)
 
     slaves = []
-    print(Sheet3)
 
     for slave in Sheet3:
         s = TcpSlave(slave, server, as_slave_id)
@@ -88,4 +81,4 @@ if __name__ == '__main__':
     while True:
         # res = slaves[0].get_slave_data()
         # print(res)
-        time.sleep(0.2)
+        time.sleep(1)

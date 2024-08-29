@@ -144,6 +144,7 @@ class SubmitSlaveHandler(tornado.web.RequestHandler):
             "freq": info[8]
         }
         config_data.append(data)
+        print("写入成功,",config_data)
         # 写入JSON文件
         with open("slave.json", 'w') as json_file:
             json.dump(config_data, json_file, indent=4)
@@ -157,7 +158,6 @@ class SubmitSlaveHandler(tornado.web.RequestHandler):
         for i in range(0, len(config_data)):
             tmp = config_data[i]
             if str(tmp['ip']) == str(info[0]) and str(tmp['port']) == str(info[1]) and str(tmp['id']) == str(info[2]):
-
                 print("删除成功")
             else:
                 res.append(config_data[i])
@@ -187,7 +187,7 @@ class SubmitSlaveHandler(tornado.web.RequestHandler):
         res = []
         for i in range(0, len(config_data)):
             tmp = config_data[i]
-            if str(tmp['ip']) == str(info[0]) and str(tmp['port']) == str(info[1]) and str(tmp['id']) == str(info[2]):
+            if str(tmp['ip']) == str(info[0]):
                 res.append(data)
             else:
                 res.append(config_data[i])
