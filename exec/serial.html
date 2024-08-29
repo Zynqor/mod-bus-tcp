@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>主机设置</title>
+    <title>串口设置</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -82,82 +82,23 @@
         .input-short {
             width: 80px; /* 设置输入框宽度为100像素，你可以根据需要调整宽度 */
         }
-
-        label {
-            display: block; /* 每行显示一个标签 */
-            font-weight: bold; /* 加粗标签文字 */
-            margin-bottom: 10px; /* 标签下方间距 */
-        }
-
-        input[type="text"] {
-            width: calc(100% - 20px); /* 输入框宽度 */
-            padding: 10px; /* 内边距 */
-            margin-bottom: 20px; /* 底部间距 */
-            border: 1px solid #ccc; /* 边框样式 */
-            border-radius: 4px; /* 圆角边框 */
-        }
-
-        input[type="submit"] {
-            width: 100%; /* 提交按钮宽度 */
-            padding: 10px; /* 内边距 */
-            border: none; /* 去除边框 */
-            background-color: #007bff; /* 按钮背景色 */
-            color: #fff; /* 按钮文字颜色 */
-            cursor: pointer; /* 鼠标悬停样式 */
-            border-radius: 4px; /* 圆角边框 */
-        }
-
-        input[type="submit"]:hover {
-            background-color: #0056b3; /* 悬停时背景色 */
-        }
-
-        button {
-            display: block; /* 按钮块级显示 */
-            width: 80%; /* 按钮宽度 */
-            margin: 20px auto 0; /* 上方间距、水平居中 */
-            padding: 10px; /* 内边距 */
-            border: none; /* 去除边框 */
-            background-color: #007bff; /* 按钮背景色 */
-            color: #fff; /* 按钮文字颜色 */
-            cursor: pointer; /* 鼠标悬停样式 */
-            border-radius: 4px; /* 圆角边框 */
-        }
-
-        button:hover {
-            background-color: #0056b3; /* 悬停时背景色 */
-        }
-
-        form {
-            width: 78%; /* 表单宽度 */
-            margin: 0 auto; /* 水平居中显示 */
-            background-color: #fff; /* 表单背景色 */
-            padding: 20px; /* 内边距 */
-            border-radius: 8px; /* 圆角边框 */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
-        }
     </style>
 </head>
 <body>
-<h1>主机设置</h1>
-<form id="myForm1" action="/subMaster1" method="post">
-
-    <!-- 在这里使用从后端传递过来的默认数据渲染表单的默认值 -->
-    <label for="ip">IP:</label><br>
-    <input type="text" id="ip" name="ip" value="{{ data['ip'] }}">
-    <label for="port">port:</label><br>
-    <input type="text" id="port" name="port" value="{{ data['port'] }}">
-    <label for="id">id:</label><br>
-    <input type="text" id="id" name="id" value="{{ data['id'] }}">
-    <br><br>
-    <input type="submit" value="设置主机属性">
-</form>
-<br>
+<h1>串口设置</h1>
 <table id="myTable" class="table">
     <thead>
     <tr>
-        <th>寄存器</th>
-        <th>寄存器地址</th>
-        <th>寄存器长度</th>
+        <th>端口号</th>
+        <th>波特率</th>
+        <th>是否开启(1/0)</th>
+        <th>保存到寄存器</th>
+        <th>读取命令</th>
+        <th>读取开始位</th>
+        <th>读取长度</th>
+        <th>保存寄存器地址</th>
+        <th>保存规则</th>
+        <th>频率</th>
         <th>操作</th>
     </tr>
     </thead>
@@ -246,25 +187,52 @@
     }
 
     function validateInput(input_data) {
-        if (!isValidReg(input_data[0])) {
+        if (!isValidComm(input_data[0])) {
+            alert("端口号错误")
+            return false;
+        }
+        if (!isCorrectBaudRate(input_data[1])) {
+            alert("波特率错误")
+            return false;
+        }
+        if (!isOneOrZero(input_data[2])) {
+            alert("是否开启错误")
+            return false;
+        }
+
+        if (!isValidReg(input_data[3])) {
             alert("寄存器错误")
             return false;
         }
-        if (!isValidHexFormat(input_data[1])) {
-            alert("寄存器地址错误")
+        if (!isEvenHexCommand(input_data[4])) {
+            alert("读取命令错误")
             return false;
         }
-        if (!isInteger(input_data[2])) {
-            alert("寄存器长度错误")
+        if (!isInteger(input_data[5])) {
+            alert("读取开始错误")
             return false;
         }
-
-
+        if (!isInteger(input_data[6])) {
+            alert("读取长度错误")
+            return false;
+        }
+        if (!isValidHexFormat(input_data[7])) {
+            alert("保存寄存器地址错误")
+            return false;
+        }
+        // if (input_data[8]) {
+        //     alert("保存长度错误")
+        //     return false;
+        // }
+        if (!isNumber(input_data[9])) {
+            alert("频率错误")
+            return false;
+        }
         return true;
     }
 
-    function goToMaster() {
-        input_data = {"type": "master"}
+    function goToSerial() {
+        input_data = {"type": "serial"}
         fetch('/refresh', {
             method: 'POST',
             headers: {
@@ -274,14 +242,14 @@
         }).then(response => response.text())
             .then(newRowData => {
                 var tmp = JSON.parse(newRowData);
-                renderTable(tmp['data'].reg);
+                renderTable(tmp['data']);
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
     }
 
-    var dataFromBackend = configData.reg;
+    var dataFromBackend = configData;
 
     window.onload = function () {
 
@@ -289,9 +257,8 @@
     };
 
     function submit(input_data) {
-
         // 发送POST请求
-        fetch('/subMaster', {
+        fetch('/subSerial', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -306,33 +273,8 @@
             });
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('myForm1');
-        form.addEventListener('submit', function (event) {
-            event.preventDefault(); // 阻止表单默认提交行为
-            // 在这里进行参数校验
-            const ip = document.getElementById('ip').value;
-            const port = document.getElementById('port').value;
-            const id = document.getElementById('id').value;
-            console.log(ip, port, id)
-            if (!isValidIPv4(ip)) {
-                alert('IP 格式不正确！');
-                return false;
-            }
-            if (!isValidPort(port)) {
-                alert('端口号格式不正确！');
-                return false;
-            }
-            if (!isValidHexFormat(id)) {
-                alert('ID 格式不正确！');
-                return false;
-            }
-            // 如果校验通过，手动提交表单
-            form.submit();
-        });
-    });
-
     function renderTable(data) {
+        console.log(data)
         var tableBody = document.querySelector("#myTable tbody");
         tableBody.innerHTML = "";
 
@@ -360,7 +302,7 @@
                 });
 
                 // 设置要发送的数据
-                if (rowData.length < 3) {
+                if (rowData.length < 9) {
                     return
                 }
 
@@ -372,10 +314,10 @@
                     "type": "edit",
                     "data": rowData
                 };
-                console.log("修改按钮点击，当前行的值为：" + rowData.join(", "));
-                submit(input_data)
 
-                goToMaster()
+                submit(input_data)
+                console.log("修改按钮点击，当前行的值为：" + rowData.join(", "));
+                goToSerial()
             };
             // var deleteButton = document.createElement("button");
             // deleteButton.textContent = "删除";

@@ -120,6 +120,117 @@
 
     //to be continue
 
+    function isValidComm(str) {
+        for (let char of str) {
+            if (!(/[a-zA-Z0-9/]/.test(char))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function isCorrectBaudRate(str) {
+        const validBaudRates = [2400, , 4800, 9600, 19200, 38400, 115200];
+        return validBaudRates.includes(Number(str));
+    }
+
+    function isOneOrZero(str) {
+        return str === '1' || str === '0';
+    }
+
+    function isEvenHexCommand(str) {
+        const hexRegex = /^[0-9a-fA-F]+$/;
+        if (!hexRegex.test(str)) {
+            return false;
+        }
+        return str.length % 2 === 0;
+    }
+
+    function isValidIPv4(ip) {
+        const ipv4Regex = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+        return ipv4Regex.test(ip);
+    }
+
+    function isValidPort(port) {
+        return port >= 0 && port <= 65535;
+    }
+
+    function isValidHexFormat(value) {
+        const hexRegex = /^0x[0-9A-Fa-f]+$/;
+        return hexRegex.test(value);
+    }
+
+    function isValidReg(value) {
+        const validValues = ['co', 'ir', 'hr', 'di'];
+        return validValues.includes(value);
+    }
+
+    function isInteger(str) {
+        const num = Number(str);
+        return !isNaN(num) && Number.isInteger(num) && str.startsWith('0x') === false && str[0] !== '-';
+    }
+
+
+    function isNumber(str) {
+
+        // 尝试使用 Number() 函数进行转换
+        const num = Number(str);
+
+        // 检查转换后的结果是否与原字符串相等
+        if (isNaN(num)) {
+            return false; // 如果是 NaN，则说明不是数字
+        }
+
+        // 使用正则表达式检查字符串是否只包含数字和小数点
+        const regex = /^-?\d+(\.\d+)?$/;
+        return regex.test(str);
+    }
+
+    function validateInput(input_data) {
+        if (!isValidComm(input_data[0])) {
+            alert("端口号错误")
+            return false;
+        }
+        if (!isCorrectBaudRate(input_data[1])) {
+            alert("波特率错误")
+            return false;
+        }
+        if (!isOneOrZero(input_data[2])) {
+            alert("是否开启错误")
+            return false;
+        }
+
+        if (!isValidReg(input_data[3])) {
+            alert("寄存器错误")
+            return false;
+        }
+        if (!isEvenHexCommand(input_data[4])) {
+            alert("读取命令错误")
+            return false;
+        }
+        if (!isInteger(input_data[5])) {
+            alert("读取开始错误")
+            return false;
+        }
+        if (!isInteger(input_data[6])) {
+            alert("读取长度错误")
+            return false;
+        }
+        if (!isValidHexFormat(input_data[7])) {
+            alert("保存寄存器地址错误")
+            return false;
+        }
+        if (!isInteger(input_data[8])) {
+            alert("保存长度错误")
+            return false;
+        }
+        if (!isNumber(input_data[9])) {
+            alert("频率错误")
+            return false;
+        }
+        return true;
+    }
+
     function goToSerial() {
         input_data = {"type": "serial"}
         fetch('/refresh', {
@@ -194,6 +305,11 @@
                 if (rowData.length < 9) {
                     return
                 }
+
+                if (!validateInput(rowData)) {
+                    return;
+                }
+
                 var input_data = {
                     "type": "edit",
                     "data": rowData

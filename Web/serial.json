@@ -1,1 +1,50 @@
-[{"com": "/dev/ttyS1", "band": "115200", "activate": "1", "save_reg": "co", "cmd": "FF0103000002", "read_start": "2", "read_len": "8", "save_start": "0x00", "save_len": "0x0F", "freq": "5"}, {"com": "/dev/ttyS2", "band": "9600", "activate": "0", "save_reg": "co", "cmd": "FF0103000002", "read_start": "2", "read_len": "8", "save_start": "0x00", "save_len": "0x0F", "freq": "5"}, {"com": "/dev/ttyS3", "band": "9600", "activate": "0", "save_reg": "co", "cmd": "FF0103000002", "read_start": "2", "read_len": "8", "save_start": "0x00", "save_len": "0x0F", "freq": "5"}, {"com": "/dev/ttyS4", "band": 9600, "activate": "1", "save_reg": "co", "cmd": "FF0103000002", "read_start": "2", "read_len": 8, "save_start": "0x00", "save_len": "0x0F", "freq": 5}]
+[
+    {
+        "com": "/dev/ttyS1",
+        "band": "115200",
+        "activate": "1",
+        "save_reg": "co",
+        "cmd": "FF0103000002",
+        "read_start": "2",
+        "read_len": "8",
+        "save_start": "0x00",
+        "save_len": "111",
+        "freq": "5"
+    },
+    {
+        "com": "/dev/ttyS2",
+        "band": "9600",
+        "activate": "0",
+        "save_reg": "co",
+        "cmd": "FF0103000002",
+        "read_start": "2",
+        "read_len": "8",
+        "save_start": "0x00",
+        "save_len": "11",
+        "freq": "0.5"
+    },
+    {
+        "com": "/dev/ttyS3",
+        "band": "9600",
+        "activate": "0",
+        "save_reg": "co",
+        "cmd": "FF0103000002",
+        "read_start": "2",
+        "read_len": "8",
+        "save_start": "0x00",
+        "save_len": "22",
+        "freq": "5"
+    },
+    {
+        "com": "/dev/ttyS4",
+        "band": "9600",
+        "activate": "1",
+        "save_reg": "co",
+        "cmd": "FF0103000002",
+        "read_start": "2",
+        "read_len": "8",
+        "save_start": "0x00",
+        "save_len": "22",
+        "freq": "5"
+    }
+]

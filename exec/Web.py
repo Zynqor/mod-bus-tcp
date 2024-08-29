@@ -1,5 +1,4 @@
 import os
-
 import tornado.ioloop
 import tornado.web
 import subprocess
@@ -141,7 +140,7 @@ class SubmitSlaveHandler(tornado.web.RequestHandler):
             "reg_len": info[4],
             "reg_addr": info[5],
             "save_start": info[6],
-            "save_len": info[7],
+            "save_rule": info[7],
             "freq": info[8]
         }
         config_data.append(data)
@@ -182,7 +181,7 @@ class SubmitSlaveHandler(tornado.web.RequestHandler):
             "reg_len": info[4],
             "reg_addr": info[5],
             "save_start": info[6],
-            "save_len": info[7],
+            "save_rule": info[7],
             "freq": info[8]
         }
         res = []
@@ -233,7 +232,7 @@ class SubmitSerialHandler(tornado.web.RequestHandler):
             "read_start": info[5],
             "read_len": info[6],
             "save_start": info[7],
-            "save_len": info[8],
+            "save_rule": info[8],
             "freq": info[9]
         }
         config_data.append(data)
@@ -256,7 +255,7 @@ class SubmitSerialHandler(tornado.web.RequestHandler):
             "read_start": info[5],
             "read_len": info[6],
             "save_start": info[7],
-            "save_len": info[8],
+            "save_rule": info[8],
             "freq": info[9]
         }
 
@@ -364,7 +363,7 @@ class FormSubmitHandler(tornado.web.RequestHandler):
             ip1 = self.get_body_argument("ip1")
             mask1 = self.get_body_argument("mask1")
             gate1 = self.get_body_argument("gate1")
-            subprocess.run(['sh modify_net1_conf.sh', ip1, mask1, gate1])
+            subprocess.run(['/data/modify_net1_conf.sh', ip1, mask1, gate1])
             data = {
                 "ip1": ip1,
                 "mask1": mask1,
@@ -376,7 +375,7 @@ class FormSubmitHandler(tornado.web.RequestHandler):
             ip2 = self.get_body_argument("ip2")
             mask2 = self.get_body_argument("mask2")
             gate2 = self.get_body_argument("gate2")
-            subprocess.run(['sh modify_net2_conf.sh', ip2, mask2, gate2])
+            subprocess.run(['/data/modify_net2_conf.sh', ip2, mask2, gate2])
             data = {
                 "ip2": ip2,
                 "mask2": mask2,
@@ -427,7 +426,7 @@ def make_app():
 
 def default_json_data():
     # 默认的config
-    config = {"ip1": "192.168.1.230", "mask1": "255.255.255.0", "gate1": "192.168.0.10", "ip2": "192.168.0.230",
+    config = {"ip1": "192.168.1.230", "mask1": "255.255.255.0", "gate1": "192.168.1.10", "ip2": "192.168.0.230",
               "mask2": "255.255.255.0", "gate2": "192.168.0.10", "ip": "127.0.0.1", "port": 8889}
     # 检查文件是否存在
     if not os.path.exists('config.json'):
@@ -440,14 +439,14 @@ def default_json_data():
         print(f"File '{'config.json'}' already exists. No action taken.")
 
     # 默认的serial
-    serial = [{"com": "/dev/ttyS1", "band": "115200", "activate": "1", "save_reg": "co", "cmd": "FF0103000002",
-               "read_start": "2", "read_len": "8", "save_start": "0x00", "save_len": "111", "freq": "5"},
-              {"com": "/dev/ttyS2", "band": "9600", "activate": "0", "save_reg": "co", "cmd": "FF0103000002",
-               "read_start": "2", "read_len": "8", "save_start": "0x00", "save_len": "11", "freq": "0.5"},
-              {"com": "/dev/ttyS3", "band": "9600", "activate": "0", "save_reg": "co", "cmd": "FF0103000002",
-               "read_start": "2", "read_len": "8", "save_start": "0x00", "save_len": "22", "freq": "5"},
-              {"com": "/dev/ttyS4", "band": "9600", "activate": "1", "save_reg": "co", "cmd": "FF0103000002",
-               "read_start": "2", "read_len": "8", "save_start": "0x00", "save_len": "22", "freq": "5"}]
+    serial = [{"com": "/dev/ttyS1", "band": "115200", "activate": "1", "save_reg": "co", "cmd": "FF06000000021DD5",
+               "read_start": "2", "read_len": "8", "save_start": "0x00", "save_rule": "[]", "freq": "5"},
+              {"com": "/dev/ttyS2", "band": "9600", "activate": "0", "save_reg": "co", "cmd": "FF06000000021DD5",
+               "read_start": "2", "read_len": "8", "save_start": "0x00", "save_rule": "[]", "freq": "0.5"},
+              {"com": "/dev/ttyS3", "band": "9600", "activate": "0", "save_reg": "co", "cmd": "FF06000000021DD5",
+               "read_start": "2", "read_len": "8", "save_start": "0x00", "save_rule": "[]", "freq": "5"},
+              {"com": "/dev/ttyS4", "band": "9600", "activate": "1", "save_reg": "co", "cmd": "FF06000000021DD5",
+               "read_start": "2", "read_len": "8", "save_start": "0x00", "save_rule": "[]", "freq": "5"}]
     # 检查文件是否存在
     if not os.path.exists('serial.json'):
         # 文件不存在，创建并写入默认值
@@ -460,7 +459,7 @@ def default_json_data():
 
     # 默认的slave
     slave = [{"ip": "127.0.0.1", "port": "10086", "id": "0x01", "reg": "co", "reg_len": "22", "reg_addr": "0x01",
-              "save_start": "0x0F", "save_len": "5", "freq": "0.2"}]
+              "save_start": "0x0F", "save_rule": "[]", "freq": "0.2"}]
     # 检查文件是否存在
     if not os.path.exists('slave.json'):
         # 文件不存在，创建并写入默认值
