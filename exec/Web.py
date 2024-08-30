@@ -426,7 +426,7 @@ def make_app():
 
 def default_json_data():
     # 默认的config
-    config = {"ip1": "127.0.0.1", "mask1": "255.255.255.0", "gate1": "192.168.1.10", "ip2": "192.168.0.230",
+    config = {"ip1": "192.168.1.230", "mask1": "255.255.255.0", "gate1": "192.168.1.10", "ip2": "192.168.0.230",
               "mask2": "255.255.255.0", "gate2": "192.168.0.10", "ip": "127.0.0.1", "port": 8889}
     # 检查文件是否存在
     if not os.path.exists('config.json'):
@@ -439,13 +439,13 @@ def default_json_data():
         print(f"File '{'config.json'}' already exists. No action taken.")
 
     # 默认的serial
-    serial = [{"com": "/dev/ttyS1", "band": "115200", "activate": "1", "save_reg": "co", "cmd": "FF06000000021DD5",
+    serial = [{"com": "/dev/ttyS1", "band": "115200", "activate": "0", "save_reg": "co", "cmd": "FF06000000021DD5",
                "read_start": "2", "read_len": "8", "save_start": "0x00", "save_rule": "[]", "freq": "5"},
               {"com": "/dev/ttyS2", "band": "9600", "activate": "0", "save_reg": "co", "cmd": "FF06000000021DD5",
-               "read_start": "2", "read_len": "8", "save_start": "0x00", "save_rule": "[]", "freq": "0.5"},
+               "read_start": "2", "read_len": "8", "save_start": "0x00", "save_rule": '[     {         "data_index": [             0,             1,             2         ],         "calculate": "AVG",         "data_save_index": [             0,             1,             2         ],         "result_save_index": 3,         "calculate_desc": "三相本体温度平均值"     },     {         "data_index": [             0,             1         ],         "calculate": "RATIO",         "data_save_index": [],         "result_save_index": 4,         "calculate_desc": "三相本体温度平均值"     },     {         "data_index": [             0         ],         "calculate": "MAX50",         "data_save_index": [],         "result_save_index": 5,         "calculate_desc": "三相本体温度平均值"     },     {         "data_index": [             1         ],         "calculate": "MIN50",         "data_save_index": [],         "result_save_index": 6,         "calculate_desc": "三相本体温度平均值"     },     {         "data_index": [             0,             1,             2         ],         "calculate": "UBALA",         "data_save_index": [],         "result_save_index": 7,         "calculate_desc": "三相本体温度平均值"     },     {         "data_index": [             0,             1,             2         ],         "calculate": "AVGDIFF",         "data_save_index": [],         "result_save_index": 8,         "calculate_desc": "三相本体温度平均值"     },     {         "data_index": [             1,             0,             2         ],         "calculate": "AVGDIFF",         "data_save_index": [],         "result_save_index": 9,         "calculate_desc": "三相本体温度平均值"     },     {         "data_index": [             2,             0,             1         ],         "calculate": "AVGDIFF",         "data_save_index": [],         "result_save_index": 10,         "calculate_desc": "三相本体温度平均值"     },     {         "data_index": [             2         ],         "calculate": "MAX/MIN50",         "data_save_index": [],         "result_save_index": 11,         "calculate_desc": "三相本体温度平均值"     },     {         "data_index": [             2,             1         ],         "calculate": "DIFF",         "data_save_index": [],         "result_save_index": 12,         "calculate_desc": "三相本体温度平均值"     } ]', "freq": "0.5"},
               {"com": "/dev/ttyS3", "band": "9600", "activate": "0", "save_reg": "co", "cmd": "FF06000000021DD5",
                "read_start": "2", "read_len": "8", "save_start": "0x00", "save_rule": "[]", "freq": "5"},
-              {"com": "/dev/ttyS4", "band": "9600", "activate": "1", "save_reg": "co", "cmd": "FF06000000021DD5",
+              {"com": "/dev/ttyS4", "band": "9600", "activate": "0", "save_reg": "co", "cmd": "FF06000000021DD5",
                "read_start": "2", "read_len": "8", "save_start": "0x00", "save_rule": "[]", "freq": "5"}]
     # 检查文件是否存在
     if not os.path.exists('serial.json'):
@@ -471,9 +471,9 @@ def default_json_data():
         print(f"File '{'slave.json'}' already exists. No action taken.")
 
     # 默认的master
-    master = {"reg": [{"reg": "co", "reg_addr": "0x00", "len": "12"}, {"reg": "di", "reg_addr": "0x00", "len": "12"},
-                      {"reg": "ir", "reg_addr": "0x00", "len": "124"}, {"reg": "hr", "reg_addr": "0x00", "len": "10"}],
-              "ip": "111.1.1.1", "port": "20000", "id": "0x0a"}
+    master = {"reg": [{"reg": "co", "reg_addr": "0x0F", "len": "16"}, {"reg": "di", "reg_addr": "0x1F", "len": "16"},
+                      {"reg": "ir", "reg_addr": "0x2F", "len": "16"}, {"reg": "hr", "reg_addr": "0x3F", "len": "16"}],
+              "ip": "192.168.1.230", "port": "20000", "id": "0x0a"}
     # 检查文件是否存在
     if not os.path.exists('master.json'):
         # 文件不存在，创建并写入默认值
