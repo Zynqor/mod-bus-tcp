@@ -91,7 +91,11 @@ class TcpSlave(threading.Thread):
                         self.server.context[self.as_slave_id].setValues(1, int(self.save_start[i], 16), self.co)
                     else:
                         self.add_data(self.co, self.history_data_co)
-                        RuleUtil.handle_rule(self.history_data_co, self.save_rule)
+                        handle_res = RuleUtil.handle_rule(self.history_data_co, self.save_rule)
+                        if not handle_res['status']:
+                            log4p.logs("结果处理失败...,失败数据:\t"+str(self.history_data_co))
+
+                        self.server.context[self.as_slave_id].setValues(1, int(self.save_start[i], 16), handle_res['data'])
 
                 elif reg == 'di':
                     self.di = self.client.read_discrete_inputs(address=int(self.reg_addr[i], 16),
@@ -101,7 +105,10 @@ class TcpSlave(threading.Thread):
                         self.server.context[self.as_slave_id].setValues(2, int(self.save_start[i], 16), self.di)
                     else:
                         self.add_data(self.di, self.history_data_di)
-                        RuleUtil.handle_rule(self.history_data_di, self.save_rule)
+                        handle_res = RuleUtil.handle_rule(self.history_data_di, self.save_rule)
+                        if not handle_res['status']:
+                            log4p.logs("结果处理失败...,失败数据:\t"+str(self.history_data_di))
+                        self.server.context[self.as_slave_id].setValues(2, int(self.save_start[i], 16), handle_res['data'])
 
                 elif reg == 'hr':
                     self.hr = self.client.read_holding_registers(address=int(self.reg_addr[i], 16),
@@ -112,7 +119,10 @@ class TcpSlave(threading.Thread):
                         self.server.context[self.as_slave_id].setValues(3, int(self.save_start[i], 16), self.hr)
                     else:
                         self.add_data(self.hr, self.history_data_hr)
-                        RuleUtil.handle_rule(self.history_data_hr, self.save_rule)
+                        handle_res = RuleUtil.handle_rule(self.history_data_hr, self.save_rule)
+                        if not handle_res['status']:
+                            log4p.logs("结果处理失败...,失败数据:\t"+str(self.history_data_hr))
+                        self.server.context[self.as_slave_id].setValues(3, int(self.save_start[i], 16), handle_res['data'])
 
                 elif reg == 'ir':
                     self.ir = self.client.read_input_registers(address=int(self.reg_addr[i], 16),
@@ -123,7 +133,10 @@ class TcpSlave(threading.Thread):
                         self.server.context[self.as_slave_id].setValues(4, int(self.save_start[i], 16), self.ir)
                     else:
                         self.add_data(self.ir, self.history_data_ir)
-                        RuleUtil.handle_rule(self.history_data_ir, self.save_rule)
+                        handle_res = RuleUtil.handle_rule(self.history_data_ir, self.save_rule)
+                        if not handle_res['status']:
+                            log4p.logs("结果处理失败...,失败数据:\t"+str(self.history_data_ir))
+                        self.server.context[self.as_slave_id].setValues(4, int(self.save_start[i], 16), handle_res['data'])
 
             time.sleep(float(self.freq))
         print("slave thread stopped.")

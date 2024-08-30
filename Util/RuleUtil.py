@@ -39,7 +39,7 @@ class RuleUtil:
         tmp = []
         avg = RuleUtil.avg(data_list)
         for data in data_list:
-            tmp.append(abs(data - avg))
+            tmp.append(data - avg)
 
         return max(tmp) / avg
 
@@ -109,15 +109,17 @@ class RuleUtil:
                 log4p.logs("calculate类型有误,错误数据为:\t" + str(item))
                 return res
             else:
+                if not isinstance(int(result_save_index), int):
+                    log4p.logs("result_save_index必须为整数,错误数据为:\t" + str(item))
+                    return res
+
                 if calculate != "None":
                     if int(result_save_index) > res_len:
                         res_len = int(result_save_index)
 
-            if isinstance(int(result_save_index), int):
-                log4p.logs("result_save_index必须为整数,错误数据为:\t" + str(item))
-                return res
+        # 长度要比最大下表大1
+        res_len += 1
         result = [0] * res_len
-        res['data'] = result
 
         for item in rule:
             data_index = item['data_index']
@@ -125,11 +127,15 @@ class RuleUtil:
             data_save_index = item['data_save_index']
             result_save_index = item['result_save_index']
             calculate_desc = item['calculate_desc']
+
+            # 待运算的数据
             tmp_data_list = []
 
             for i in range(0, len(data_save_index)):
                 # 把
-                result[int(result_save_index[i])] = history_data[-1][int(data_index[i])]
+                result[int(data_save_index[i])] = history_data[-1][int(data_index[i])]
+
+            for i in range(0, len(data_index)):
                 tmp_data_list.append(history_data[-1][int(data_index[i])])
 
             if calculate == "None":
@@ -137,20 +143,31 @@ class RuleUtil:
             elif calculate == RuleUtil.calculate_type[0]:
                 result[int(result_save_index)] = RuleUtil.avg(tmp_data_list)
             elif calculate == RuleUtil.calculate_type[1]:
+                if len(tmp_data_list) != 2:
+                    log4p.logs("RATIO运算数据长度必须为2,错误数据为:\t" + str(item))
+                    return res
                 result[int(result_save_index)] = RuleUtil.ratio(tmp_data_list[0], tmp_data_list[1])
             elif calculate == RuleUtil.calculate_type[2]:
+                if len(data_index) != 1:
+                    log4p.logs("MAX50运算数据长度必须为1,错误数据为:\t" + str(item))
+                    return res
+
                 # MAX50
                 tmp_history = []
                 for tmp_data in history_data:
-                    tmp_history.append(tmp_data[int(data_index[i])])
+                    tmp_history.append(tmp_data[int(data_index[0])])
 
                 result[int(result_save_index)] = max(tmp_history)
             elif calculate == RuleUtil.calculate_type[3]:
+                if len(data_index) != 1:
+                    log4p.logs("MIN50运算数据长度必须为1,错误数据为:\t" + str(item))
+                    return res
                 # MIN50
                 tmp_history = []
                 for tmp_data in history_data:
-                    tmp_history.append(tmp_data[int(data_index[i])])
+                    tmp_history.append(tmp_data[int(data_index[0])])
                 result[int(result_save_index)] = min(tmp_history)
+
             elif calculate == RuleUtil.calculate_type[4]:
                 # UBALA
                 result[int(result_save_index)] = RuleUtil.ubala(tmp_data_list)
@@ -158,15 +175,27 @@ class RuleUtil:
                 # AVGDIFF
                 result[int(result_save_index)] = RuleUtil.avgdiff(tmp_data_list)
             elif calculate == RuleUtil.calculate_type[6]:
+                if len(data_index) != 1:
+                    log4p.logs("MAX/MIN50运算数据长度必须为1,错误数据为:\t" + str(item))
+                    return res
                 # MAX/MIN50
                 tmp_history = []
                 for tmp_data in history_data:
-                    tmp_history.append(tmp_data[int(data_index[i])])
+                    tmp_history.append(tmp_data[int(data_index[0])])
                 result[int(result_save_index)] = RuleUtil.max_min(tmp_history)
             elif calculate == RuleUtil.calculate_type[7]:
+                if len(tmp_data_list) != 2:
+                    log4p.logs("数据长度必须为2,错误数据为:\t" + str(item))
+                    return res
                 # DIFF
                 result[int(result_save_index)] = RuleUtil.diff(tmp_data_list[0], tmp_data_list[1])
 
+        for i in range(0, len(result)):
+            result[i] = int(result[i] * 100)
+        log4p.logs("计算结果*100:\t" + str(result))
+        res['data'] = DataUtil.expand_arr_2_demical(result)
+        res['status'] = True
+        return res
 
 if __name__ == '__main__':
     history_data = [[50, 100, 150], [51, 102, 153], [52, 104, 156], [53, 106, 159], [54, 108, 162], [55, 110, 165],
@@ -181,4 +210,5 @@ if __name__ == '__main__':
     with open("../exec/serial.json", "r") as f:
         config_data = json.load(f)
     save_rule = config_data[1]['save_rule']
-    RuleUtil.handle_rule(history_data, save_rule)
+    res = RuleUtil.handle_rule(history_data, save_rule)
+    print(res)

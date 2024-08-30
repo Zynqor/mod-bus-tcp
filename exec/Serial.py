@@ -1,5 +1,3 @@
-from turtledemo.clock import datum
-
 import serial.tools.list_ports
 import time
 import threading
@@ -42,7 +40,7 @@ class Serial(threading.Thread):
     def read_serial(self):
         if self.serial.in_waiting:
             data = self.serial.read(self.serial.in_waiting)
-            log4p.logs("收到串口数据:\t" + data)
+            log4p.logs("收到串口数据:\t" + str(data))
             info = self.bytes_to_hex_string(data).upper().replace(" ", "")
             if self.check_crc(info):
                 self.handle_res(info)
@@ -81,7 +79,10 @@ class Serial(threading.Thread):
                 self.server.context[self.as_slave_id].setValues(1, self.save_start, res)
             else:
                 self.add_data(res)
-                RuleUtil.handle_rule(self.history_data, self.save_rule)
+                handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
+                if not handle_res['status']:
+                    log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
+                self.server.context[self.as_slave_id].setValues(1, self.save_start, handle_res['data'])
 
         elif reg == 'di':
             res = self.convert_each_digit(result)
@@ -89,21 +90,30 @@ class Serial(threading.Thread):
                 self.server.context[self.as_slave_id].setValues(2, self.save_start, res)
             else:
                 self.add_data(res)
-                RuleUtil.handle_rule(self.history_data, self.save_rule)
+                handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
+                if not handle_res['status']:
+                    log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
+                self.server.context[self.as_slave_id].setValues(2, self.save_start, handle_res['data'])
         elif reg == 'hr':
             res = self.convert_two_byte(result)
             if self.save_rule == "[]":
                 self.server.context[self.as_slave_id].setValues(3, self.save_start, res)
             else:
                 self.add_data(res)
-                RuleUtil.handle_rule(self.history_data, self.save_rule)
+                handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
+                if not handle_res['status']:
+                    log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
+                self.server.context[self.as_slave_id].setValues(3, self.save_start, handle_res['data'])
         elif reg == 'ir':
             res = self.convert_two_byte(result)
             if self.save_rule == "[]":
                 self.server.context[self.as_slave_id].setValues(4, self.save_start, res)
             else:
                 self.add_data(res)
-                RuleUtil.handle_rule(self.history_data, self.save_rule)
+                handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
+                if not handle_res['status']:
+                    log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
+                self.server.context[self.as_slave_id].setValues(4, self.save_start, handle_res['data'])
 
     # 定义一个函数，接受一个八位的十六进制字符串作为参数，返回对应的浮点数
     def hex_to_float(self, hex_str):

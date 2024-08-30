@@ -144,7 +144,7 @@ class SubmitSlaveHandler(tornado.web.RequestHandler):
             "freq": info[8]
         }
         config_data.append(data)
-        print("写入成功,",config_data)
+        print("写入成功,", config_data)
         # 写入JSON文件
         with open("slave.json", 'w') as json_file:
             json.dump(config_data, json_file, indent=4)
@@ -426,7 +426,7 @@ def make_app():
 
 def default_json_data():
     # 默认的config
-    config = {"ip1": "192.168.1.230", "mask1": "255.255.255.0", "gate1": "192.168.1.10", "ip2": "192.168.0.230",
+    config = {"ip1": "127.0.0.1", "mask1": "255.255.255.0", "gate1": "192.168.1.10", "ip2": "192.168.0.230",
               "mask2": "255.255.255.0", "gate2": "192.168.0.10", "ip": "127.0.0.1", "port": 8889}
     # 检查文件是否存在
     if not os.path.exists('config.json'):
