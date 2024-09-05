@@ -72,6 +72,9 @@ class Serial(threading.Thread):
     def handle_res(self, result):
         log4p.logs("接收到的数据：" + str(result))
         reg = self.save_reg
+        if len(result) < self.read_start + self.read_len:
+            result = result + '0' * (self.read_start + self.read_len - len(result))
+        log4p.logs("读取的数据长度：" + str(len(result)))
         result = result[self.read_start:self.read_start + self.read_len]
         if reg == 'co':
             res = self.convert_each_digit(result)
@@ -82,7 +85,12 @@ class Serial(threading.Thread):
                 handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
                 if not handle_res['status']:
                     log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
-                self.server.context[self.as_slave_id].setValues(1, self.save_start, handle_res['data'])
+
+                datas = handle_res['data']
+                if 32768 in datas:
+                    self.process_data(datas, 1)
+                else:
+                    self.server.context[self.as_slave_id].setValues(1, self.save_start, datas)
 
         elif reg == 'di':
             res = self.convert_each_digit(result)
@@ -93,7 +101,13 @@ class Serial(threading.Thread):
                 handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
                 if not handle_res['status']:
                     log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
-                self.server.context[self.as_slave_id].setValues(2, self.save_start, handle_res['data'])
+                datas = handle_res['data']
+
+                if 32768 in datas:
+                    self.process_data(datas, 2)
+                else:
+                    self.server.context[self.as_slave_id].setValues(2, self.save_start, datas)
+
         elif reg == 'hr':
             res = self.convert_two_byte(result)
             if self.save_rule == "[]":
@@ -103,7 +117,12 @@ class Serial(threading.Thread):
                 handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
                 if not handle_res['status']:
                     log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
-                self.server.context[self.as_slave_id].setValues(3, self.save_start, handle_res['data'])
+                datas = handle_res['data']
+                if 32768 in datas:
+                    self.process_data(datas, 3)
+                else:
+                    self.server.context[self.as_slave_id].setValues(3, self.save_start, datas)
+
         elif reg == 'ir':
             res = self.convert_two_byte(result)
             if self.save_rule == "[]":
@@ -113,7 +132,11 @@ class Serial(threading.Thread):
                 handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
                 if not handle_res['status']:
                     log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
-                self.server.context[self.as_slave_id].setValues(4, self.save_start, handle_res['data'])
+                datas = handle_res['data']
+                if 32768 in datas:
+                    self.process_data(datas, 4)
+                else:
+                    self.server.context[self.as_slave_id].setValues(4, self.save_start, datas)
 
     # 定义一个函数，接受一个八位的十六进制字符串作为参数，返回对应的浮点数
     def hex_to_float(self, hex_str):
@@ -125,6 +148,17 @@ class Serial(threading.Thread):
         hex_float = struct.unpack(">f", hex_bytes)[0]
         # 返回浮点数
         return hex_float
+
+    def process_data(self, datas, reg):
+        i = 0
+        while i < len(datas):
+            if i != len(datas) - 1 and i % 2 == 0 and datas[i + 1] == 0 and datas[i] == 32768:
+                i += 2
+                continue
+
+            log4p.logs(f"write to address:\tid={self.save_start + i}\tvalue={datas[i]}")
+            self.server.context[self.as_slave_id].setValues(reg, self.save_start + i, [datas[i]])
+            i += 1
 
     def split_cmd(self, cmd):
         if len(cmd) % 2 == 1:

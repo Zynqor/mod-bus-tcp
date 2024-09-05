@@ -2,6 +2,8 @@ import struct
 from binascii import unhexlify
 from crcmod import crcmod
 
+from Util.log4p import log4p
+
 
 class DataUtil:
     # 定义一个函数，接受一个八位的十六进制字符串作为参数，返回对应的浮点数
@@ -45,18 +47,17 @@ class DataUtil:
     @staticmethod
     def complement_32(arr):
         ''' 将数组中的每个整数转换为32位补码表示的字符串列表'''
-        expanded_array = []
+        res = []
         for num in arr:
+            if num < -2 ** 31 or num > 2 ** 31 - 1:
+                log4p.logs(f"输入 {num} 超出了32位有符号整数的范围")
+                return res
             if num >= 0:
-                # 正数的补码与原码相同
-                expanded_array.append(bin(num)[2:].zfill(32))
+                res.append(format(num, '032b'))
             else:
-                # 负数先求绝对值的二进制表示，再取反加一
-                abs_num = abs(num)
-                binary_str = bin(abs_num)[2:].zfill(32)
-                inverted_str = "".join(['1' if bit == '0' else '0' for bit in binary_str])
-                expanded_array.append(bin(int(inverted_str, 2) + 1)[2:])
-        return expanded_array
+                res.append(format((1 << 32) + num, '032b'))
+
+        return res
 
     @staticmethod
     def expand_arr_2_hex(arr):
@@ -66,9 +67,8 @@ class DataUtil:
         res = []
         bin_32 = DataUtil.complement_32(arr)
         for i in bin_32:
-            res.append(DataUtil.bin_to_hex(i[16:]))
             res.append(DataUtil.bin_to_hex(i[:16]))
-
+            res.append(DataUtil.bin_to_hex(i[16:]))
         return res
 
     @staticmethod
@@ -78,6 +78,7 @@ class DataUtil:
         '''
         res = []
         tmp = DataUtil.expand_arr_2_hex(arr)
+
         for i in tmp:
             res.append(int(i, 16))
 
@@ -91,11 +92,6 @@ class DataUtil:
 
 
 if __name__ == '__main__':
-    res = DataUtil.hex_to_float("9800")
-    print(res)
-    original_array = [26200, 0, 200, 205900]
-    expanded_array = DataUtil.expand_arr_2_hex(original_array)
-    print(expanded_array)
+    original_array = [-2147483648, 2147483647, 200, 205900]
     expanded_array = DataUtil.expand_arr_2_demical(original_array)
-
     print(expanded_array)

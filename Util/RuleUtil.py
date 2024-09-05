@@ -1,4 +1,5 @@
 import json
+from xml.sax.saxutils import escape
 
 from Util.DataUtil import DataUtil
 from Util.log4p import log4p
@@ -14,7 +15,7 @@ class RuleUtil:
         :param data_list: 数据列表
         :return:
         """
-        return sum(data_list) / len(data_list)
+        return sum(data_list) * 1.0 / len(data_list)
 
     @staticmethod
     def ratio(data1, data2):
@@ -27,7 +28,7 @@ class RuleUtil:
         if data2 == 0:
             return 0
         else:
-            return data1 / data2
+            return data1 * 1.0 / data2
 
     @staticmethod
     def ubala(data_list):
@@ -38,10 +39,12 @@ class RuleUtil:
         """
         tmp = []
         avg = RuleUtil.avg(data_list)
+        if avg == 0:
+            return 0
         for data in data_list:
             tmp.append(data - avg)
 
-        return max(tmp) / avg
+        return max(tmp) * 1.0 / avg
 
     @staticmethod
     def avgdiff(data_list):
@@ -51,7 +54,7 @@ class RuleUtil:
         :return:
         '''
 
-        return data_list[0] - RuleUtil.avg(data_list)
+        return (data_list[0] - RuleUtil.avg(data_list)) * 1.0
 
     @staticmethod
     def max_min(data_list):
@@ -60,7 +63,11 @@ class RuleUtil:
         :param data_list:
         :return:
         '''
-        return max(data_list) / min(data_list)
+        min_value = min(data_list)
+        if min_value == 0:
+            return 0
+        max_value = max(data_list)
+        return max_value * 1.0 / min_value
 
     @staticmethod
     def diff(arg1, arg2):
@@ -70,7 +77,7 @@ class RuleUtil:
         :param arg2: 参数2
         :return:
         """
-        return arg1 - arg2
+        return (arg1 - arg2) * 1.0
 
     @staticmethod
     def handle_rule(history_data, save_rule):
@@ -121,6 +128,9 @@ class RuleUtil:
         res_len += 1
         result = [0] * res_len
 
+        # 记录实际使用的index,不使用的index就不记录,填充65536作为标识数据
+        used_index = []
+
         for item in rule:
             data_index = item['data_index']
             calculate = item['calculate']
@@ -132,16 +142,20 @@ class RuleUtil:
             tmp_data_list = []
 
             for i in range(0, len(data_save_index)):
-                # 把
+                # 把元数据存储到目标书组的data_save_index
                 result[int(data_save_index[i])] = history_data[-1][int(data_index[i])]
+                used_index.append(int(data_save_index[i]))
 
             for i in range(0, len(data_index)):
                 tmp_data_list.append(history_data[-1][int(data_index[i])])
 
+            # 使用到的index只存在于result_save_index,data_save_index
+            used_index.append(int(result_save_index))
             if calculate == "None":
                 pass
             elif calculate == RuleUtil.calculate_type[0]:
                 result[int(result_save_index)] = RuleUtil.avg(tmp_data_list)
+
             elif calculate == RuleUtil.calculate_type[1]:
                 if len(tmp_data_list) != 2:
                     log4p.logs("RATIO运算数据长度必须为2,错误数据为:\t" + str(item))
@@ -191,24 +205,17 @@ class RuleUtil:
                 result[int(result_save_index)] = RuleUtil.diff(tmp_data_list[0], tmp_data_list[1])
 
         for i in range(0, len(result)):
-            result[i] = int(result[i] * 100)
-        log4p.logs("计算结果*100:\t" + str(result))
+            if i in used_index:
+                result[i] = int(result[i] * 1000)
+            else:
+                result[i] = -2147483648
+
+        log4p.logs("计算结果:\t" + str(result))
         res['data'] = DataUtil.expand_arr_2_demical(result)
         res['status'] = True
+        log4p.logs("返回的res:\t" + str(res))
         return res
 
+
 if __name__ == '__main__':
-    history_data = [[50, 100, 150], [51, 102, 153], [52, 104, 156], [53, 106, 159], [54, 108, 162], [55, 110, 165],
-                    [56, 112, 168], [57, 114, 171], [58, 116, 174], [59, 118, 177], [60, 120, 180], [61, 122, 183],
-                    [62, 124, 186], [63, 126, 189], [64, 128, 192], [65, 130, 195], [66, 132, 198], [67, 134, 201],
-                    [68, 136, 204], [69, 138, 207], [70, 140, 210], [71, 142, 213], [72, 144, 216], [73, 146, 219],
-                    [74, 148, 222], [75, 150, 225], [76, 152, 228], [77, 154, 231], [78, 156, 234], [79, 158, 237],
-                    [80, 160, 240], [81, 162, 243], [82, 164, 246], [83, 166, 249], [84, 168, 252], [85, 170, 255],
-                    [86, 172, 258], [87, 174, 261], [88, 176, 264], [89, 178, 267], [90, 180, 270], [91, 182, 273],
-                    [92, 184, 276], [93, 186, 279], [94, 188, 282], [95, 190, 285], [96, 192, 288], [97, 194, 291],
-                    [98, 196, 294], [99, 198, 297]]
-    with open("../exec/serial.json", "r") as f:
-        config_data = json.load(f)
-    save_rule = config_data[1]['save_rule']
-    res = RuleUtil.handle_rule(history_data, save_rule)
-    print(res)
+    print(RuleUtil.ratio(1, 2))

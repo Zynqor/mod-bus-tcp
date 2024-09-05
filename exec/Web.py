@@ -77,6 +77,10 @@ class RefreshHandler(tornado.web.RequestHandler):
             # 读取本地配置文件
             with open("serial.json", "r") as f:
                 config_data = json.load(f)
+                for item in config_data:
+                    if "\\\"" in item['save_rule']:
+                        item['save_rule'] = item['save_rule'].replace("\\\"", "\"")
+            print(config_data)
         if data['type'] == 'master':
             # 读取本地配置文件
             with open("master.json", "r") as f:
@@ -126,6 +130,13 @@ class RestartHandler(tornado.web.RequestHandler):
         self.render("index.html", data=config_data)
 
 
+class RestartHandler1(tornado.web.RequestHandler):
+    def get(self):
+        print("重启机器")
+        subprocess.run(['/data/restart.sh'])
+        self.render("index.html", data=config_data)
+
+
 class SubmitSlaveHandler(tornado.web.RequestHandler):
     def add(self, datas):
         info = datas['data']
@@ -140,7 +151,7 @@ class SubmitSlaveHandler(tornado.web.RequestHandler):
             "reg_len": info[4],
             "reg_addr": info[5],
             "save_start": info[6],
-            "save_rule": info[7],
+            "save_rule": str(info[7]),
             "freq": info[8]
         }
         config_data.append(data)
@@ -181,7 +192,7 @@ class SubmitSlaveHandler(tornado.web.RequestHandler):
             "reg_len": info[4],
             "reg_addr": info[5],
             "save_start": info[6],
-            "save_rule": info[7],
+            "save_rule": str(info[7]),
             "freq": info[8]
         }
         res = []
@@ -232,7 +243,7 @@ class SubmitSerialHandler(tornado.web.RequestHandler):
             "read_start": info[5],
             "read_len": info[6],
             "save_start": info[7],
-            "save_rule": info[8],
+            "save_rule": str(info[8]),
             "freq": info[9]
         }
         config_data.append(data)
@@ -255,7 +266,7 @@ class SubmitSerialHandler(tornado.web.RequestHandler):
             "read_start": info[5],
             "read_len": info[6],
             "save_start": info[7],
-            "save_rule": info[8],
+            "save_rule": str(info[8]).replace("&quot;","\""),
             "freq": info[9]
         }
 
@@ -416,6 +427,7 @@ def make_app():
         (r"/slave", SlaveHandler),
         (r"/master", MasterHandler),
         (r"/restartService", RestartHandler),
+        (r"/restart", RestartHandler1),
         (r"/subSlave", SubmitSlaveHandler),
         (r"/subSerial", SubmitSerialHandler),
         (r"/subMaster", SubmitMasterHandler),
@@ -442,7 +454,9 @@ def default_json_data():
     serial = [{"com": "/dev/ttyS1", "band": "115200", "activate": "0", "save_reg": "co", "cmd": "FF06000000021DD5",
                "read_start": "2", "read_len": "8", "save_start": "0x00", "save_rule": "[]", "freq": "5"},
               {"com": "/dev/ttyS2", "band": "9600", "activate": "0", "save_reg": "co", "cmd": "FF06000000021DD5",
-               "read_start": "2", "read_len": "8", "save_start": "0x00", "save_rule": '[     {         "data_index": [             0,             1,             2         ],         "calculate": "AVG",         "data_save_index": [             0,             1,             2         ],         "result_save_index": 3,         "calculate_desc": "三相本体温度平均值"     },     {         "data_index": [             0,             1         ],         "calculate": "RATIO",         "data_save_index": [],         "result_save_index": 4,         "calculate_desc": "三相本体温度平均值"     },     {         "data_index": [             0         ],         "calculate": "MAX50",         "data_save_index": [],         "result_save_index": 5,         "calculate_desc": "三相本体温度平均值"     },     {         "data_index": [             1         ],         "calculate": "MIN50",         "data_save_index": [],         "result_save_index": 6,         "calculate_desc": "三相本体温度平均值"     },     {         "data_index": [             0,             1,             2         ],         "calculate": "UBALA",         "data_save_index": [],         "result_save_index": 7,         "calculate_desc": "三相本体温度平均值"     },     {         "data_index": [             0,             1,             2         ],         "calculate": "AVGDIFF",         "data_save_index": [],         "result_save_index": 8,         "calculate_desc": "三相本体温度平均值"     },     {         "data_index": [             1,             0,             2         ],         "calculate": "AVGDIFF",         "data_save_index": [],         "result_save_index": 9,         "calculate_desc": "三相本体温度平均值"     },     {         "data_index": [             2,             0,             1         ],         "calculate": "AVGDIFF",         "data_save_index": [],         "result_save_index": 10,         "calculate_desc": "三相本体温度平均值"     },     {         "data_index": [             2         ],         "calculate": "MAX/MIN50",         "data_save_index": [],         "result_save_index": 11,         "calculate_desc": "三相本体温度平均值"     },     {         "data_index": [             2,             1         ],         "calculate": "DIFF",         "data_save_index": [],         "result_save_index": 12,         "calculate_desc": "三相本体温度平均值"     } ]', "freq": "0.5"},
+               "read_start": "2", "read_len": "8", "save_start": "0x00",
+               "save_rule": '[]',
+               "freq": "0.5"},
               {"com": "/dev/ttyS3", "band": "9600", "activate": "0", "save_reg": "co", "cmd": "FF06000000021DD5",
                "read_start": "2", "read_len": "8", "save_start": "0x00", "save_rule": "[]", "freq": "5"},
               {"com": "/dev/ttyS4", "band": "9600", "activate": "0", "save_reg": "co", "cmd": "FF06000000021DD5",
@@ -493,6 +507,7 @@ if __name__ == "__main__":
     MainHandler.run_script()
     app = make_app()
     address = config_data['ip1']
+    # address = '127.0.0.1'
     port = config_data['port']
     http_server = httpserver.HTTPServer(app)
     http_server.listen(port=port, address=address)

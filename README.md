@@ -66,3 +66,6 @@
 8. reg_len:读取目标寄存器的长度,英文分号分割,长度与reg对应
 9. freq:查询频率
 10. reg_addr:读取目标寄存器的起始地址,英文分号分割,长度与reg对应
+
+#### 规则配置参考
+https://wdjxrrf0as.feishu.cn/docx/KUZAdpMdPo7WhZxmXkJccpwFnbg?from=from_copylink
