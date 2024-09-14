@@ -40,7 +40,7 @@ class Serial(threading.Thread):
     def read_serial(self):
         if self.serial.in_waiting:
             data = self.serial.read(self.serial.in_waiting)
-            log4p.logs("收到串口数据:\t" + str(data))
+            #log4p.logs("收到串口数据:\t" + str(data))
             info = self.bytes_to_hex_string(data).upper().replace(" ", "")
             if self.check_crc(info):
                 self.handle_res(info)
@@ -156,7 +156,7 @@ class Serial(threading.Thread):
                 i += 2
                 continue
 
-            log4p.logs(f"write to address:\tid={self.save_start + i}\tvalue={datas[i]}")
+            # log4p.logs(f"write to address:\tid={self.save_start + i}\tvalue={datas[i]}")
             self.server.context[self.as_slave_id].setValues(reg, self.save_start + i, [datas[i]])
             i += 1
 
