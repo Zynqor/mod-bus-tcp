@@ -114,4 +114,12 @@ https://wdjxrrf0as.feishu.cn/docx/KUZAdpMdPo7WhZxmXkJccpwFnbg?from=from_copylink
    pip install --no-index --find-links=/data/packages -r requirements.txt
    ```
 
-   
+
+## 整体安装流程
+
+1. 将网络和电脑链接,保证网关和电脑能ping通
+2. 使用串口登录设备,开启ssh
+   * 将/etc/init.d/#S50sshd 文件更改名称，改为 S50sshd，重启系统即可开启此服务
+3. 在linux内部创建根目录文件夹,/data并且给最高权限
+4. 将install内部的内容全部上传至文件夹
+5. 给install.sh 777的权限,并且执行`./install.sh`
