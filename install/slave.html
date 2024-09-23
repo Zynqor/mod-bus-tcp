@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加从机</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .table th,
+        .table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .table th {
+            background-color: #f2f2f2;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn-group button {
+            padding: 5px 10px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .btn-group button:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-group button:first-child {
+            margin-right: 5px;
+        }
+
+        .btn-group button:last-child {
+            margin-left: 5px;
+        }
+
+        #home {
+            display: block; /* 按钮块级显示 */
+            width: 80%; /* 按钮宽度 */
+            margin: 20px auto 0; /* 上方间距、水平居中 */
+            padding: 10px; /* 内边距 */
+            border: none; /* 去除边框 */
+            background-color: #007bff; /* 按钮背景色 */
+            color: #fff; /* 按钮文字颜色 */
+            cursor: pointer; /* 鼠标悬停样式 */
+            border-radius: 4px; /* 圆角边框 */
+        }
+
+        #home:hover {
+            background-color: #0056b3; /* 悬停时背景色 */
+        }
+
+        .input-short {
+            width: 80px; /* 设置输入框宽度为100像素，你可以根据需要调整宽度 */
+        }
+    </style>
+</head>
+<body>
+<h1>添加从机</h1>
+<table id="myTable" class="table">
+    <thead>
+    <tr>
+        <th>IP</th>
+        <th>端口</th>
+        <th>id</th>
+        <th>读取寄存器</th>
+        <th>读取长度</th>
+        <th>读取地址</th>
+        <th>保存地址</th>
+        <th>保存规则</th>
+        <th>查询频率</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- 这里是动态生成的表格内容 -->
+    </tbody>
+</table>
+<button onclick="goToMain()" id="home">回主页</button>
+
+
+<script>
+    let configData = `{{data}}`; // 将已经编码为json的data赋值给变量
+    configData = configData.replace(/&#x27;/g, "\"");
+
+    configData = JSON.parse(configData);
+
+    // 访问data
+    console.log(configData);
+
+    //to be continue
+
+    function goToSlave() {
+        input_data = {"type": "slave"}
+        fetch('/refresh', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(input_data),
+        }).then(response => response.text())
+            .then(newRowData => {
+                var tmp = JSON.parse(newRowData);
+                renderTable(tmp['data']);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+    var dataFromBackend = configData;
+
+    window.onload = function () {
+
+        renderTable(dataFromBackend);
+    };
+
+    function submit(input_data) {
+        // 发送POST请求
+        fetch('/subSlave', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(input_data),
+        }).then(response => response.text())
+            .then(newRowData => {
+                console.log('Response:', newRowData);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+    function isValidIPv4(ip) {
+        const ipv4Regex = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+        return ipv4Regex.test(ip);
+    }
+
+    function isValidPort(port) {
+        return port >= 0 && port <= 65535;
+    }
+
+    function isValidHexFormat(value) {
+        const hexRegex = /^0x[0-9A-Fa-f]+$/;
+        return hexRegex.test(value);
+    }
+
+    function isValidReg(value) {
+        const validValues = ['co', 'ir', 'hr', 'di'];
+        return validValues.includes(value);
+    }
+
+    function isInteger(str) {
+        const num = Number(str);
+        return !isNaN(num) && Number.isInteger(num) && str.startsWith('0x') === false && str[0] !== '-';
+    }
+
+
+    function isNumber(str) {
+
+        // 尝试使用 Number() 函数进行转换
+        const num = Number(str);
+
+        // 检查转换后的结果是否与原字符串相等
+        if (isNaN(num)) {
+            return false; // 如果是 NaN，则说明不是数字
+        }
+
+        // 使用正则表达式检查字符串是否只包含数字和小数点
+        const regex = /^-?\d+(\.\d+)?$/;
+        return regex.test(str);
+    }
+
+    function validateInput(input_data) {
+        if (!isValidIPv4(input_data[0])) {
+            alert(" IP输入错误 ");
+            return false;
+        }
+        if (!isValidPort(input_data[1])) {
+            alert(" 端口输入错误 ");
+            return false;
+        }
+        if (!isValidHexFormat(input_data[2])) {
+            alert(" id输入错误 ");
+            return false;
+        }
+        // if (!isValidReg(input_data[3])) {
+        //     alert(" 读取寄存器输入错误 ");
+        //     return false;
+        // }
+        // if (!isInteger(input_data[4])) {
+        //     alert(" 读取长度输入错误 ");
+        //     return false;
+        // }
+        // if (!isValidHexFormat(input_data[5])) {
+        //     alert(" 读取地址输入错误 " + input_data[5]);
+        //     return false;
+        // }
+        // if (!isValidHexFormat(input_data[6])) {
+        //     alert(" 保存地址输入错误 ");
+        //     return false;
+        // }
+        // if (!isInteger(input_data[7])) {
+        //     alert(" 保存位数输入错误 ");
+        //     return false;
+        // }
+        if (!isNumber(input_data[8])) {
+            alert(" 查询频率输入错误 ");
+            return false;
+        }
+        return true;
+    }
+
+
+    function renderTable(data) {
+        console.log(data)
+        var tableBody = document.querySelector("#myTable tbody");
+        tableBody.innerHTML = "";
+
+        data.forEach(function (data) {
+            var row = document.createElement("tr");
+
+            Object.keys(data).forEach(function (key) {
+                var cell = document.createElement("td");
+                var input = document.createElement("input");
+                input.type = "text";
+                input.value = data[key];
+                input.classList.add("input-short"); // 添加新的类
+                cell.appendChild(input);
+                row.appendChild(cell);
+            });
+
+            var btnGroupCell = document.createElement("td");
+            btnGroupCell.className = "btn-group";
+            var editButton = document.createElement("button");
+            editButton.textContent = "修改";
+            editButton.onclick = function () {
+
+                var rowData = [];
+                row.querySelectorAll("input").forEach(function (input) {
+                    rowData.push(input.value);
+                });
+
+
+                // 设置要发送的数据
+                if (rowData.length < 9) {
+                    return
+                }
+                if (!validateInput(rowData)) {
+                    return;
+                }
+
+                var input_data = {
+                    "type": "edit",
+                    "data": rowData
+                };
+
+                submit(input_data)
+                console.log("修改按钮点击，当前行的值为：" + rowData.join(", "));
+                goToSlave()
+            };
+            var deleteButton = document.createElement("button");
+            deleteButton.textContent = "删除";
+            deleteButton.onclick = function () {
+                var rowData = [];
+                row.querySelectorAll("input").forEach(function (input) {
+
+                    rowData.push(input.value);
+                });
+
+
+                var input_data = {
+                    "type": "del",
+                    "data": rowData
+                };
+
+                submit(input_data)
+                console.log("删除按钮点击，当前行的值为：" + rowData.join(", "));
+                goToSlave()
+            };
+            btnGroupCell.appendChild(editButton);
+            btnGroupCell.appendChild(deleteButton);
+            row.appendChild(btnGroupCell);
+
+            tableBody.appendChild(row);
+        });
+
+        var emptyRow = document.createElement("tr");
+        for (var i = 0; i < Object.keys(dataFromBackend[0]).length; i++) {
+            var cell = document.createElement("td");
+            var input = document.createElement("input");
+            input.type = "text";
+            input.name = "empty_content";
+            input.classList.add("input-short"); // 添加新的类
+            cell.appendChild(input);
+            emptyRow.appendChild(cell);
+        }
+        var btnGroupCell = document.createElement("td");
+        btnGroupCell.className = "btn-group";
+        var addButton = document.createElement("button");
+        addButton.textContent = "新增";
+        addButton.onclick = function () {
+            var newRowData = [];
+            emptyRow.querySelectorAll("input").forEach(function (input) {
+                console.log(input)
+                if (input.value !== '') {
+                    newRowData.push(input.value);
+                }
+            });
+            // 设置要发送的数据
+            if (newRowData.length < 9) {
+                return
+            }
+            if (!validateInput(newRowData)) {
+                return;
+            }
+            var input_data = {
+                "type": "add",
+                "data": newRowData
+            };
+
+            submit(input_data)
+
+            console.log("新增按钮点击，当前行的值为：" + newRowData.join(", "));
+            goToSlave()
+        };
+        var cancelButton = document.createElement("button");
+        cancelButton.textContent = "取消";
+        cancelButton.onclick = function () {
+            emptyRow.querySelectorAll("input").forEach(function (input) {
+                input.value = ""; // 清空文本框的值
+            });
+        };
+        btnGroupCell.appendChild(addButton);
+        btnGroupCell.appendChild(cancelButton);
+        emptyRow.appendChild(btnGroupCell);
+
+        tableBody.appendChild(emptyRow);
+    }
+
+    function goToMain() {
+        window.location.href = "/";
+    }
+</script>
+</body>
+</html>

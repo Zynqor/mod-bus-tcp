@@ -9,7 +9,7 @@
     pip install pyserial -i https://pypi.doubanio.com/simple/
     pip install pandas -i https://pypi.doubanio.com/simple/
     pip install tornado -i https://pypi.doubanio.com/simple/
-    ```
+   ```
 ## 目录介绍
 1. exec:最终完整版安装包,包含剩下的文件
 2. modbus:串口读取,modbustcp服务端,modbustcp客户端的模块
@@ -69,3 +69,49 @@
 
 #### 规则配置参考
 https://wdjxrrf0as.feishu.cn/docx/KUZAdpMdPo7WhZxmXkJccpwFnbg?from=from_copylink
+
+# 离线安装
+
+1. 首先有一个联网环境的,平台相同的机器
+
+2. 下载相关包,注意此时你的环境里只是下载没有安装
+
+   ```cmd
+   pip download pymodbus -i https://pypi.doubanio.com/simple/ -d /home/packages
+   pip download pyserial -i https://pypi.doubanio.com/simple/ -d /home/packages
+   pip download pandas -i https://pypi.doubanio.com/simple/ -d /home/packages
+   pip download tornado -i https://pypi.doubanio.com/simple/ -d /home/packages
+   ```
+
+3. 安装对应的包
+
+   ```bash
+    pip install pymodbus -i https://pypi.doubanio.com/simple/
+    pip install pyserial -i https://pypi.doubanio.com/simple/
+    pip install pandas -i https://pypi.doubanio.com/simple/
+    pip install tornado -i https://pypi.doubanio.com/simple/
+   ```
+
+4. 导出当前环境
+
+   ```cmd
+   pip freeze > requirements.txt
+   ```
+
+   * 导出的依赖目录在当前环境下
+
+5. 下载对应的包
+
+   ```bash
+   pip download -r requirements.txt -i https://pypi.doubanio.com/simple/ -d /home/packages
+   ```
+
+   
+
+6. 将依赖和依赖目录都传到目标环境,使用如下命令安装
+
+   ```cmd
+   pip install --no-index --find-links=/data/packages -r requirements.txt
+   ```
+
+   
