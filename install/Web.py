@@ -6,6 +6,8 @@ from tornado import httpserver, ioloop
 import json
 import subprocess
 
+from install.Util.log4p import log4p
+
 
 def append_to_json(file_path, new_data):
     """
@@ -506,10 +508,11 @@ if __name__ == "__main__":
 
     MainHandler.run_script()
     app = make_app()
-    address = config_data['ip1']
+    address = config_data['ip']
     # address = '127.0.0.1'
     port = config_data['port']
     http_server = httpserver.HTTPServer(app)
     http_server.listen(port=port, address=address)
-    print("URL:http://{}:{}/".format(address, port))
+    msg = "URL:http://{}:{}/".format(address, port)
+    log4p.logs(msg)
     ioloop.IOLoop.instance().start()

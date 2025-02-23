@@ -106,8 +106,6 @@ https://wdjxrrf0as.feishu.cn/docx/KUZAdpMdPo7WhZxmXkJccpwFnbg?from=from_copylink
    pip download -r requirements.txt -i https://pypi.doubanio.com/simple/ -d /home/packages
    ```
 
-   
-
 6. 将依赖和依赖目录都传到目标环境,使用如下命令安装
 
    ```cmd
