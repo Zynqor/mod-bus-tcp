@@ -27,6 +27,7 @@ class Serial(threading.Thread):
         self.freq = float(serial_info['freq'])
         self.serial = serial.Serial(port=self.port, baudrate=self.band, timeout=0.2)
         self.history_data = []
+        log4p.logs("启动串口读取服务...")
 
     def stop(self):
         self.running = False
@@ -70,11 +71,11 @@ class Serial(threading.Thread):
         return binary_result
 
     def handle_res(self, result):
-        log4p.logs("接收到的数据：" + str(result))
+        #log4p.logs("接收到的数据：" + str(result))
         reg = self.save_reg
         if len(result) < self.read_start + self.read_len:
             result = result + '0' * (self.read_start + self.read_len - len(result))
-        log4p.logs("读取的数据长度：" + str(len(result)))
+        #log4p.logs("读取的数据长度：" + str(len(result)))
         result = result[self.read_start:self.read_start + self.read_len]
         if reg == 'co':
             res = self.convert_each_digit(result)

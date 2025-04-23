@@ -91,6 +91,7 @@ class RuleUtil:
             'status': False
         }
         res_len = 0
+
         rule = json.loads(save_rule)
         for item in rule:
             data_index = item['data_index']
@@ -99,7 +100,7 @@ class RuleUtil:
             result_save_index = item['result_save_index']
             calculate_desc = item['calculate_desc']
 
-           # log4p.logs(f"data_index: {data_index}\t" + f"calculate: {calculate}" + f"data_save_index: {data_save_index}\t" + f"result_save_index: {result_save_index}\t" + f"calculate_desc: {calculate_desc}")
+            #log4p.logs(f"data_index: {data_index}\t" + f"calculate: {calculate}" + f"data_save_index: {data_save_index}\t" + f"result_save_index: {result_save_index}\t" + f"calculate_desc: {calculate_desc}")
             if isinstance(data_index, list) and isinstance(data_save_index, list):
                 if len(data_index) < len(data_save_index):
                     log4p.logs("data_index的长度不能小于data_save_index的长度,错误数据为:\t" + str(item))
@@ -209,10 +210,10 @@ class RuleUtil:
             else:
                 result[i] = -2147483648
 
-        # log4p.logs("计算结果:\t" + str(result))
+        #log4p.logs("计算结果:\t" + str(result))
         res['data'] = DataUtil.expand_arr_2_demical(result)
         res['status'] = True
-        # log4p.logs("返回的res:\t" + str(res))
+        #log4p.logs("返回的res:\t" + str(res))
         return res
 
 
