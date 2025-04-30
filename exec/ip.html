@@ -191,7 +191,8 @@
         }
     }
 
-    // 监听表单提交事件
+
+    <!-- 修改表单1的监听事件 -->
     document.getElementById("myForm1").addEventListener("submit", function (event) {
         // 阻止表单的默认提交行为
         event.preventDefault();
@@ -203,6 +204,8 @@
             if (xhr.readyState == 4 && xhr.status == 200) {
                 // 表单提交成功，弹出提示框
                 alert("IP修改成功,重启系统即可生效");
+                // 添加跳转回主页的代码
+                window.location.href = "/";
             }
         };
         // 将表单数据序列化并发送
@@ -210,7 +213,7 @@
         xhr.send(new URLSearchParams(formData).toString());
     });
 
-    // 监听表单提交事件
+    <!-- 修改表单2的监听事件 -->
     document.getElementById("myForm2").addEventListener("submit", function (event) {
         // 阻止表单的默认提交行为
         event.preventDefault();
@@ -222,6 +225,8 @@
             if (xhr.readyState == 4 && xhr.status == 200) {
                 // 表单提交成功，弹出提示框
                 alert("IP修改成功,重启系统即可生效");
+                // 添加跳转回主页的代码
+                window.location.href = "/";
             }
         };
         // 将表单数据序列化并发送

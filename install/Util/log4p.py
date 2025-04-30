@@ -24,13 +24,13 @@ class log4p:
         if log4p.file_name is None or log4p.file_name == '':
             date_string = now.strftime("%Y-%m-%d")
             log4p.file_name = f"log_{date_string}.txt"
-        if now.hour == 0 and now.minute == 1:
+        if now.hour == 12 and now.minute == 1 and now.second == 0:
             date_string = now.strftime("%Y-%m-%d")
             log4p.file_name = f"log_{date_string}.txt"
-            # 获取当前目录下的所有.txt文件
+            # ???????????????.txt???
             file_paths = [f for f in os.listdir('.') if f.endswith('.txt')]
 
-            # 排除昨天的日志文件和今天的日志文件
+            # ??????????????????????????
             yesterday = (now - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
             today = now.strftime("%Y-%m-%d")
 

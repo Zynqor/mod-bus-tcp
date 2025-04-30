@@ -1,11 +1,102 @@
 import os
+import threading
+from datetime import datetime
 import tornado.ioloop
 import tornado.web
-import subprocess
+import tornado.websocket
 from tornado import httpserver, ioloop
 import json
 import subprocess
+from collections import deque
 
+from Util.log4p import log4p
+
+# 全局变量，用于存储所有WebSocket客户端连接
+websocket_clients = set()
+# 使用双端队列存储最近的日志，限制最大长度
+log_queue = deque(maxlen=100)
+
+# 日志文件路径
+today = datetime.now().strftime("%Y-%m-%d")
+LOG_FILE_PATH = f"log_{today}.txt"
+
+
+
+class LogsHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render("logs.html")
+
+
+class WebSocketHandler(tornado.websocket.WebSocketHandler):
+    def open(self):
+        print("WebSocket连接已建立")
+        # 将新客户端添加到客户端集合中
+        websocket_clients.add(self)
+
+        # 如果有历史日志，立即发送给新连接的客户端
+        if log_queue:
+            self.write_message(json.dumps(list(log_queue)))
+
+    def on_message(self, message):
+        # 本例中客户端不需要发送消息给服务器
+        pass
+
+    def on_close(self):
+        print("WebSocket连接已关闭")
+        # 从客户端集合中移除断开连接的客户端
+        websocket_clients.remove(self)
+
+
+# 用于检查日志文件更新并广播给所有WebSocket客户端的函数
+def check_log_updates():
+    try:
+        # 检查日志文件是否存在
+        if not os.path.exists(LOG_FILE_PATH):
+            print("No Such File")
+            return
+
+        # 获取文件修改时间
+        current_mtime = os.path.getmtime(LOG_FILE_PATH)
+
+        # 如果文件被修改
+        if hasattr(check_log_updates, 'last_mtime') and current_mtime == check_log_updates.last_mtime:
+            return
+
+        # 更新最后修改时间
+        check_log_updates.last_mtime = current_mtime
+
+        # 读取日志文件
+        with open(LOG_FILE_PATH, 'r') as f:
+            try:
+                logs = deque(f, maxlen=100)
+
+                # 更新日志队列
+                for log in logs:
+                    # print("--",log)
+                    if log not in log_queue:
+                        log_queue.append(log)
+
+                # 广播给所有连接的客户端
+                if websocket_clients and logs:
+                    for client in websocket_clients:
+                        client.write_message(json.dumps(list(logs)))
+            except json.JSONDecodeError:
+                print("日志文件格式错误")
+
+    except Exception as e:
+        print(f"检查日志更新时出错: {e}")
+
+
+# 初始化上次修改时间
+check_log_updates.last_mtime = 0
+
+
+# 将此函数添加到Tornado的周期性回调中
+def setup_periodic_log_check():
+    tornado.ioloop.PeriodicCallback(
+        check_log_updates,
+        1000  # 每1000毫秒(1秒)检查一次
+    ).start()
 
 def append_to_json(file_path, new_data):
     """
@@ -33,7 +124,7 @@ def append_to_json(file_path, new_data):
     with open(file_path, 'w') as json_file:
         json.dump(existing_data, json_file, indent=4)
 
-    print("数据已追加写入JSON文件:", file_path)
+    log4p.logs("数据已追加写入JSON文件:", file_path)
 
 
 class MainHandler(tornado.web.RequestHandler):
@@ -49,11 +140,11 @@ class MainHandler(tornado.web.RequestHandler):
     def run_script():
         if MainHandler.process != None:
             # 检查是否有正在运行的进程，如果没有或已结束，则启动新的Python脚本
-            print("已有一个脚本在运行")
+            log4p.logs("已有一个脚本在运行")
             return
         # 启动新的Python脚本
         MainHandler.process = subprocess.Popen(['python', 'Main.py'])
-        print("已启动脚本")
+        log4p.logs("已启动脚本")
 
     @staticmethod
     def restart_script():
@@ -63,7 +154,7 @@ class MainHandler(tornado.web.RequestHandler):
             # 启动新的Python脚本
             MainHandler.process = subprocess.Popen(['python', 'Main.py'])
         else:
-            print("没有找到正在运行的进程，无法重启。")
+            log4p.logs("没有找到正在运行的进程，无法重启。")
 
 
 class RefreshHandler(tornado.web.RequestHandler):
@@ -80,7 +171,7 @@ class RefreshHandler(tornado.web.RequestHandler):
                 for item in config_data:
                     if "\\\"" in item['save_rule']:
                         item['save_rule'] = item['save_rule'].replace("\\\"", "\"")
-            print(config_data)
+            log4p.logs(config_data)
         if data['type'] == 'master':
             # 读取本地配置文件
             with open("master.json", "r") as f:
@@ -125,14 +216,14 @@ class MasterHandler(tornado.web.RequestHandler):
 
 class RestartHandler(tornado.web.RequestHandler):
     def get(self):
-        print("重启服务")
+        log4p.logs("重启服务")
         MainHandler.restart_script()
         self.render("index.html", data=config_data)
 
 
 class RestartHandler1(tornado.web.RequestHandler):
     def get(self):
-        print("重启机器")
+        log4p.logs("重启机器")
         subprocess.run(['/data/restart.sh'])
         self.render("index.html", data=config_data)
 
@@ -155,7 +246,7 @@ class SubmitSlaveHandler(tornado.web.RequestHandler):
             "freq": info[8]
         }
         config_data.append(data)
-        print("写入成功,", config_data)
+        log4p.logs("写入成功,", config_data)
         # 写入JSON文件
         with open("slave.json", 'w') as json_file:
             json.dump(config_data, json_file, indent=4)
@@ -169,7 +260,7 @@ class SubmitSlaveHandler(tornado.web.RequestHandler):
         for i in range(0, len(config_data)):
             tmp = config_data[i]
             if str(tmp['ip']) == str(info[0]) and str(tmp['port']) == str(info[1]) and str(tmp['id']) == str(info[2]):
-                print("删除成功")
+                log4p.logs("删除成功")
             else:
                 res.append(config_data[i])
         if len(res) == 0:
@@ -294,7 +385,7 @@ class SubmitSerialHandler(tornado.web.RequestHandler):
             tmp = config_data[i]
             if str(tmp['ip']) == str(info[0]) and str(tmp['port']) == str(info[1]) and str(tmp['id']) == str(info[2]):
 
-                print("删除成功")
+                log4p.logs("删除成功")
             else:
                 res.append(config_data[i])
         if len(res) == 0:
@@ -397,14 +488,14 @@ class FormSubmitHandler(tornado.web.RequestHandler):
         append_to_json("config.json", info)
 
     def serial_handle(self):
-        print("处理serial")
+        log4p.logs("处理serial")
 
     def slave_handle(self):
 
-        print("处理slave")
+        log4p.logs("处理slave")
 
     def master_handle(self):
-        print("处理master")
+        log4p.logs("处理master")
 
     def post(self):
         type = self.get_body_argument("type")
@@ -432,9 +523,11 @@ def make_app():
         (r"/subSerial", SubmitSerialHandler),
         (r"/subMaster", SubmitMasterHandler),
         (r"/subMaster1", SubmitMasterHandler1),
-        (r"/refresh", RefreshHandler)
+        (r"/refresh", RefreshHandler),
+        # 新增路由
+        (r"/logs", LogsHandler),
+        (r"/ws", WebSocketHandler),
     ], debug=True)
-
 
 def default_json_data():
     # 默认的config
@@ -445,10 +538,10 @@ def default_json_data():
         # 文件不存在，创建并写入默认值
         with open('config.json', 'w') as file:
             json.dump(config, file)
-        print(f"File '{'config.json'}' created and initialized with default values.")
+        log4p.logs(f"File '{'config.json'}' created and initialized with default values.")
     else:
         # 文件已存在，不执行任何操作
-        print(f"File '{'config.json'}' already exists. No action taken.")
+        log4p.logs(f"File '{'config.json'}' already exists. No action taken.")
 
     # 默认的serial
     serial = [{"com": "/dev/ttyS1", "band": "115200", "activate": "0", "save_reg": "co", "cmd": "FF06000000021DD5",
@@ -466,10 +559,10 @@ def default_json_data():
         # 文件不存在，创建并写入默认值
         with open('serial.json', 'w') as file:
             json.dump(serial, file)
-        print(f"File '{'serial.json'}' created and initialized with default values.")
+        log4p.logs(f"File '{'serial.json'}' created and initialized with default values.")
     else:
         # 文件已存在，不执行任何操作
-        print(f"File '{'serial.json'}' already exists. No action taken.")
+        log4p.logs(f"File '{'serial.json'}' already exists. No action taken.")
 
     # 默认的slave
     slave = [{"ip": "127.0.0.1", "port": "10086", "id": "0x01", "reg": "co", "reg_len": "22", "reg_addr": "0x01",
@@ -479,10 +572,10 @@ def default_json_data():
         # 文件不存在，创建并写入默认值
         with open('slave.json', 'w') as file:
             json.dump(slave, file)
-        print(f"File '{'slave.json'}' created and initialized with default values.")
+        log4p.logs(f"File '{'slave.json'}' created and initialized with default values.")
     else:
         # 文件已存在，不执行任何操作
-        print(f"File '{'slave.json'}' already exists. No action taken.")
+        log4p.logs(f"File '{'slave.json'}' already exists. No action taken.")
 
     # 默认的master
     master = {"reg": [{"reg": "co", "reg_addr": "0x0F", "len": "16"}, {"reg": "di", "reg_addr": "0x1F", "len": "16"},
@@ -493,10 +586,21 @@ def default_json_data():
         # 文件不存在，创建并写入默认值
         with open('master.json', 'w') as file:
             json.dump(master, file)
-        print(f"File '{'master.json'}' created and initialized with default values.")
+        log4p.logs(f"File '{'master.json'}' created and initialized with default values.")
     else:
         # 文件已存在，不执行任何操作
-        print(f"File '{'master.json'}' already exists. No action taken.")
+        log4p.logs(f"File '{'master.json'}' already exists. No action taken.")
+
+
+# 模拟生成日志的线程函数
+def generate_test_logs():
+    counter = 0
+    while True:
+        log4p.logs(f"测试日志 #{counter}")
+        counter += 1
+        import time
+        time.sleep(0.1)  # 每秒生成一条日志
+
 
 
 if __name__ == "__main__":
@@ -507,9 +611,17 @@ if __name__ == "__main__":
     MainHandler.run_script()
     app = make_app()
     address = config_data['ip1']
-    # address = '127.0.0.1'
+    # address = '192.168.0.18'
     port = config_data['port']
     http_server = httpserver.HTTPServer(app)
     http_server.listen(port=port, address=address)
     print("URL:http://{}:{}/".format(address, port))
-    ioloop.IOLoop.instance().start()
+    # 可选：启动测试日志生成线程（实际使用时可以注释掉）
+    # log_thread = threading.Thread(target=generate_test_logs)
+    # log_thread.daemon = True
+    # log_thread.start()
+    # 设置周期性日志检查
+    io_loop = ioloop.IOLoop.instance()
+    setup_periodic_log_check()
+
+    io_loop.start()

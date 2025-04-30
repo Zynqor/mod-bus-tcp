@@ -77,11 +77,15 @@
 <button onclick="goToIp()">修改本机IP</button>
 <button onclick="goToSlave()">添加ModbusTcp从机</button>
 <button onclick="goToSerial()">串口设置</button>
+<button onclick="goToLogs()">查看串口日志</button>
 <button onclick="goToMaster()">设置ModbusTcp主机</button>
 <button onclick="restart()">重启网关设备</button>
 <button onclick="restartService()">重启串口服务</button>
 <script>
 
+    function goToLogs() {
+        window.location.href = "/logs";
+    }
 
     function goToIp() {
         window.location.href = "/ip";
@@ -102,11 +106,13 @@
     function restartService() {
         window.location.href = "/restartService";
         alert("服务已重启");
+        window.location.href = "/"
     }
 
     function restart() {
         window.location.href = "/restart";
         alert("系统已重启,请稍后");
+        window.location.href = "/"
     }
 </script>
 </body>

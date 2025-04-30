@@ -9,6 +9,7 @@
     pip install pyserial -i https://pypi.doubanio.com/simple/
     pip install pandas -i https://pypi.doubanio.com/simple/
     pip install tornado -i https://pypi.doubanio.com/simple/
+    pip install crcmod -i https://pypi.doubanio.com/simple/
    ```
 ## 目录介绍
 1. exec:最终完整版安装包,包含剩下的文件

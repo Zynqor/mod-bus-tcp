@@ -47,7 +47,9 @@ class Serial(threading.Thread):
                 self.handle_res(info)
 
     def send_serial(self):
-        self.serial.write(bytes.fromhex(self.cmd + self.get_crc(self.cmd)))
+        send_cmd = self.cmd + self.get_crc(self.cmd)
+        log4p.logs("Tx:\t" + str(send_cmd))
+        self.serial.write(bytes.fromhex(send_cmd))
 
     def convert_two_byte(self, hex_str):
         result = []
@@ -71,7 +73,7 @@ class Serial(threading.Thread):
         return binary_result
 
     def handle_res(self, result):
-        #log4p.logs("接收到的数据：" + str(result))
+        log4p.logs("Rx:" + str(result))
         reg = self.save_reg
         if len(result) < self.read_start + self.read_len:
             result = result + '0' * (self.read_start + self.read_len - len(result))
