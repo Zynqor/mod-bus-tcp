@@ -16,10 +16,9 @@ websocket_clients = set()
 # 使用双端队列存储最近的日志，限制最大长度
 log_queue = deque(maxlen=100)
 
-# 日志文件路径
-today = datetime.now().strftime("%Y-%m-%d")
-LOG_FILE_PATH = f"log_{today}.txt"
-
+def get_current_log_file():
+    today = datetime.now().strftime("%Y-%m-%d")
+    return f"log_{today}.txt"
 
 
 class LogsHandler(tornado.web.RequestHandler):
@@ -48,44 +47,49 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 
 
 # 用于检查日志文件更新并广播给所有WebSocket客户端的函数
+# 替换原有的check_log_updates函数
 def check_log_updates():
     try:
+        # 获取当前日期的日志文件
+        current_log_file = get_current_log_file()
+
         # 检查日志文件是否存在
-        if not os.path.exists(LOG_FILE_PATH):
-            print("No Such File")
+        if not os.path.exists(current_log_file):
+            print(f"日志文件不存在: {current_log_file}")
             return
 
-        # 获取文件修改时间
-        current_mtime = os.path.getmtime(LOG_FILE_PATH)
+        # 获取文件大小来检测变化，比修改时间更可靠
+        current_size = os.path.getsize(current_log_file)
 
-        # 如果文件被修改
-        if hasattr(check_log_updates, 'last_mtime') and current_mtime == check_log_updates.last_mtime:
+        # 如果文件大小未变化，则返回
+        if hasattr(check_log_updates, 'last_size') and current_size == check_log_updates.last_size:
             return
 
-        # 更新最后修改时间
-        check_log_updates.last_mtime = current_mtime
+        # 更新大小记录
+        check_log_updates.last_size = current_size
 
         # 读取日志文件
-        with open(LOG_FILE_PATH, 'r') as f:
+        with open(current_log_file, 'r') as f:
             try:
+                # 读取最后100行
                 logs = deque(f, maxlen=100)
 
                 # 更新日志队列
+                new_logs = []
                 for log in logs:
-                    # print("--",log)
                     if log not in log_queue:
                         log_queue.append(log)
+                        new_logs.append(log)
 
-                # 广播给所有连接的客户端
-                if websocket_clients and logs:
+                # 只广播新的日志内容给所有连接的客户端
+                if websocket_clients and new_logs:
                     for client in websocket_clients:
-                        client.write_message(json.dumps(list(logs)))
-            except json.JSONDecodeError:
-                print("日志文件格式错误")
+                        client.write_message(json.dumps(new_logs))
+            except Exception as e:
+                print(f"处理日志文件时出错: {e}")
 
     except Exception as e:
         print(f"检查日志更新时出错: {e}")
-
 
 # 初始化上次修改时间
 check_log_updates.last_mtime = 0
@@ -617,9 +621,7 @@ if __name__ == "__main__":
     http_server.listen(port=port, address=address)
     print("URL:http://{}:{}/".format(address, port))
     # 可选：启动测试日志生成线程（实际使用时可以注释掉）
-    # log_thread = threading.Thread(target=generate_test_logs)
-    # log_thread.daemon = True
-    # log_thread.start()
+    
     # 设置周期性日志检查
     io_loop = ioloop.IOLoop.instance()
     setup_periodic_log_check()
