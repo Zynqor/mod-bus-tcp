@@ -192,222 +192,230 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>网络配置</h1>
-            <p>修改您设备的网络地址和相关设置</p>
-        </div>
-
-        <div class="card">
-            <div class="card-title">
-                <i class="fas fa-network-wired"></i>
-                <h2>以太网接口 1</h2>
-            </div>
-
-            <form id="myForm1" action="/submit" method="post">
-                <input type="hidden" name="type" value="ip"/>
-                <input type="hidden" name="eth" value="1"/>
-
-                <div class="form-group">
-                    <label for="ip1"><i class="fas fa-laptop"></i> IP 地址:</label>
-                    <input type="text" id="ip1" name="ip1" class="form-control" value="{{ data['ip1'] }}" placeholder="例如: 192.168.1.100">
-                </div>
-
-                <div class="form-group">
-                    <label for="mask1"><i class="fas fa-mask"></i> 子网掩码:</label>
-                    <input type="text" id="mask1" name="mask1" class="form-control" value="{{ data['mask1'] }}" placeholder="例如: 255.255.255.0">
-                </div>
-
-                <div class="form-group">
-                    <label for="gate1"><i class="fas fa-door-open"></i> 默认网关:</label>
-                    <input type="text" id="gate1" name="gate1" class="form-control" value="{{ data['gate1'] }}" placeholder="例如: 192.168.1.1">
-                </div>
-
-                <button type="submit" class="btn" onclick="validateIP1()">
-                    <i class="fas fa-save"></i> 保存配置
-                </button>
-
-                <div class="info-text">
-                    <i class="fas fa-info-circle"></i> 修改后需要重启设备才能生效
-                </div>
-            </form>
-        </div>
-
-        <div class="card">
-            <div class="card-title">
-                <i class="fas fa-network-wired"></i>
-                <h2>以太网接口 2</h2>
-            </div>
-
-            <form id="myForm2" action="/submit" method="post">
-                <input type="hidden" name="type" value="ip"/>
-                <input type="hidden" name="eth" value="2"/>
-
-                <div class="form-group">
-                    <label for="ip2"><i class="fas fa-laptop"></i> IP 地址:</label>
-                    <input type="text" id="ip2" name="ip2" class="form-control" value="{{ data['ip2'] }}" placeholder="例如: 192.168.2.100">
-                </div>
-
-                <div class="form-group">
-                    <label for="mask2"><i class="fas fa-mask"></i> 子网掩码:</label>
-                    <input type="text" id="mask2" name="mask2" class="form-control" value="{{ data['mask2'] }}" placeholder="例如: 255.255.255.0">
-                </div>
-
-                <div class="form-group">
-                    <label for="gate2"><i class="fas fa-door-open"></i> 默认网关:</label>
-                    <input type="text" id="gate2" name="gate2" class="form-control" value="{{ data['gate2'] }}" placeholder="例如: 192.168.2.1">
-                </div>
-
-                <button type="submit" class="btn" onclick="validateIP2()">
-                    <i class="fas fa-save"></i> 保存配置
-                </button>
-
-                <div class="info-text">
-                    <i class="fas fa-info-circle"></i> 修改后需要重启设备才能生效
-                </div>
-            </form>
-        </div>
-
-        <button class="btn btn-secondary" onclick="goToMain()">
-            <i class="fas fa-home"></i> 返回主页
-        </button>
-
-        <footer>
-            <p>© 2025 网关管理系统 | 版本 1.0</p>
-        </footer>
+<div class="container">
+    <div class="header">
+        <h1>网络配置</h1>
+        <p>修改您设备的网络地址和相关设置</p>
     </div>
 
-    <script>
-        function validateIP1() {
-            var ipInput = document.getElementById("ip1");
-            var maskInput = document.getElementById("mask1");
-            var gateInput = document.getElementById("gate1");
-            var ipValue = ipInput.value;
-            var maskValue = maskInput.value;
-            var gateValue = gateInput.value;
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-network-wired"></i>
+            <h2>以太网接口 1</h2>
+        </div>
 
-            // 使用正则表达式验证 IPv4 地址格式
-            var ipv4Regex = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
-            // 使用正则表达式验证 IPv6 地址格式
-            var ipv6Regex = /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:))/;
+        <form id="myForm1" action="/submit" method="post">
+            <input type="hidden" name="type" value="ip"/>
+            <input type="hidden" name="eth" value="1"/>
 
-            // 使用正则表达式验证子网掩码格式
-            var subnetMaskRegex = /^(254|252|248|240|224|192|128|0)\.0\.0\.0|255\.(254|252|248|240|224|192|128|0)\.0\.0|255\.255\.(254|252|248|240|224|192|128|0)\.0|255\.255\.255\.(254|252|248|240|224|192|128|0)$/;
+            <div class="form-group">
+                <label for="ip1"><i class="fas fa-laptop"></i> IP 地址:</label>
+                <input type="text" id="ip1" name="ip1" class="form-control" value="{{ data['ip1'] }}"
+                       placeholder="例如: 192.168.1.100">
+            </div>
+
+            <div class="form-group">
+                <label for="mask1"><i class="fas fa-mask"></i> 子网掩码:</label>
+                <input type="text" id="mask1" name="mask1" class="form-control" value="{{ data['mask1'] }}"
+                       placeholder="例如: 255.255.255.0">
+            </div>
+
+            <div class="form-group">
+                <label for="gate1"><i class="fas fa-door-open"></i> 默认网关:</label>
+                <input type="text" id="gate1" name="gate1" class="form-control" value="{{ data['gate1'] }}"
+                       placeholder="例如: 192.168.1.1">
+            </div>
+
+            <button type="submit" class="btn" onclick="validateIP1()">
+                <i class="fas fa-save"></i> 保存配置
+            </button>
+
+            <div class="info-text">
+                <i class="fas fa-info-circle"></i> 修改后需要重启设备才能生效
+            </div>
+        </form>
+    </div>
+
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-network-wired"></i>
+            <h2>以太网接口 2</h2>
+        </div>
+
+        <form id="myForm2" action="/submit" method="post">
+            <input type="hidden" name="type" value="ip"/>
+            <input type="hidden" name="eth" value="2"/>
+
+            <div class="form-group">
+                <label for="ip2"><i class="fas fa-laptop"></i> IP 地址:</label>
+                <input type="text" id="ip2" name="ip2" class="form-control" value="{{ data['ip2'] }}"
+                       placeholder="例如: 192.168.2.100">
+            </div>
+
+            <div class="form-group">
+                <label for="mask2"><i class="fas fa-mask"></i> 子网掩码:</label>
+                <input type="text" id="mask2" name="mask2" class="form-control" value="{{ data['mask2'] }}"
+                       placeholder="例如: 255.255.255.0">
+            </div>
+
+            <div class="form-group">
+                <label for="gate2"><i class="fas fa-door-open"></i> 默认网关:</label>
+                <input type="text" id="gate2" name="gate2" class="form-control" value="{{ data['gate2'] }}"
+                       placeholder="例如: 192.168.2.1">
+            </div>
+
+            <button type="submit" class="btn" onclick="validateIP2()">
+                <i class="fas fa-save"></i> 保存配置
+            </button>
+
+            <div class="info-text">
+                <i class="fas fa-info-circle"></i> 修改后需要重启设备才能生效
+            </div>
+        </form>
+    </div>
+
+    <button class="btn btn-secondary" onclick="goToMain()">
+        <i class="fas fa-home"></i> 返回主页
+    </button>
+
+    <footer>
+        <p>© 2025 网关管理系统 | 版本 1.0</p>
+    </footer>
+</div>
+
+<script>
+    function validateIP1() {
+        var ipInput = document.getElementById("ip1");
+        var maskInput = document.getElementById("mask1");
+        var gateInput = document.getElementById("gate1");
+        var ipValue = ipInput.value;
+        var maskValue = maskInput.value;
+        var gateValue = gateInput.value;
+
+        // 使用正则表达式验证 IPv4 地址格式
+        var ipv4Regex = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+        // 使用正则表达式验证 IPv6 地址格式
+        var ipv6Regex = /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:))/;
+
+        // 使用正则表达式验证子网掩码格式
+        var subnetMaskRegex = /^(254|252|248|240|224|192|128|0)\.0\.0\.0|255\.(254|252|248|240|224|192|128|0)\.0\.0|255\.255\.(254|252|248|240|224|192|128|0)\.0|255\.255\.255\.(254|252|248|240|224|192|128|0)$/;
 
 
-            // 验证IPv4地址格式
-            if (!ipv4Regex.test(ipValue)) {
-                // 如果不符合IPv4地址格式，再验证IPv6地址格式
-                if (!ipv6Regex.test(ipValue)) {
-                    alert("请输入正确的 IP 地址格式！");
-                    event.preventDefault();
-                }
-            }
-
-            // 验证子网掩码格式
-            if (!subnetMaskRegex.test(maskValue)) {
-                // 如果不符合子网掩码格式，弹出提示信息并阻止表单提交
-                alert("请输入正确的子网掩码格式！");
+        // 验证IPv4地址格式
+        if (!ipv4Regex.test(ipValue)) {
+            // 如果不符合IPv4地址格式，再验证IPv6地址格式
+            if (!ipv6Regex.test(ipValue)) {
+                alert("请输入正确的 IP 地址格式！");
                 event.preventDefault();
             }
-
-            // 验证网关格式
-            if (!ipv4Regex.test(gateValue)) {
-                // 如果不符合IPv4地址格式，再验证IPv6地址格式
-                if (!ipv6Regex.test(gateValue)) {
-                    alert("请输入正确的网关格式！");
-                    event.preventDefault();
-                }
-            }
         }
 
-        function validateIP2() {
-            var ipInput = document.getElementById("ip2");
-            var maskInput = document.getElementById("mask2");
-            var gateInput = document.getElementById("gate2");
-            var ipValue = ipInput.value;
-            var maskValue = maskInput.value;
-            var gateValue = gateInput.value;
+        // 验证子网掩码格式
+        if (!subnetMaskRegex.test(maskValue)) {
+            // 如果不符合子网掩码格式，弹出提示信息并阻止表单提交
+            alert("请输入正确的子网掩码格式！");
+            event.preventDefault();
+        }
 
-            // 使用正则表达式验证 IPv4 地址格式
-            var ipv4Regex = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
-            // 使用正则表达式验证 IPv6 地址格式
-            var ipv6Regex = /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:))/;
-
-            // 使用正则表达式验证子网掩码格式
-            var subnetMaskRegex = /^(254|252|248|240|224|192|128|0)\.0\.0\.0|255\.(254|252|248|240|224|192|128|0)\.0\.0|255\.255\.(254|252|248|240|224|192|128|0)\.0|255\.255\.255\.(254|252|248|240|224|192|128|0)$/;
-
-            // 验证IPv4地址格式
-            if (!ipv4Regex.test(ipValue)) {
-                // 如果不符合IPv4地址格式，再验证IPv6地址格式
-                if (!ipv6Regex.test(ipValue)) {
-                    alert("请输入正确的 IP 地址格式！");
-                    event.preventDefault();
-                }
-            }
-
-            // 验证子网掩码格式
-            if (!subnetMaskRegex.test(maskValue)) {
-                // 如果不符合子网掩码格式，弹出提示信息并阻止表单提交
-                alert("请输入正确的子网掩码格式！");
+        // 验证网关格式
+        if (!ipv4Regex.test(gateValue)) {
+            // 如果不符合IPv4地址格式，再验证IPv6地址格式
+            if (!ipv6Regex.test(gateValue)) {
+                alert("请输入正确的网关格式！");
                 event.preventDefault();
             }
+        }
+    }
 
-            // 验证网关格式
-            if (!ipv4Regex.test(gateValue)) {
-                // 如果不符合IPv4地址格式，再验证IPv6地址格式
-                if (!ipv6Regex.test(gateValue)) {
-                    alert("请输入正确的网关格式！");
-                    event.preventDefault();
-                }
+    function validateIP2() {
+        var ipInput = document.getElementById("ip2");
+        var maskInput = document.getElementById("mask2");
+        var gateInput = document.getElementById("gate2");
+        var ipValue = ipInput.value;
+        var maskValue = maskInput.value;
+        var gateValue = gateInput.value;
+
+        // 使用正则表达式验证 IPv4 地址格式
+        var ipv4Regex = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+        // 使用正则表达式验证 IPv6 地址格式
+        var ipv6Regex = /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:))/;
+
+        // 使用正则表达式验证子网掩码格式
+        var subnetMaskRegex = /^(254|252|248|240|224|192|128|0)\.0\.0\.0|255\.(254|252|248|240|224|192|128|0)\.0\.0|255\.255\.(254|252|248|240|224|192|128|0)\.0|255\.255\.255\.(254|252|248|240|224|192|128|0)$/;
+
+        // 验证IPv4地址格式
+        if (!ipv4Regex.test(ipValue)) {
+            // 如果不符合IPv4地址格式，再验证IPv6地址格式
+            if (!ipv6Regex.test(ipValue)) {
+                alert("请输入正确的 IP 地址格式！");
+                event.preventDefault();
             }
         }
 
-        // 修改表单1的监听事件
-        document.getElementById("myForm1").addEventListener("submit", function (event) {
-            // 阻止表单的默认提交行为
+        // 验证子网掩码格式
+        if (!subnetMaskRegex.test(maskValue)) {
+            // 如果不符合子网掩码格式，弹出提示信息并阻止表单提交
+            alert("请输入正确的子网掩码格式！");
             event.preventDefault();
-            // 发送异步请求
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "/submit");
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    // 表单提交成功，弹出提示框
-                    alert("IP修改成功,重启系统即可生效");
-                    // 添加跳转回主页的代码
-                    window.location.href = "/";
-                }
-            };
-            // 将表单数据序列化并发送
-            var formData = new FormData(document.getElementById("myForm1"));
-            xhr.send(new URLSearchParams(formData).toString());
-        });
-
-        // 修改表单2的监听事件
-        document.getElementById("myForm2").addEventListener("submit", function (event) {
-            // 阻止表单的默认提交行为
-            event.preventDefault();
-            // 发送异步请求
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "/submit");
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    // 表单提交成功，弹出提示框
-                    alert("IP修改成功,重启系统即可生效");
-                    // 添加跳转回主页的代码
-                    window.location.href = "/";
-                }
-            };
-            // 将表单数据序列化并发送
-            var formData = new FormData(document.getElementById("myForm2"));
-            xhr.send(new URLSearchParams(formData).toString());
-        });
-
-        function goToMain() {
-            window.location.href = "/";
         }
-    </script>
+
+        // 验证网关格式
+        if (!ipv4Regex.test(gateValue)) {
+            // 如果不符合IPv4地址格式，再验证IPv6地址格式
+            if (!ipv6Regex.test(gateValue)) {
+                alert("请输入正确的网关格式！");
+                event.preventDefault();
+            }
+        }
+    }
+
+    // 修改表单1的监听事件
+    document.getElementById("myForm1").addEventListener("submit", function (event) {
+        // 阻止表单的默认提交行为
+        event.preventDefault();
+        // 发送异步请求
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/submit");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            // if (xhr.readyState == 4 && xhr.status == 200) {
+            // 表单提交成功，弹出提示框
+
+            // }
+        };
+        // 将表单数据序列化并发送
+        var formData = new FormData(document.getElementById("myForm1"));
+        xhr.send(new URLSearchParams(formData).toString());
+        alert("IP修改成功,重启系统即可生效");
+        // 添加跳转回主页的代码
+        window.location.href = "/";
+    });
+
+    // 修改表单2的监听事件
+    document.getElementById("myForm2").addEventListener("submit", function (event) {
+        // 阻止表单的默认提交行为
+        event.preventDefault();
+        // 发送异步请求
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/submit");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            // if (xhr.readyState == 4 && xhr.status == 200) {
+            // 表单提交成功，弹出提示框
+
+            // }
+        };
+        // 将表单数据序列化并发送
+        var formData = new FormData(document.getElementById("myForm2"));
+        xhr.send(new URLSearchParams(formData).toString());
+        alert("IP修改成功,重启系统即可生效");
+        // 添加跳转回主页的代码
+        window.location.href = "/";
+    });
+
+    function goToMain() {
+        window.location.href = "/";
+    }
+</script>
 </body>
 </html>
