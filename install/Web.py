@@ -16,6 +16,7 @@ websocket_clients = set()
 # 使用双端队列存储最近的日志，限制最大长度
 log_queue = deque(maxlen=100)
 
+
 def get_current_log_file():
     today = datetime.now().strftime("%Y-%m-%d")
     return f"log_{today}.txt"
@@ -91,6 +92,7 @@ def check_log_updates():
     except Exception as e:
         print(f"检查日志更新时出错: {e}")
 
+
 # 初始化上次修改时间
 check_log_updates.last_mtime = 0
 
@@ -101,6 +103,7 @@ def setup_periodic_log_check():
         check_log_updates,
         1000  # 每1000毫秒(1秒)检查一次
     ).start()
+
 
 def append_to_json(file_path, new_data):
     """
@@ -361,7 +364,7 @@ class SubmitSerialHandler(tornado.web.RequestHandler):
             "read_start": info[5],
             "read_len": info[6],
             "save_start": info[7],
-            "save_rule": str(info[8]).replace("&quot;","\""),
+            "save_rule": str(info[8]).replace("&quot;", "\""),
             "freq": info[9]
         }
 
@@ -533,6 +536,7 @@ def make_app():
         (r"/ws", WebSocketHandler),
     ], debug=True)
 
+
 def default_json_data():
     # 默认的config
     config = {"ip1": "192.168.1.230", "mask1": "255.255.255.0", "gate1": "192.168.1.10", "ip2": "192.168.0.230",
@@ -606,7 +610,6 @@ def generate_test_logs():
         time.sleep(0.1)  # 每秒生成一条日志
 
 
-
 if __name__ == "__main__":
     default_json_data()
     with open("config.json", "r") as f:
@@ -615,13 +618,13 @@ if __name__ == "__main__":
     MainHandler.run_script()
     app = make_app()
     address = config_data['ip1']
-    # address = '192.168.0.18'
+    # address = '127.0.0.1'
     port = config_data['port']
     http_server = httpserver.HTTPServer(app)
     http_server.listen(port=port, address=address)
     print("URL:http://{}:{}/".format(address, port))
     # 可选：启动测试日志生成线程（实际使用时可以注释掉）
-    
+
     # 设置周期性日志检查
     io_loop = ioloop.IOLoop.instance()
     setup_periodic_log_check()

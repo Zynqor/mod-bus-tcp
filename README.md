@@ -8,7 +8,7 @@
     pip install pymodbus -i https://pypi.doubanio.com/simple/
     pip install pyserial -i https://pypi.doubanio.com/simple/
     pip install pandas -i https://pypi.doubanio.com/simple/
-    pip install tornado -i https://pypi.doubanio.com/simple/
+    pip install tornado==6.4.1 -i https://pypi.doubanio.com/simple/
     pip install crcmod -i https://pypi.doubanio.com/simple/
    ```
 ## 目录介绍

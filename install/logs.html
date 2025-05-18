@@ -4,108 +4,432 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>日志查看</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        :root {
+            --primary-color: #4361ee;
+            --primary-hover: #3a56d4;
+            --secondary-color: #3f37c9;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-radius: 10px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background-color: #f0f0f0;
         }
 
-        h1 {
-            text-align: center;
-            margin-top: 50px;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
         }
 
-        #log-container {
-            width: 80%;
+        .container {
+            max-width: 1000px;
             margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            height: 400px;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .header h1:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 4px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .header p {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: var(--primary-color);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .card-title i {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-right: 15px;
+        }
+
+        .card-title h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .log-container {
+            height: 500px;
             overflow-y: auto;
-            font-family: monospace;
+            background-color: #2b2b2b;
+            color: #f0f0f0;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .log-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .log-container::-webkit-scrollbar-track {
+            background: #333;
+            border-radius: 8px;
+        }
+
+        .log-container::-webkit-scrollbar-thumb {
+            background: #666;
+            border-radius: 8px;
+        }
+
+        .log-container::-webkit-scrollbar-thumb:hover {
+            background: #888;
         }
 
         .log-entry {
             margin-bottom: 5px;
-            padding: 5px;
-            border-bottom: 1px solid #eee;
+            padding: 8px 10px;
+            border-bottom: 1px solid #444;
+            word-wrap: break-word;
+            transition: background-color 0.3s;
         }
 
-        button {
-            display: block;
-            width: 80%;
-            margin: 20px auto 0;
-            padding: 10px;
+        .log-entry:hover {
+            background-color: #333;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .log-info {
+            background-color: rgba(67, 97, 238, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .log-info p {
+            margin: 0;
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
             border: none;
-            background-color: #007bff;
-            color: #fff;
+            border-radius: 5px;
             cursor: pointer;
-            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition);
+            width: 100%;
         }
 
-        button:hover {
-            background-color: #0056b3;
+        .btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            margin-top: 20px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            width: auto;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background-color: #dc3545;
+        }
+
+        .status-indicator.connected {
+            background-color: #28a745;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            padding: 8px 15px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .log-container {
+                height: 400px;
+            }
         }
     </style>
 </head>
 <body>
-<h1>日志查看</h1>
+    <div class="container">
+        <div class="header">
+            <h1>系统日志</h1>
+            <p>查看和监控串口通信日志</p>
+        </div>
 
-<div id="log-container">
-    <!-- 日志内容将在这里动态显示 -->
-</div>
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-file-alt"></i>
+                <h2>实时日志</h2>
+            </div>
 
-<button onclick="goToMain()">回主页</button>
+            <div class="connection-status">
+                <span class="status-indicator" id="connection-indicator"></span>
+                <span id="connection-text">连接中...</span>
+            </div>
 
-<script>
-    // 创建WebSocket连接
-    const socket = new WebSocket('ws://' + window.location.host + '/ws');
-    const logContainer = document.getElementById('log-container');
+            <div class="log-info">
+                <p><i class="fas fa-info-circle"></i> 日志会实时更新，最多显示200条记录。自动滚动到最新内容。</p>
+            </div>
 
-    // 连接建立时的处理
-    socket.onopen = function(event) {
-        console.log('WebSocket连接已建立');
-    };
+            <div class="log-controls">
+                <button class="btn btn-small" id="clear-log">
+                    <i class="fas fa-trash-alt"></i> 清空显示
+                </button>
+                <button class="btn btn-small" id="toggle-scroll">
+                    <i class="fas fa-scroll"></i> <span id="scroll-text">暂停自动滚动</span>
+                </button>
+            </div>
 
-    // 接收消息时的处理
-    socket.onmessage = function(event) {
-        // 解析接收到的JSON数据
-        const logData = JSON.parse(event.data);
+            <div id="log-container" class="log-container">
+                <!-- 日志内容将在这里动态显示 -->
+                <div class="log-entry">等待日志数据...</div>
+            </div>
+        </div>
 
-        // 创建新的日志条目
-        for (const log of logData) {
+        <button class="btn btn-secondary" onclick="goToMain()">
+            <i class="fas fa-home"></i> 返回主页
+        </button>
+
+        <footer>
+            <p>© 2025 网关管理系统 | 版本 1.0</p>
+        </footer>
+    </div>
+
+    <script>
+        // 创建WebSocket连接
+        const socket = new WebSocket('ws://' + window.location.host + '/ws');
+        const logContainer = document.getElementById('log-container');
+        const connectionIndicator = document.getElementById('connection-indicator');
+        const connectionText = document.getElementById('connection-text');
+        const clearLogBtn = document.getElementById('clear-log');
+        const toggleScrollBtn = document.getElementById('toggle-scroll');
+        const scrollText = document.getElementById('scroll-text');
+
+        let autoScroll = true;
+
+        // 清空日志按钮
+        clearLogBtn.addEventListener('click', function() {
+            while (logContainer.firstChild) {
+                logContainer.removeChild(logContainer.firstChild);
+            }
+        });
+
+        // 切换自动滚动按钮
+        toggleScrollBtn.addEventListener('click', function() {
+            autoScroll = !autoScroll;
+            scrollText.textContent = autoScroll ? "暂停自动滚动" : "启用自动滚动";
+
+            if (autoScroll) {
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }
+        });
+
+        // 连接建立时的处理
+        socket.onopen = function(event) {
+            console.log('WebSocket连接已建立');
+            connectionIndicator.classList.add('connected');
+            connectionText.textContent = "已连接";
+
+            // 清除初始的等待消息
+            if (logContainer.firstChild && logContainer.firstChild.textContent === "等待日志数据...") {
+                logContainer.removeChild(logContainer.firstChild);
+            }
+        };
+
+        // 接收消息时的处理
+        socket.onmessage = function(event) {
+            try {
+                // 解析接收到的JSON数据
+                const logData = JSON.parse(event.data);
+
+                // 创建新的日志条目
+                for (const log of logData) {
+                    const logEntry = document.createElement('div');
+                    logEntry.className = 'log-entry';
+
+                    // 添加时间戳
+                    const now = new Date();
+                    const timestamp = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+
+                    logEntry.innerHTML = `<span style="color: #888;">[${timestamp}]</span> ${log}`;
+                    logContainer.appendChild(logEntry);
+                }
+
+                // 自动滚动到最新日志
+                if (autoScroll) {
+                    logContainer.scrollTop = logContainer.scrollHeight;
+                }
+
+                // 限制显示的日志数量，防止内存占用过大
+                while (logContainer.children.length > 200) {
+                    logContainer.removeChild(logContainer.firstChild);
+                }
+            } catch (error) {
+                console.error('解析日志数据时出错:', error);
+
+                // 如果不是有效的JSON，直接显示原始数据
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.style.color = '#ff6b6b';
+                logEntry.textContent = `[错误数据] ${event.data}`;
+                logContainer.appendChild(logEntry);
+
+                if (autoScroll) {
+                    logContainer.scrollTop = logContainer.scrollHeight;
+                }
+            }
+        };
+
+        // 连接关闭时的处理
+        socket.onclose = function(event) {
+            console.log('WebSocket连接已关闭');
+            connectionIndicator.classList.remove('connected');
+            connectionText.textContent = "已断开";
+            connectionText.style.color = "#dc3545";
+
+            // 添加断开连接的提示
             const logEntry = document.createElement('div');
             logEntry.className = 'log-entry';
-            logEntry.textContent = log;
+            logEntry.style.color = '#ff6b6b';
+            logEntry.innerHTML = '<i class="fas fa-exclamation-triangle"></i> 连接已断开，请刷新页面重试';
             logContainer.appendChild(logEntry);
+
+            if (autoScroll) {
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }
+        };
+
+        // 发生错误时的处理
+        socket.onerror = function(error) {
+            console.error('WebSocket错误:', error);
+            connectionIndicator.classList.remove('connected');
+            connectionText.textContent = "连接错误";
+            connectionText.style.color = "#dc3545";
+
+            // 添加错误提示
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.style.color = '#ff6b6b';
+            logEntry.innerHTML = '<i class="fas fa-exclamation-circle"></i> 连接发生错误，请刷新页面重试';
+            logContainer.appendChild(logEntry);
+
+            if (autoScroll) {
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }
+        };
+
+        function goToMain() {
+            window.location.href = "/";
         }
-
-        // 自动滚动到最新日志
-        logContainer.scrollTop = logContainer.scrollHeight;
-
-        // 限制显示的日志数量，防止内存占用过大
-        while (logContainer.children.length > 200) {
-            logContainer.removeChild(logContainer.firstChild);
-        }
-    };
-
-    // 连接关闭时的处理
-    socket.onclose = function(event) {
-        console.log('WebSocket连接已关闭');
-    };
-
-    // 发生错误时的处理
-    socket.onerror = function(error) {
-        console.error('WebSocket错误:', error);
-    };
-
-    function goToMain() {
-        window.location.href = "/";
-    }
-</script>
+    </script>
 </body>
 </html>

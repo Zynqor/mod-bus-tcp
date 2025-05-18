@@ -4,116 +4,278 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>网关管理页面</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-hover: #3a56d4;
+            --secondary-color: #3f37c9;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-radius: 10px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: Arial, sans-serif; /* 使用 Arial 字体以确保兼容性 */
-            margin: 0; /* 去除默认边距 */
-            padding: 0; /* 去除默认内边距 */
-            background-color: #f0f0f0; /* 设置背景颜色 */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
         }
 
-        h1 {
-            text-align: center; /* 标题居中显示 */
-            margin-top: 50px; /* 设置标题顶部间距 */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
         }
 
-        form {
-            width: 80%; /* 表单宽度 */
-            margin: 0 auto; /* 水平居中显示 */
-            background-color: #fff; /* 表单背景色 */
-            padding: 20px; /* 内边距 */
-            border-radius: 8px; /* 圆角边框 */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
         }
 
-        label {
-            display: block; /* 每行显示一个标签 */
-            font-weight: bold; /* 加粗标签文字 */
-            margin-bottom: 10px; /* 标签下方间距 */
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
         }
 
-        input[type="text"] {
-            width: calc(100% - 20px); /* 输入框宽度 */
-            padding: 10px; /* 内边距 */
-            margin-bottom: 20px; /* 底部间距 */
-            border: 1px solid #ccc; /* 边框样式 */
-            border-radius: 4px; /* 圆角边框 */
+        .header h1:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 4px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
         }
 
-        input[type="submit"] {
-            width: 100%; /* 提交按钮宽度 */
-            padding: 10px; /* 内边距 */
-            border: none; /* 去除边框 */
-            background-color: #007bff; /* 按钮背景色 */
-            color: #fff; /* 按钮文字颜色 */
-            cursor: pointer; /* 鼠标悬停样式 */
-            border-radius: 4px; /* 圆角边框 */
+        .header p {
+            color: #6c757d;
+            font-size: 1.1rem;
         }
 
-        input[type="submit"]:hover {
-            background-color: #0056b3; /* 悬停时背景色 */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
         }
 
-        button {
-            display: block; /* 按钮块级显示 */
-            width: 80%; /* 按钮宽度 */
-            margin: 20px auto 0; /* 上方间距、水平居中 */
-            padding: 10px; /* 内边距 */
-            border: none; /* 去除边框 */
-            background-color: #007bff; /* 按钮背景色 */
-            color: #fff; /* 按钮文字颜色 */
-            cursor: pointer; /* 鼠标悬停样式 */
-            border-radius: 4px; /* 圆角边框 */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
 
-        button:hover {
-            background-color: #0056b3; /* 悬停时背景色 */
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: var(--primary-color);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .warning-btn {
+            background-color: #e63946;
+        }
+
+        .warning-btn:hover {
+            background-color: #d62b39;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
 <body>
-<h1>主页</h1>
+    <div class="container">
+        <div class="header">
+            <h1>网关管理系统</h1>
+            <p>管理和配置您的网关设备</p>
+        </div>
 
-<button onclick="goToIp()">修改本机IP</button>
-<button onclick="goToSlave()">添加ModbusTcp从机</button>
-<button onclick="goToSerial()">串口设置</button>
-<button onclick="goToLogs()">查看串口日志</button>
-<button onclick="goToMaster()">设置ModbusTcp主机</button>
-<button onclick="restart()">重启网关设备</button>
-<button onclick="restartService()">重启串口服务</button>
-<script>
+        <div class="dashboard">
+            <div class="card" onclick="goToIp()">
+                <div class="card-icon">
+                    <i class="fas fa-network-wired"></i>
+                </div>
+                <h3 class="card-title">修改本机IP</h3>
+                <p>配置设备的网络地址</p>
+                <button class="btn">访问配置</button>
+            </div>
 
-    function goToLogs() {
-        window.location.href = "/logs";
-    }
+            <div class="card" onclick="goToSlave()">
+                <div class="card-icon">
+                    <i class="fas fa-server"></i>
+                </div>
+                <h3 class="card-title">添加ModbusTcp从机</h3>
+                <p>配置和管理设备的从站设置</p>
+                <button class="btn">访问配置</button>
+            </div>
 
-    function goToIp() {
-        window.location.href = "/ip";
-    }
+            <div class="card" onclick="goToSerial()">
+                <div class="card-icon">
+                    <i class="fas fa-plug"></i>
+                </div>
+                <h3 class="card-title">串口设置</h3>
+                <p>配置设备的串行通信参数</p>
+                <button class="btn">访问配置</button>
+            </div>
 
-    function goToSlave() {
-        window.location.href = "/slave";
-    }
+            <div class="card" onclick="goToLogs()">
+                <div class="card-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3 class="card-title">查看串口日志</h3>
+                <p>检查系统通信日志和状态记录</p>
+                <button class="btn">查看日志</button>
+            </div>
 
-    function goToSerial() {
-        window.location.href = "/serial";
-    }
+            <div class="card" onclick="goToMaster()">
+                <div class="card-icon">
+                    <i class="fas fa-sitemap"></i>
+                </div>
+                <h3 class="card-title">设置ModbusTcp主机</h3>
+                <p>配置设备作为主站的相关参数</p>
+                <button class="btn">访问配置</button>
+            </div>
 
-    function goToMaster() {
-        window.location.href = "/master";
-    }
+            <div class="card" onclick="restartService()">
+                <div class="card-icon">
+                    <i class="fas fa-sync"></i>
+                </div>
+                <h3 class="card-title">重启串口服务</h3>
+                <p>重新启动串口通信服务</p>
+                <button class="btn">重启服务</button>
+            </div>
 
-    function restartService() {
-        window.location.href = "/restartService";
-        alert("服务已重启");
-        window.location.href = "/"
-    }
+            <div class="card" onclick="restart()">
+                <div class="card-icon">
+                    <i class="fas fa-power-off"></i>
+                </div>
+                <h3 class="card-title">重启网关设备</h3>
+                <p>完全重启网关设备系统</p>
+                <button class="btn warning-btn">重启设备</button>
+            </div>
+        </div>
 
-    function restart() {
-        window.location.href = "/restart";
-        alert("系统已重启,请稍后");
-        window.location.href = "/"
-    }
-</script>
+        <footer>
+            <p>© 2025 网关管理系统 | 版本 1.0</p>
+        </footer>
+    </div>
+
+    <script>
+        function goToLogs() {
+            window.location.href = "/logs";
+        }
+
+        function goToIp() {
+            window.location.href = "/ip";
+        }
+
+        function goToSlave() {
+            window.location.href = "/slave";
+        }
+
+        function goToSerial() {
+            window.location.href = "/serial";
+        }
+
+        function goToMaster() {
+            window.location.href = "/master";
+        }
+
+        function restartService() {
+            if(confirm("确定要重启串口服务吗？")) {
+                window.location.href = "/restartService";
+                alert("服务已重启");
+                window.location.href = "/";
+            }
+        }
+
+        function restart() {
+            if(confirm("确定要重启网关设备吗？这可能需要几分钟时间。")) {
+                window.location.href = "/restart";
+                alert("系统已重启,请稍后");
+                window.location.href = "/";
+            }
+        }
+    </script>
 </body>
 </html>

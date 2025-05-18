@@ -4,456 +4,585 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>主机设置</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f0f0;
+        :root {
+            --primary-color: #4361ee;
+            --primary-hover: #3a56d4;
+            --secondary-color: #3f37c9;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-radius: 10px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
         }
 
-        h1 {
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
             text-align: center;
-            margin-top: 50px;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .header h1:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 4px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .header p {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: var(--primary-color);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .card-title i {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-right: 15px;
+        }
+
+        .card-title h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+
+        .table-container {
+            margin-bottom: 30px;
+            overflow-x: auto;
         }
 
         .table {
-            width: 80%;
-            margin: 20px auto;
+            width: 100%;
             border-collapse: collapse;
             background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
         }
 
         .table th,
         .table td {
-            border: 1px solid #ddd;
-            padding: 10px;
+            padding: 15px;
             text-align: left;
+            border-bottom: 1px solid #e9ecef;
         }
 
         .table th {
-            background-color: #f2f2f2;
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .input-short {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .input-short:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.15);
         }
 
         .btn-group {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .btn-group button {
-            padding: 5px 10px;
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 15px;
             border: none;
-            background-color: #007bff;
-            color: #fff;
+            border-radius: 5px;
             cursor: pointer;
-            border-radius: 4px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition);
+            text-align: center;
         }
 
-        .btn-group button:hover {
-            background-color: #0056b3;
-        }
-
-        .btn-group button:first-child {
+        .btn i {
             margin-right: 5px;
         }
 
-        .btn-group button:last-child {
-            margin-left: 5px;
+        .btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
         }
 
-        #home {
-            display: block; /* 按钮块级显示 */
-            width: 80%; /* 按钮宽度 */
-            margin: 20px auto 0; /* 上方间距、水平居中 */
-            padding: 10px; /* 内边距 */
-            border: none; /* 去除边框 */
-            background-color: #007bff; /* 按钮背景色 */
-            color: #fff; /* 按钮文字颜色 */
-            cursor: pointer; /* 鼠标悬停样式 */
-            border-radius: 4px; /* 圆角边框 */
+        .btn-edit {
+            background-color: #4361ee;
         }
 
-        #home:hover {
-            background-color: #0056b3; /* 悬停时背景色 */
+        .btn-edit:hover {
+            background-color: #3a56d4;
         }
 
-        .input-short {
-            width: 80px; /* 设置输入框宽度为100像素，你可以根据需要调整宽度 */
+        .btn-delete {
+            background-color: #e63946;
         }
 
-        label {
-            display: block; /* 每行显示一个标签 */
-            font-weight: bold; /* 加粗标签文字 */
-            margin-bottom: 10px; /* 标签下方间距 */
+        .btn-delete:hover {
+            background-color: #d62b39;
         }
 
-        input[type="text"] {
-            width: calc(100% - 20px); /* 输入框宽度 */
-            padding: 10px; /* 内边距 */
-            margin-bottom: 20px; /* 底部间距 */
-            border: 1px solid #ccc; /* 边框样式 */
-            border-radius: 4px; /* 圆角边框 */
+        .btn-add {
+            background-color: #2ecc71;
         }
 
-        input[type="submit"] {
-            width: 100%; /* 提交按钮宽度 */
-            padding: 10px; /* 内边距 */
-            border: none; /* 去除边框 */
-            background-color: #007bff; /* 按钮背景色 */
-            color: #fff; /* 按钮文字颜色 */
-            cursor: pointer; /* 鼠标悬停样式 */
-            border-radius: 4px; /* 圆角边框 */
+        .btn-add:hover {
+            background-color: #27ae60;
         }
 
-        input[type="submit"]:hover {
-            background-color: #0056b3; /* 悬停时背景色 */
+        .btn-secondary {
+            background-color: #6c757d;
+            width: 100%;
+            max-width: 300px;
+            margin: 20px auto;
+            display: block;
         }
 
-        button {
-            display: block; /* 按钮块级显示 */
-            width: 80%; /* 按钮宽度 */
-            margin: 20px auto 0; /* 上方间距、水平居中 */
-            padding: 10px; /* 内边距 */
-            border: none; /* 去除边框 */
-            background-color: #007bff; /* 按钮背景色 */
-            color: #fff; /* 按钮文字颜色 */
-            cursor: pointer; /* 鼠标悬停样式 */
-            border-radius: 4px; /* 圆角边框 */
+        .btn-secondary:hover {
+            background-color: #5a6268;
         }
 
-        button:hover {
-            background-color: #0056b3; /* 悬停时背景色 */
+        .info-text {
+            background-color: rgba(67, 97, 238, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary-color);
         }
 
-        form {
-            width: 78%; /* 表单宽度 */
-            margin: 0 auto; /* 水平居中显示 */
-            background-color: #fff; /* 表单背景色 */
-            padding: 20px; /* 内边距 */
-            border-radius: 8px; /* 圆角边框 */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+        .info-text p {
+            margin: 0;
+            color: #495057;
+            font-size: 0.95rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .table th,
+            .table td {
+                padding: 10px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+                gap: 5px;
+            }
         }
     </style>
 </head>
 <body>
-<h1>主机设置</h1>
-<form id="myForm1" action="/subMaster1" method="post">
+    <div class="container">
+        <div class="header">
+            <h1>ModbusTcp主机设置</h1>
+            <p>配置ModbusTcp主机连接参数和寄存器</p>
+        </div>
 
-    <!-- 在这里使用从后端传递过来的默认数据渲染表单的默认值 -->
-    <label for="ip">IP:</label><br>
-    <input type="text" id="ip" name="ip" value="{{ data['ip'] }}">
-    <label for="port">port:</label><br>
-    <input type="text" id="port" name="port" value="{{ data['port'] }}">
-    <label for="id">id:</label><br>
-    <input type="text" id="id" name="id" value="{{ data['id'] }}">
-    <br><br>
-    <input type="submit" value="设置主机属性">
-</form>
-<br>
-<table id="myTable" class="table">
-    <thead>
-    <tr>
-        <th>寄存器</th>
-        <th>寄存器地址</th>
-        <th>寄存器长度</th>
-        <th>操作</th>
-    </tr>
-    </thead>
-    <tbody>
-    <!-- 这里是动态生成的表格内容 -->
-    </tbody>
-</table>
-<button onclick="goToMain()" id="home">回主页</button>
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-server"></i>
+                <h2>主机连接参数</h2>
+            </div>
 
+            <form id="myForm1" action="/subMaster1" method="post">
+                <div class="form-group">
+                    <label for="ip"><i class="fas fa-network-wired"></i> IP地址:</label>
+                    <input type="text" id="ip" name="ip" class="form-control" value="{{ data['ip'] }}" placeholder="例如: 192.168.1.100">
+                </div>
 
-<script>
-    let configData = `{{data}}`; // 将已经编码为json的data赋值给变量
-    configData = configData.replace(/&#x27;/g, "\"");
+                <div class="form-group">
+                    <label for="port"><i class="fas fa-plug"></i> 端口号:</label>
+                    <input type="text" id="port" name="port" class="form-control" value="{{ data['port'] }}" placeholder="例如: 502">
+                </div>
 
-    configData = JSON.parse(configData);
+                <div class="form-group">
+                    <label for="id"><i class="fas fa-fingerprint"></i> 设备ID:</label>
+                    <input type="text" id="id" name="id" class="form-control" value="{{ data['id'] }}" placeholder="例如: 0x01">
+                </div>
 
-    // 访问data
-    console.log(configData);
+                <button type="submit" class="btn btn-edit" style="width: 100%;">
+                    <i class="fas fa-save"></i> 保存主机配置
+                </button>
 
-    //to be continue
+                <div class="info-text">
+                    <p><i class="fas fa-info-circle"></i> 提示: IP应为标准IPv4格式，端口范围为0-65535，设备ID需以"0x"开头的十六进制格式。</p>
+                </div>
+            </form>
+        </div>
 
-    function isValidComm(str) {
-        for (let char of str) {
-            if (!(/[a-zA-Z0-9/]/.test(char))) {
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-list-alt"></i>
+                <h2>寄存器配置</h2>
+            </div>
+
+            <div class="info-text">
+                <p><i class="fas fa-lightbulb"></i> 寄存器类型: co=线圈, hr=保持寄存器, ir=输入寄存器, di=离散输入。地址格式应为"0x"开头的十六进制。</p>
+            </div>
+
+            <div class="table-container">
+                <table id="myTable" class="table">
+                    <thead>
+                        <tr>
+                            <th>寄存器类型</th>
+                            <th>寄存器地址</th>
+                            <th>寄存器长度</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- 这里是动态生成的表格内容 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <button class="btn btn-secondary" onclick="goToMain()">
+            <i class="fas fa-home"></i> 返回主页
+        </button>
+
+        <footer>
+            <p>© 2025 网关管理系统 | 版本 1.0</p>
+        </footer>
+    </div>
+
+    <script>
+        let configData = `{{data}}`; // 将已经编码为json的data赋值给变量
+        configData = configData.replace(/&#x27;/g, "\"");
+
+        configData = JSON.parse(configData);
+
+        // 访问data
+        console.log(configData);
+
+        function isValidComm(str) {
+            for (let char of str) {
+                if (!(/[a-zA-Z0-9/]/.test(char))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function isCorrectBaudRate(str) {
+            const validBaudRates = [2400, , 4800, 9600, 19200, 38400, 115200];
+            return validBaudRates.includes(Number(str));
+        }
+
+        function isOneOrZero(str) {
+            return str === '1' || str === '0';
+        }
+
+        function isEvenHexCommand(str) {
+            const hexRegex = /^[0-9a-fA-F]+$/;
+            if (!hexRegex.test(str)) {
                 return false;
             }
-        }
-        return true;
-    }
-
-    function isCorrectBaudRate(str) {
-        const validBaudRates = [2400, , 4800, 9600, 19200, 38400, 115200];
-        return validBaudRates.includes(Number(str));
-    }
-
-    function isOneOrZero(str) {
-        return str === '1' || str === '0';
-    }
-
-    function isEvenHexCommand(str) {
-        const hexRegex = /^[0-9a-fA-F]+$/;
-        if (!hexRegex.test(str)) {
-            return false;
-        }
-        return str.length % 2 === 0;
-    }
-
-    function isValidIPv4(ip) {
-        const ipv4Regex = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-        return ipv4Regex.test(ip);
-    }
-
-    function isValidPort(port) {
-        return port >= 0 && port <= 65535;
-    }
-
-    function isValidHexFormat(value) {
-        const hexRegex = /^0x[0-9A-Fa-f]+$/;
-        return hexRegex.test(value);
-    }
-
-    function isValidReg(value) {
-        const validValues = ['co', 'ir', 'hr', 'di'];
-        return validValues.includes(value);
-    }
-
-    function isInteger(str) {
-        const num = Number(str);
-        return !isNaN(num) && Number.isInteger(num) && str.startsWith('0x') === false && str[0] !== '-';
-    }
-
-
-    function isNumber(str) {
-
-        // 尝试使用 Number() 函数进行转换
-        const num = Number(str);
-
-        // 检查转换后的结果是否与原字符串相等
-        if (isNaN(num)) {
-            return false; // 如果是 NaN，则说明不是数字
+            return str.length % 2 === 0;
         }
 
-        // 使用正则表达式检查字符串是否只包含数字和小数点
-        const regex = /^-?\d+(\.\d+)?$/;
-        return regex.test(str);
-    }
-
-    function validateInput(input_data) {
-        if (!isValidReg(input_data[0])) {
-            alert("寄存器错误")
-            return false;
-        }
-        if (!isValidHexFormat(input_data[1])) {
-            alert("寄存器地址错误")
-            return false;
-        }
-        if (!isInteger(input_data[2])) {
-            alert("寄存器长度错误")
-            return false;
+        function isValidIPv4(ip) {
+            const ipv4Regex = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+            return ipv4Regex.test(ip);
         }
 
+        function isValidPort(port) {
+            return port >= 0 && port <= 65535;
+        }
 
-        return true;
-    }
+        function isValidHexFormat(value) {
+            const hexRegex = /^0x[0-9A-Fa-f]+$/;
+            return hexRegex.test(value);
+        }
 
-    function goToMaster() {
-        input_data = {"type": "master"}
-        fetch('/refresh', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(input_data),
-        }).then(response => response.text())
-            .then(newRowData => {
-                var tmp = JSON.parse(newRowData);
-                renderTable(tmp['data'].reg);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
+        function isValidReg(value) {
+            const validValues = ['co', 'ir', 'hr', 'di'];
+            return validValues.includes(value);
+        }
+
+        function isInteger(str) {
+            const num = Number(str);
+            return !isNaN(num) && Number.isInteger(num) && str.startsWith('0x') === false && str[0] !== '-';
+        }
+
+        function isNumber(str) {
+            // 尝试使用 Number() 函数进行转换
+            const num = Number(str);
+
+            // 检查转换后的结果是否与原字符串相等
+            if (isNaN(num)) {
+                return false; // 如果是 NaN，则说明不是数字
+            }
+
+            // 使用正则表达式检查字符串是否只包含数字和小数点
+            const regex = /^-?\d+(\.\d+)?$/;
+            return regex.test(str);
+        }
+
+        function validateInput(input_data) {
+            if (!isValidReg(input_data[0])) {
+                alert("寄存器类型错误，有效值为: co, ir, hr, di");
+                return false;
+            }
+            if (!isValidHexFormat(input_data[1])) {
+                alert("寄存器地址格式错误，应为0x开头的十六进制格式");
+                return false;
+            }
+            if (!isInteger(input_data[2])) {
+                alert("寄存器长度错误，应为整数");
+                return false;
+            }
+            return true;
+        }
+
+        function goToMaster() {
+            input_data = {"type": "master"}
+            fetch('/refresh', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(input_data),
+            }).then(response => response.text())
+                .then(newRowData => {
+                    var tmp = JSON.parse(newRowData);
+                    renderTable(tmp['data'].reg);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+
+        var dataFromBackend = configData.reg;
+
+        window.onload = function () {
+            renderTable(dataFromBackend);
+        };
+
+        function submit(input_data) {
+            // 发送POST请求
+            fetch('/subMaster', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(input_data),
+            }).then(response => response.text())
+                .then(newRowData => {
+                    console.log('Response:', newRowData);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('myForm1');
+            form.addEventListener('submit', function (event) {
+                event.preventDefault(); // 阻止表单默认提交行为
+                // 在这里进行参数校验
+                const ip = document.getElementById('ip').value;
+                const port = document.getElementById('port').value;
+                const id = document.getElementById('id').value;
+                console.log(ip, port, id)
+                if (!isValidIPv4(ip)) {
+                    alert('IP 格式不正确！');
+                    return false;
+                }
+                if (!isValidPort(port)) {
+                    alert('端口号格式不正确！');
+                    return false;
+                }
+                if (!isValidHexFormat(id)) {
+                    alert('ID 格式不正确！');
+                    return false;
+                }
+                // 如果校验通过，手动提交表单
+                form.submit();
             });
-    }
-
-    var dataFromBackend = configData.reg;
-
-    window.onload = function () {
-
-        renderTable(dataFromBackend);
-    };
-
-    function submit(input_data) {
-
-        // 发送POST请求
-        fetch('/subMaster', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(input_data),
-        }).then(response => response.text())
-            .then(newRowData => {
-                console.log('Response:', newRowData);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('myForm1');
-        form.addEventListener('submit', function (event) {
-            event.preventDefault(); // 阻止表单默认提交行为
-            // 在这里进行参数校验
-            const ip = document.getElementById('ip').value;
-            const port = document.getElementById('port').value;
-            const id = document.getElementById('id').value;
-            console.log(ip, port, id)
-            if (!isValidIPv4(ip)) {
-                alert('IP 格式不正确！');
-                return false;
-            }
-            if (!isValidPort(port)) {
-                alert('端口号格式不正确！');
-                return false;
-            }
-            if (!isValidHexFormat(id)) {
-                alert('ID 格式不正确！');
-                return false;
-            }
-            // 如果校验通过，手动提交表单
-            form.submit();
         });
-    });
 
-    function renderTable(data) {
-        var tableBody = document.querySelector("#myTable tbody");
-        tableBody.innerHTML = "";
+        function renderTable(data) {
+            var tableBody = document.querySelector("#myTable tbody");
+            tableBody.innerHTML = "";
 
-        data.forEach(function (data) {
-            var row = document.createElement("tr");
+            data.forEach(function (data) {
+                var row = document.createElement("tr");
 
-            Object.keys(data).forEach(function (key) {
-                var cell = document.createElement("td");
-                var input = document.createElement("input");
-                input.type = "text";
-                input.value = data[key];
-                input.classList.add("input-short"); // 添加新的类
-                cell.appendChild(input);
-                row.appendChild(cell);
-            });
-
-            var btnGroupCell = document.createElement("td");
-            btnGroupCell.className = "btn-group";
-            var editButton = document.createElement("button");
-            editButton.textContent = "修改";
-            editButton.onclick = function () {
-                var rowData = [];
-                row.querySelectorAll("input").forEach(function (input) {
-                    rowData.push(input.value);
+                Object.keys(data).forEach(function (key) {
+                    var cell = document.createElement("td");
+                    var input = document.createElement("input");
+                    input.type = "text";
+                    input.value = data[key];
+                    input.classList.add("input-short");
+                    cell.appendChild(input);
+                    row.appendChild(cell);
                 });
 
-                // 设置要发送的数据
-                if (rowData.length < 3) {
-                    return
-                }
+                var btnGroupCell = document.createElement("td");
+                btnGroupCell.className = "btn-group";
+                var editButton = document.createElement("button");
+                editButton.innerHTML = '<i class="fas fa-edit"></i> 修改';
+                editButton.className = "btn btn-edit";
+                editButton.onclick = function () {
+                    var rowData = [];
+                    row.querySelectorAll("input").forEach(function (input) {
+                        rowData.push(input.value);
+                    });
 
-                if (!validateInput(rowData)) {
-                    return;
-                }
+                    // 设置要发送的数据
+                    if (rowData.length < 3) {
+                        return
+                    }
 
-                var input_data = {
-                    "type": "edit",
-                    "data": rowData
+                    if (!validateInput(rowData)) {
+                        return;
+                    }
+
+                    var input_data = {
+                        "type": "edit",
+                        "data": rowData
+                    };
+                    console.log("修改按钮点击，当前行的值为：" + rowData.join(", "));
+                    submit(input_data)
+
+                    goToMaster()
                 };
-                console.log("修改按钮点击，当前行的值为：" + rowData.join(", "));
-                submit(input_data)
 
-                goToMaster()
-            };
-            // var deleteButton = document.createElement("button");
-            // deleteButton.textContent = "删除";
-            // deleteButton.onclick = function () {
-            //     var rowData = [];
-            //     row.querySelectorAll("input").forEach(function (input) {
-            //
-            //         rowData.push(input.value);
-            //     });
-            //     var input_data = {
-            //         "type": "del",
-            //         "data": rowData
-            //     };
-            //
-            //     submit(input_data)
-            //     console.log("删除按钮点击，当前行的值为：" + rowData.join(", "));
-            //     goToSlave()
-            // };
-            btnGroupCell.appendChild(editButton);
-            // btnGroupCell.appendChild(deleteButton);
-            row.appendChild(btnGroupCell);
+                btnGroupCell.appendChild(editButton);
+                row.appendChild(btnGroupCell);
 
-            tableBody.appendChild(row);
-        });
+                tableBody.appendChild(row);
+            });
+        }
 
-        // var emptyRow = document.createElement("tr");
-        // for (var i = 0; i < Object.keys(dataFromBackend[0]).length; i++) {
-        //     var cell = document.createElement("td");
-        //     var input = document.createElement("input");
-        //     input.type = "text";
-        //     input.name = "empty_content";
-        //     input.classList.add("input-short"); // 添加新的类
-        //     cell.appendChild(input);
-        //     emptyRow.appendChild(cell);
-        // }
-        // var btnGroupCell = document.createElement("td");
-        // btnGroupCell.className = "btn-group";
-        // var addButton = document.createElement("button");
-        // addButton.textContent = "新增";
-        // addButton.onclick = function () {
-        //     var newRowData = [];
-        //     emptyRow.querySelectorAll("input").forEach(function (input) {
-        //         console.log(input)
-        //         if (input.value !== '') {
-        //             newRowData.push(input.value);
-        //         }
-        //     });
-        //     // 设置要发送的数据
-        //     if (newRowData.length < 9) {
-        //         return
-        //     }
-        //     var input_data = {
-        //         "type": "add",
-        //         "data": newRowData
-        //     };
-        //
-        //     submit(input_data)
-        //
-        //     console.log("新增按钮点击，当前行的值为：" + newRowData.join(", "));
-        //     goToSlave()
-        // };
-        // var cancelButton = document.createElement("button");
-        // cancelButton.textContent = "取消";
-        // cancelButton.onclick = function () {
-        //     emptyRow.querySelectorAll("input").forEach(function (input) {
-        //         input.value = ""; // 清空文本框的值
-        //     });
-        // };
-        // btnGroupCell.appendChild(addButton);
-        // btnGroupCell.appendChild(cancelButton);
-        // emptyRow.appendChild(btnGroupCell);
-        //
-        // tableBody.appendChild(emptyRow);
-    }
-
-    function goToMain() {
-        window.location.href = "/";
-    }
-</script>
+        function goToMain() {
+            window.location.href = "/";
+        }
+    </script>
 </body>
 </html>
