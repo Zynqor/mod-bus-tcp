@@ -10,11 +10,165 @@ import subprocess
 from collections import deque
 
 from Util.log4p import log4p
+# 导入以太网模块
+from EthernetModule import EthernetModule, EthernetHandler, SubmitEthernetHandler
 
 # 全局变量，用于存储所有WebSocket客户端连接
 websocket_clients = set()
 # 使用双端队列存储最近的日志，限制最大长度
 log_queue = deque(maxlen=100)
+websocket_clients_lock = threading.Lock()  # 添加线程锁
+
+
+def ethernet_data_callback(connection_name, data_type, data, message):
+    """以太网数据回调函数 - 用于WebSocket推送"""
+    try:
+        # 构建推送消息
+        push_message = {
+            "module": "ethernet",
+            "connection": connection_name,
+            "type": data_type,  # "status", "send", "receive", "error"
+            "data": data,
+            "message": message,
+            "timestamp": datetime.now().strftime("%H:%M:%S")
+        }
+
+        log4p.logs(f"准备WebSocket推送: {connection_name} - {data_type} - {message}")
+        log4p.logs(f"当前WebSocket客户端数量: {len(websocket_clients)}")
+
+        # ⚠️ 关键修复：使用IOLoop将推送操作调度到主线程
+        def do_websocket_push():
+            try:
+                # 线程安全地获取WebSocket客户端列表
+                with websocket_clients_lock:
+                    clients_copy = websocket_clients.copy()
+                    client_count = len(websocket_clients)
+
+                log4p.logs(f"准备推送到 {client_count} 个WebSocket客户端")
+
+                # 向所有WebSocket客户端推送数据
+                if clients_copy:
+                    message_json = json.dumps(push_message, ensure_ascii=False)
+                    disconnected_clients = set()
+                    successful_pushes = 0
+
+                    for client in clients_copy:
+                        try:
+                            # 检查连接是否仍然有效
+                            if hasattr(client, 'ws_connection') and client.ws_connection is not None:
+                                client.write_message(message_json)
+                                successful_pushes += 1
+                                log4p.logs(f"WebSocket推送成功到客户端: {id(client)}")
+                            else:
+                                log4p.logs(f"客户端连接无效，标记为断开: {id(client)}")
+                                disconnected_clients.add(client)
+                        except Exception as e:
+                            log4p.logs(f"WebSocket推送失败到客户端 {id(client)}: {str(e)}")
+                            # 标记无效的客户端连接
+                            disconnected_clients.add(client)
+
+                    # 线程安全地移除无效的客户端连接
+                    if disconnected_clients:
+                        with websocket_clients_lock:
+                            for client in disconnected_clients:
+                                websocket_clients.discard(client)
+                                log4p.logs(f"移除无效的WebSocket客户端: {id(client)}")
+
+                    log4p.logs(
+                        f"以太网数据推送完成: {connection_name} - {data_type} - 成功推送到 {successful_pushes} 个客户端")
+
+                    if successful_pushes == 0:
+                        log4p.logs("警告: 虽然有WebSocket客户端连接，但推送失败")
+                else:
+                    log4p.logs(f"没有活动的WebSocket客户端，跳过推送")
+
+            except Exception as e:
+                log4p.logs(f"WebSocket推送操作失败: {str(e)}")
+                import traceback
+                log4p.logs(f"推送操作详细错误: {traceback.format_exc()}")
+
+        # 将推送操作调度到主事件循环
+        try:
+            ioloop = tornado.ioloop.IOLoop.current()
+            ioloop.add_callback(do_websocket_push)
+            log4p.logs(f"WebSocket推送已调度到主事件循环")
+        except Exception as e:
+            log4p.logs(f"调度WebSocket推送到主事件循环失败: {str(e)}")
+            # 如果无法获取当前IOLoop，尝试获取实例IOLoop
+            try:
+                ioloop = tornado.ioloop.IOLoop.instance()
+                ioloop.add_callback(do_websocket_push)
+                log4p.logs(f"WebSocket推送已调度到实例事件循环")
+            except Exception as e2:
+                log4p.logs(f"调度到实例事件循环也失败: {str(e2)}")
+
+    except Exception as e:
+        log4p.logs(f"以太网数据回调处理失败: {str(e)}")
+        import traceback
+        log4p.logs(f"详细错误信息: {traceback.format_exc()}")
+
+# ⚠️ 关键修复：确保在导入模块后立即设置回调
+log4p.logs("正在设置以太网模块数据回调...")
+EthernetModule.set_data_callback(ethernet_data_callback)
+log4p.logs("以太网模块数据回调已设置完成")
+
+# 验证回调是否正确设置
+if EthernetModule.data_callback is not None:
+    log4p.logs("✓ 以太网模块回调验证成功")
+else:
+    log4p.logs("✗ 以太网模块回调设置失败")
+
+
+# 然后更新 WebSocketHandler 类，使用线程安全的操作
+class WebSocketHandler(tornado.websocket.WebSocketHandler):
+    def check_origin(self, origin):
+        """允许所有来源的WebSocket连接"""
+        return True
+
+    def open(self):
+        print("WebSocket连接已建立")
+        log4p.logs("WebSocket连接已建立")
+
+        # 线程安全地添加客户端
+        with websocket_clients_lock:
+            websocket_clients.add(self)
+            client_count = len(websocket_clients)
+
+        log4p.logs(f"当前WebSocket客户端数量: {client_count}")
+
+        # 如果有历史日志，立即发送给新连接的客户端
+        if log_queue:
+            try:
+                self.write_message(json.dumps(list(log_queue)))
+                log4p.logs("历史日志已发送给新客户端")
+            except Exception as e:
+                log4p.logs(f"发送历史日志失败: {str(e)}")
+
+    def on_message(self, message):
+        # 本例中客户端不需要发送消息给服务器
+        log4p.logs(f"收到WebSocket消息: {message}")
+
+    def on_close(self):
+        print("WebSocket连接已关闭")
+        log4p.logs("WebSocket连接已关闭")
+
+        # 线程安全地移除客户端
+        with websocket_clients_lock:
+            websocket_clients.discard(self)
+            client_count = len(websocket_clients)
+
+        log4p.logs(f"当前WebSocket客户端数量: {client_count}")
+
+    def on_connection_close(self):
+        """连接关闭时的处理"""
+        log4p.logs("WebSocket连接异常关闭")
+
+        with websocket_clients_lock:
+            websocket_clients.discard(self)
+
+    def data_received(self, chunk):
+        """重写此方法以避免未实现的错误"""
+        pass
 
 
 def get_current_log_file():
@@ -27,28 +181,7 @@ class LogsHandler(tornado.web.RequestHandler):
         self.render("logs.html")
 
 
-class WebSocketHandler(tornado.websocket.WebSocketHandler):
-    def open(self):
-        print("WebSocket连接已建立")
-        # 将新客户端添加到客户端集合中
-        websocket_clients.add(self)
-
-        # 如果有历史日志，立即发送给新连接的客户端
-        if log_queue:
-            self.write_message(json.dumps(list(log_queue)))
-
-    def on_message(self, message):
-        # 本例中客户端不需要发送消息给服务器
-        pass
-
-    def on_close(self):
-        print("WebSocket连接已关闭")
-        # 从客户端集合中移除断开连接的客户端
-        websocket_clients.remove(self)
-
-
 # 用于检查日志文件更新并广播给所有WebSocket客户端的函数
-# 替换原有的check_log_updates函数
 def check_log_updates():
     try:
         # 获取当前日期的日志文件
@@ -155,7 +288,6 @@ class MainHandler(tornado.web.RequestHandler):
 
     @staticmethod
     def restart_script():
-
         if MainHandler.process is not None:
             MainHandler.process.terminate()
             # 启动新的Python脚本
@@ -167,11 +299,12 @@ class MainHandler(tornado.web.RequestHandler):
 class RefreshHandler(tornado.web.RequestHandler):
     def post(self):
         data = json.loads(self.request.body)
+
         if data['type'] == 'slave':
             # 读取本地配置文件
             with open("slave.json", "r") as f:
                 config_data = json.load(f)
-        if data['type'] == 'serial':
+        elif data['type'] == 'serial':
             # 读取本地配置文件
             with open("serial.json", "r") as f:
                 config_data = json.load(f)
@@ -179,10 +312,15 @@ class RefreshHandler(tornado.web.RequestHandler):
                     if "\\\"" in item['save_rule']:
                         item['save_rule'] = item['save_rule'].replace("\\\"", "\"")
             log4p.logs(config_data)
-        if data['type'] == 'master':
+        elif data['type'] == 'master':
             # 读取本地配置文件
             with open("master.json", "r") as f:
                 config_data = json.load(f)
+        elif data['type'] == 'ethernet':
+            # 使用以太网模块加载配置
+            config_data = EthernetModule.load_config()
+        else:
+            config_data = {}
 
         info = {"data": config_data}
         self.write(info)
@@ -225,6 +363,9 @@ class RestartHandler(tornado.web.RequestHandler):
     def get(self):
         log4p.logs("重启服务")
         MainHandler.restart_script()
+        # 修复原始代码中的错误
+        with open("config.json", "r") as f:
+            config_data = json.load(f)
         self.render("index.html", data=config_data)
 
 
@@ -232,6 +373,9 @@ class RestartHandler1(tornado.web.RequestHandler):
     def get(self):
         log4p.logs("重启机器")
         subprocess.run(['/data/restart.sh'])
+        # 修复原始代码中的错误
+        with open("config.json", "r") as f:
+            config_data = json.load(f)
         self.render("index.html", data=config_data)
 
 
@@ -302,10 +446,6 @@ class SubmitSlaveHandler(tornado.web.RequestHandler):
                 res.append(config_data[i])
         with open("slave.json", 'w') as json_file:
             json.dump(res, json_file, indent=4)
-        # config_data.append(data)
-        # # 写入JSON文件
-        # with open("slave.json", 'w') as json_file:
-        #     json.dump(config_data, json_file, indent=4)
 
     def post(self):
         data = json.loads(self.request.body)
@@ -315,15 +455,6 @@ class SubmitSlaveHandler(tornado.web.RequestHandler):
             self.delete(data)
         elif data['type'] == 'edit':
             self.edit(data)
-    # # 获取参数
-    # param1 = data.get("param1")
-    # param2 = data.get("param2")
-    #
-    # # 处理参数
-    # # ...
-    #
-    # # 返回响应
-    # self.write("Received param1: {} and param2: {}".format(param1, param2))
 
 
 class SubmitSerialHandler(tornado.web.RequestHandler):
@@ -377,28 +508,23 @@ class SubmitSerialHandler(tornado.web.RequestHandler):
                 res.append(config_data[i])
         with open("serial.json", 'w') as json_file:
             json.dump(res, json_file, indent=4)
-        # config_data.append(data)
-        # # 写入JSON文件
-        # with open("slave.json", 'w') as json_file:
-        #     json.dump(config_data, json_file, indent=4)
 
     def delete(self, datas):
         info = datas['data']
-        # 读取本地配置文件
-        with open("slave.json", "r") as f:
+        # 修复原始代码中的错误 - 应该读取serial.json而不是slave.json
+        with open("serial.json", "r") as f:
             config_data = json.load(f)
         res = []
         for i in range(0, len(config_data)):
             tmp = config_data[i]
-            if str(tmp['ip']) == str(info[0]) and str(tmp['port']) == str(info[1]) and str(tmp['id']) == str(info[2]):
-
+            if str(tmp['com']) == str(info[0]):  # 修复删除条件 - 应该按com匹配
                 log4p.logs("删除成功")
             else:
                 res.append(config_data[i])
         if len(res) == 0:
             res = config_data
         # 写入JSON文件
-        with open("slave.json", 'w') as json_file:
+        with open("serial.json", 'w') as json_file:
             json.dump(res, json_file, indent=4)
 
     def post(self):
@@ -426,7 +552,8 @@ class SubmitMasterHandler(tornado.web.RequestHandler):
         reg = config_data['reg']
 
         res = []
-        for i in range(0, len(config_data)):
+        # 修复原始代码中的错误 - 应该遍历reg数组
+        for i in range(0, len(reg)):
             tmp = reg[i]
             if str(tmp['reg']) == str(info[0]):
                 res.append(data)
@@ -435,10 +562,6 @@ class SubmitMasterHandler(tornado.web.RequestHandler):
         config_data['reg'] = res
         with open("master.json", 'w') as json_file:
             json.dump(config_data, json_file, indent=4)
-        # config_data.append(data)
-        # # 写入JSON文件
-        # with open("slave.json", 'w') as json_file:
-        #     json.dump(config_data, json_file, indent=4)
 
     def post(self):
         data = json.loads(self.request.body)
@@ -498,11 +621,14 @@ class FormSubmitHandler(tornado.web.RequestHandler):
         log4p.logs("处理serial")
 
     def slave_handle(self):
-
         log4p.logs("处理slave")
 
     def master_handle(self):
         log4p.logs("处理master")
+
+    # 新增以太网处理方法
+    def ethernet_handle(self):
+        log4p.logs("处理ethernet")
 
     def post(self):
         type = self.get_body_argument("type")
@@ -514,6 +640,8 @@ class FormSubmitHandler(tornado.web.RequestHandler):
             self.slave_handle()
         elif type == 'master':
             self.master_handle()
+        elif type == 'ethernet':  # 新增以太网类型处理
+            self.ethernet_handle()
 
 
 def make_app():
@@ -524,12 +652,14 @@ def make_app():
         (r"/serial", SerialHandler),
         (r"/slave", SlaveHandler),
         (r"/master", MasterHandler),
+        (r"/ethernet", EthernetHandler),  # 新增以太网路由 - 使用模块中的处理器
         (r"/restartService", RestartHandler),
         (r"/restart", RestartHandler1),
         (r"/subSlave", SubmitSlaveHandler),
         (r"/subSerial", SubmitSerialHandler),
         (r"/subMaster", SubmitMasterHandler),
         (r"/subMaster1", SubmitMasterHandler1),
+        (r"/subEthernet", SubmitEthernetHandler),  # 新增以太网提交路由 - 使用模块中的处理器
         (r"/refresh", RefreshHandler),
         # 新增路由
         (r"/logs", LogsHandler),
@@ -546,10 +676,10 @@ def default_json_data():
         # 文件不存在，创建并写入默认值
         with open('config.json', 'w') as file:
             json.dump(config, file)
-        log4p.logs(f"File '{'config.json'}' created and initialized with default values.")
+        log4p.logs(f"File 'config.json' created and initialized with default values.")
     else:
         # 文件已存在，不执行任何操作
-        log4p.logs(f"File '{'config.json'}' already exists. No action taken.")
+        log4p.logs(f"File 'config.json' already exists. No action taken.")
 
     # 默认的serial
     serial = [{"com": "/dev/ttyS1", "band": "115200", "activate": "0", "save_reg": "co", "cmd": "FF06000000021DD5",
@@ -567,10 +697,10 @@ def default_json_data():
         # 文件不存在，创建并写入默认值
         with open('serial.json', 'w') as file:
             json.dump(serial, file)
-        log4p.logs(f"File '{'serial.json'}' created and initialized with default values.")
+        log4p.logs(f"File 'serial.json' created and initialized with default values.")
     else:
         # 文件已存在，不执行任何操作
-        log4p.logs(f"File '{'serial.json'}' already exists. No action taken.")
+        log4p.logs(f"File 'serial.json' already exists. No action taken.")
 
     # 默认的slave
     slave = [{"ip": "127.0.0.1", "port": "10086", "id": "0x01", "reg": "co", "reg_len": "22", "reg_addr": "0x01",
@@ -580,10 +710,10 @@ def default_json_data():
         # 文件不存在，创建并写入默认值
         with open('slave.json', 'w') as file:
             json.dump(slave, file)
-        log4p.logs(f"File '{'slave.json'}' created and initialized with default values.")
+        log4p.logs(f"File 'slave.json' created and initialized with default values.")
     else:
         # 文件已存在，不执行任何操作
-        log4p.logs(f"File '{'slave.json'}' already exists. No action taken.")
+        log4p.logs(f"File 'slave.json' already exists. No action taken.")
 
     # 默认的master
     master = {"reg": [{"reg": "co", "reg_addr": "0x0F", "len": "16"}, {"reg": "di", "reg_addr": "0x1F", "len": "16"},
@@ -594,10 +724,13 @@ def default_json_data():
         # 文件不存在，创建并写入默认值
         with open('master.json', 'w') as file:
             json.dump(master, file)
-        log4p.logs(f"File '{'master.json'}' created and initialized with default values.")
+        log4p.logs(f"File 'master.json' created and initialized with default values.")
     else:
         # 文件已存在，不执行任何操作
-        log4p.logs(f"File '{'master.json'}' already exists. No action taken.")
+        log4p.logs(f"File 'master.json' already exists. No action taken.")
+
+    # 使用以太网模块初始化配置文件
+    EthernetModule.init_config_file()
 
 
 # 模拟生成日志的线程函数
@@ -617,8 +750,8 @@ if __name__ == "__main__":
 
     MainHandler.run_script()
     app = make_app()
-    address = config_data['ip1']
-    # address = '127.0.0.1'
+    # address = config_data['ip1']
+    address = '0.0.0.0'
     port = config_data['port']
     http_server = httpserver.HTTPServer(app)
     http_server.listen(port=port, address=address)

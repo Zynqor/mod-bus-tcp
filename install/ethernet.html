@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>以太网调试 - 网关管理系统</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --primary-hover: #5a6fd8;
+            --secondary-color: #764ba2;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-radius: 10px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .connection-list {
+            grid-column: 1 / -1;
+        }
+
+        .connection-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .connection-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .connection-info {
+            flex: 1;
+        }
+
+        .connection-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .connection-details {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--danger-color);
+        }
+
+        .status-dot.connected {
+            background-color: var(--success-color);
+        }
+
+        .status-dot.connecting {
+            background-color: var(--warning-color);
+        }
+
+        .connection-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.25);
+        }
+
+        .form-control:disabled {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .data-terminal {
+            background-color: #1e1e1e;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .data-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .data-input input {
+            flex: 1;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .add-connection-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: var(--transition);
+        }
+
+        .add-connection-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .alert {
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .connection-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .connection-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header" style="position: relative;">
+        <button class="back-btn" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i> 返回
+        </button>
+        <h1>
+            <i class="fas fa-ethernet"></i>
+            以太网调试模块
+        </h1>
+        <p>TCP/UDP数据收发测试和网络连接调试工具</p>
+    </div>
+
+    <!-- 提示消息 -->
+    <div id="alertMessage" class="alert">
+        <span id="alertText"></span>
+    </div>
+
+    <div class="main-content">
+        <!-- 连接管理 -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-plus-circle"></i>
+                新建连接
+            </h2>
+            <form id="connectionForm">
+                <div class="form-group">
+                    <label class="form-label">连接名称</label>
+                    <input type="text" class="form-control" id="connectionName" placeholder="例如: TCP客户端测试"
+                           required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">协议类型</label>
+                        <select class="form-control" id="protocol" required>
+                            <option value="TCP">TCP</option>
+                            <option value="UDP">UDP</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">工作模式</label>
+                        <select class="form-control" id="mode" required>
+                            <option value="Client">客户端</option>
+                            <option value="Server">服务器</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">本地IP</label>
+                        <input type="text" class="form-control" id="localIp" value="192.168.1.230" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">本地端口</label>
+                        <input type="number" class="form-control" id="localPort" placeholder="8000" min="1" max="65535"
+                               required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">远程IP</label>
+                        <input type="text" class="form-control" id="remoteIp" placeholder="192.168.1.100">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">远程端口</label>
+                        <input type="number" class="form-control" id="remotePort" placeholder="8001" min="1"
+                               max="65535">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">数据格式</label>
+                        <select class="form-control" id="dataFormat" required>
+                            <option value="HEX">十六进制</option>
+                            <option value="ASCII">ASCII</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">自动连接</label>
+                        <select class="form-control" id="autoConnect" required>
+                            <option value="0">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </div>
+                </div>
+
+                <input type="hidden" id="editIndex" value="">
+                <button type="submit" class="btn btn-primary" id="submitBtn" style="width: 100%;">
+                    <i class="fas fa-plus"></i> 创建连接
+                </button>
+            </form>
+        </div>
+
+        <!-- 数据收发 -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-terminal"></i>
+                数据收发终端
+            </h2>
+            <div class="form-group">
+                <label class="form-label">选择连接</label>
+                <select class="form-control" id="activeConnection">
+                    <option value="">请选择一个连接</option>
+                </select>
+            </div>
+            <div class="data-terminal" id="dataTerminal">
+                <div style="color: #00ff00;">以太网调试终端已就绪...</div>
+                <div style="color: #888;">请先选择一个连接配置</div>
+            </div>
+            <div class="data-input">
+                <input type="text" class="form-control" id="sendData" placeholder="输入要发送的数据..." disabled>
+                <button class="btn btn-success" id="sendBtn" onclick="sendData()" disabled>
+                    <i class="fas fa-paper-plane"></i> 发送
+                </button>
+                <button class="btn btn-secondary" onclick="clearSendData()" title="清空输入框">
+                    <i class="fas fa-eraser"></i>
+                </button>
+            </div>
+            <div class="quick-actions">
+                <button class="btn btn-warning" onclick="clearTerminal()">
+                    <i class="fas fa-broom"></i> 清空
+                </button>
+                <button class="btn btn-primary" onclick="sendHeartbeat()" id="heartbeatBtn" disabled>
+                    <i class="fas fa-heartbeat"></i> 心跳
+                </button>
+                <button class="btn btn-primary" onclick="sendTestData()" id="testDataBtn" disabled>
+                    <i class="fas fa-vial"></i> 测试数据
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 连接列表 -->
+    <div class="section connection-list">
+        <h2 class="section-title">
+            <i class="fas fa-list"></i>
+            连接管理
+            <button class="btn btn-primary" onclick="refreshConnections()" style="margin-left: auto;">
+                <i class="fas fa-sync"></i> 刷新
+            </button>
+        </h2>
+        <div id="connectionsList">
+            <!-- 连接列表将通过JavaScript动态生成 -->
+        </div>
+    </div>
+</div>
+
+<button class="add-connection-btn" onclick="scrollToForm()" title="新建连接">
+    <i class="fas fa-plus"></i>
+</button>
+
+<script>
+    // 全局变量
+    let connections = [];
+    let currentEditIndex = -1;
+    let connectionStates = {}; // 存储连接状态
+    let websocket = null; // WebSocket连接
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', function () {
+        loadConnections();
+        setupEventListeners();
+        updateFormBasedOnProtocolMode();
+        initWebSocket(); // 初始化WebSocket连接
+    });
+
+    // 初始化WebSocket连接
+    // 初始化WebSocket连接
+    function initWebSocket() {
+        try {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws`;
+
+            console.log('正在连接WebSocket:', wsUrl);
+            addToTerminal(`正在连接WebSocket: ${wsUrl}`, 'info');
+
+            websocket = new WebSocket(wsUrl);
+
+            websocket.onopen = function (event) {
+                console.log('WebSocket连接成功建立');
+                addToTerminal('WebSocket连接已建立', 'success');
+            };
+
+            websocket.onmessage = function (event) {
+                try {
+                    const data = JSON.parse(event.data);
+                    console.log('收到WebSocket消息:', data);
+
+                    // 只处理以太网模块的消息
+                    if (data.module === 'ethernet') {
+                        handleEthernetMessage(data);
+                    } else if (Array.isArray(data)) {
+                        // 处理历史日志消息
+                        console.log('收到历史日志:', data.length, '条');
+                    } else {
+                        console.log('收到其他消息:', data);
+                    }
+
+                } catch (error) {
+                    // 忽略非JSON消息（可能是其他模块的日志消息）
+                    console.log('收到非以太网消息:', event.data);
+                }
+            };
+
+            websocket.onclose = function (event) {
+                console.log('WebSocket连接已断开, 代码:', event.code, '原因:', event.reason);
+                addToTerminal(`WebSocket连接已断开 (代码: ${event.code})`, 'warning');
+
+                // 5秒后尝试重连
+                setTimeout(() => {
+                    console.log('尝试重新连接WebSocket...');
+                    addToTerminal('尝试重新连接WebSocket...', 'info');
+                    initWebSocket();
+                }, 5000);
+            };
+
+            websocket.onerror = function (error) {
+                console.error('WebSocket连接错误:', error);
+                addToTerminal('WebSocket连接错误', 'error');
+            };
+
+        } catch (error) {
+            console.error('WebSocket初始化失败:', error);
+            addToTerminal('WebSocket初始化失败: ' + error.message, 'error');
+        }
+    }
+
+    // 处理以太网WebSocket消息
+    function handleEthernetMessage(data) {
+        const {connection, type, data: msgData, message, timestamp} = data;
+
+        switch (type) {
+            case 'status':
+                if (msgData === 'connected') {
+                    updateConnectionStatus(connection, true);
+                    addToTerminal(`[${timestamp}] ${message}`, 'success');
+                } else if (msgData === 'disconnected') {
+                    updateConnectionStatus(connection, false);
+                    addToTerminal(`[${timestamp}] ${message}`, 'warning');
+                }
+                break;
+
+            case 'send':
+                addToTerminal(`[${timestamp}] 发送: ${msgData}`, 'send');
+                break;
+
+            case 'receive':
+                addToTerminal(`[${timestamp}] 接收: ${msgData}`, 'receive');
+                break;
+
+            case 'error':
+                addToTerminal(`[${timestamp}] 错误: ${message}`, 'error');
+                break;
+
+            default:
+                addToTerminal(`[${timestamp}] ${message}`, 'info');
+        }
+    }
+
+    // 更新连接状态
+    function updateConnectionStatus(connectionName, isConnected) {
+        // 找到连接在数组中的索引
+        const index = connections.findIndex(conn => conn.name === connectionName);
+        if (index !== -1) {
+            connectionStates[index] = isConnected;
+            renderConnections(); // 重新渲染连接列表
+        }
+    }
+
+    // 设置事件监听器
+    function setupEventListeners() {
+        // 协议和模式变化监听
+        document.getElementById('protocol').addEventListener('change', updateFormBasedOnProtocolMode);
+        document.getElementById('mode').addEventListener('change', updateFormBasedOnProtocolMode);
+
+        // 活动连接变化监听
+        document.getElementById('activeConnection').addEventListener('change', onActiveConnectionChange);
+
+        // 回车发送数据
+        document.getElementById('sendData').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter' && !this.disabled) {
+                sendData();
+            }
+        });
+
+        // 表单提交
+        document.getElementById('connectionForm').addEventListener('submit', handleFormSubmit);
+    }
+
+    // 根据协议和模式更新表单状态
+    function updateFormBasedOnProtocolMode() {
+        const protocol = document.getElementById('protocol').value;
+        const mode = document.getElementById('mode').value;
+        const remoteIp = document.getElementById('remoteIp');
+        const remotePort = document.getElementById('remotePort');
+
+        if (protocol === 'UDP' && mode === 'Server') {
+            remoteIp.disabled = true;
+            remotePort.disabled = true;
+            remoteIp.value = '';
+            remotePort.value = '';
+            remoteIp.placeholder = '服务器模式无需设置';
+            remotePort.placeholder = '服务器模式无需设置';
+            remoteIp.required = false;
+            remotePort.required = false;
+        } else {
+            remoteIp.disabled = false;
+            remotePort.disabled = false;
+            remoteIp.placeholder = '192.168.1.100';
+            remotePort.placeholder = '8001';
+            remoteIp.required = true;
+            remotePort.required = true;
+        }
+    }
+
+    // 显示提示消息
+    function showAlert(message, type = 'success') {
+        // const alertDiv = document.getElementById('alertMessage');
+        // const alertText = document.getElementById('alertText');
+        //
+        // alertDiv.className = `alert alert-${type}`;
+        // alertText.textContent = message;
+        // alertDiv.style.display = 'block';
+        //
+        // setTimeout(() => {
+        //     alertDiv.style.display = 'none';
+        // }, 3000);
+    }
+
+    // 从服务器加载连接配置
+    async function loadConnections() {
+        try {
+            const response = await fetch('/refresh', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({type: 'ethernet'})
+            });
+
+            const result = await response.json();
+            connections = result.data || [];
+            renderConnections();
+            updateActiveConnectionSelect();
+        } catch (error) {
+            console.error('加载连接配置失败:', error);
+            showAlert('加载连接配置失败', 'danger');
+        }
+    }
+
+    // 渲染连接列表
+    function renderConnections() {
+        const connectionsList = document.getElementById('connectionsList');
+
+        if (connections.length === 0) {
+            connectionsList.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #6c757d;">
+                        <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                        <p>暂无连接配置</p>
+                        <p>点击"新建连接"开始配置</p>
+                    </div>
+                `;
+            return;
+        }
+
+        connectionsList.innerHTML = connections.map((conn, index) => {
+            const isServer = conn.mode === 'Server';
+            const remoteInfo = isServer ? '' : ` → ${conn.remote_ip}:${conn.remote_port}`;
+            const details = `${conn.protocol} ${conn.mode} | ${conn.local_ip}:${conn.local_port}${remoteInfo} | ${conn.data_format}格式`;
+
+            // 检查连接状态
+            const isConnected = connectionStates[index] || false;
+            const statusClass = isConnected ? 'connected' : '';
+            const statusText = isConnected ? '已连接' : '未连接';
+            const connectBtnText = isConnected ? '断开连接' : '连接';
+            const connectBtnClass = isConnected ? 'btn-danger' : 'btn-success';
+            const connectAction = isConnected ? `disconnectConnection(${index})` : `connectConnection(${index})`;
+
+            return `
+                    <div class="connection-item">
+                        <div class="connection-info">
+                            <div class="connection-name">${conn.name}</div>
+                            <div class="connection-details">${details}</div>
+                        </div>
+                        <div class="connection-status">
+                            <div class="status-dot ${statusClass}"></div>
+                            <span>${statusText}</span>
+                        </div>
+                        <div class="connection-actions">
+                            <button class="btn ${connectBtnClass}" onclick="${connectAction}">${connectBtnText}</button>
+                            <button class="btn btn-primary" onclick="editConnection(${index})">编辑</button>
+                            <button class="btn btn-danger" onclick="deleteConnection(${index})">删除</button>
+                        </div>
+                    </div>
+                `;
+        }).join('');
+    }
+
+    // 更新活动连接选择器
+    function updateActiveConnectionSelect() {
+        const select = document.getElementById('activeConnection');
+        select.innerHTML = '<option value="">请选择一个连接</option>';
+
+        connections.forEach((conn, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = conn.name;
+            select.appendChild(option);
+        });
+    }
+
+    // 处理表单提交
+    async function handleFormSubmit(e) {
+        e.preventDefault();
+
+        const formData = {
+            name: document.getElementById('connectionName').value,
+            protocol: document.getElementById('protocol').value,
+            mode: document.getElementById('mode').value,
+            local_ip: document.getElementById('localIp').value,
+            local_port: document.getElementById('localPort').value,
+            remote_ip: document.getElementById('remoteIp').value,
+            remote_port: document.getElementById('remotePort').value,
+            auto_connect: document.getElementById('autoConnect').value,
+            data_format: document.getElementById('dataFormat').value
+        };
+
+        const editIndex = document.getElementById('editIndex').value;
+        const isEdit = editIndex !== '';
+
+        try {
+            const response = await fetch('/subEthernet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    type: isEdit ? 'edit' : 'add',
+                    data: [
+                        formData.name,
+                        formData.protocol,
+                        formData.mode,
+                        formData.local_ip,
+                        formData.local_port,
+                        formData.remote_ip,
+                        formData.remote_port,
+                        formData.auto_connect,
+                        formData.data_format
+                    ]
+                })
+            });
+
+            if (response.ok) {
+                showAlert(isEdit ? '连接配置已更新' : '连接配置已创建');
+                resetForm();
+                loadConnections();
+            } else {
+                throw new Error('保存失败');
+            }
+        } catch (error) {
+            console.error('保存连接配置失败:', error);
+            showAlert('保存连接配置失败', 'danger');
+        }
+    }
+
+    // 重置表单
+    function resetForm() {
+        document.getElementById('connectionForm').reset();
+        document.getElementById('editIndex').value = '';
+        document.getElementById('submitBtn').innerHTML = '<i class="fas fa-plus"></i> 创建连接';
+        document.getElementById('localIp').value = '192.168.1.230';
+        updateFormBasedOnProtocolMode();
+    }
+
+    // 编辑连接
+    function editConnection(index) {
+        const conn = connections[index];
+
+        document.getElementById('connectionName').value = conn.name;
+        document.getElementById('protocol').value = conn.protocol;
+        document.getElementById('mode').value = conn.mode;
+        document.getElementById('localIp').value = conn.local_ip;
+        document.getElementById('localPort').value = conn.local_port;
+        document.getElementById('remoteIp').value = conn.remote_ip || '';
+        document.getElementById('remotePort').value = conn.remote_port || '';
+        document.getElementById('autoConnect').value = conn.auto_connect;
+        document.getElementById('dataFormat').value = conn.data_format;
+        document.getElementById('editIndex').value = conn.name; // 使用名称作为编辑标识
+
+        document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save"></i> 更新连接';
+        updateFormBasedOnProtocolMode();
+
+        // 滚动到表单
+        scrollToForm();
+        showAlert('正在编辑连接配置', 'warning');
+    }
+
+    // 删除连接
+    async function deleteConnection(index) {
+        const conn = connections[index];
+
+        if (!confirm(`确定要删除连接"${conn.name}"吗？`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch('/subEthernet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    type: 'del',
+                    data: [conn.name]
+                })
+            });
+
+            if (response.ok) {
+                showAlert('连接已删除');
+
+                // 清除连接状态
+                delete connectionStates[index];
+
+                // 重新加载连接列表
+                loadConnections();
+            } else {
+                throw new Error('删除失败');
+            }
+        } catch (error) {
+            console.error('删除连接失败:', error);
+            showAlert('删除连接失败', 'danger');
+        }
+    }
+
+    // 连接到指定连接
+    async function connectConnection(index) {
+        const conn = connections[index];
+        addToTerminal(`正在连接到 ${conn.name}...`, 'info');
+
+        try {
+            const response = await fetch('/subEthernet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    type: 'connect',
+                    name: conn.name
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                // 连接成功的状态更新会通过WebSocket接收
+                showAlert(`正在连接到 ${conn.name}`, 'info');
+            } else {
+                const errorMsg = result.error || '连接失败';
+                addToTerminal(`连接失败: ${errorMsg}`, 'error');
+                showAlert(`连接失败: ${errorMsg}`, 'danger');
+            }
+        } catch (error) {
+            addToTerminal(`连接失败: ${error.message}`, 'error');
+            showAlert(`连接失败: ${error.message}`, 'danger');
+        }
+    }
+
+    // 断开指定连接
+    async function disconnectConnection(index) {
+        const conn = connections[index];
+        addToTerminal(`正在断开 ${conn.name}...`, 'warning');
+
+        try {
+            const response = await fetch('/subEthernet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    type: 'disconnect',
+                    name: conn.name
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                // 断开成功的状态更新会通过WebSocket接收
+                showAlert(`正在断开 ${conn.name}`, 'warning');
+            } else {
+                const errorMsg = result.error || '断开失败';
+                addToTerminal(`断开失败: ${errorMsg}`, 'error');
+                showAlert(`断开失败: ${errorMsg}`, 'danger');
+            }
+        } catch (error) {
+            addToTerminal(`断开失败: ${error.message}`, 'error');
+            showAlert(`断开失败: ${error.message}`, 'danger');
+        }
+    }
+
+    // 活动连接变化处理
+    function onActiveConnectionChange() {
+        const select = document.getElementById('activeConnection');
+        const selectedIndex = select.value;
+
+        const sendDataInput = document.getElementById('sendData');
+        const sendBtn = document.getElementById('sendBtn');
+        const heartbeatBtn = document.getElementById('heartbeatBtn');
+        const testDataBtn = document.getElementById('testDataBtn');
+
+        if (selectedIndex === '') {
+            sendDataInput.disabled = true;
+            sendBtn.disabled = true;
+            heartbeatBtn.disabled = true;
+            testDataBtn.disabled = true;
+            addToTerminal('请选择一个连接配置', 'warning');
+        } else {
+            const conn = connections[selectedIndex];
+            const isConnected = connectionStates[selectedIndex] || false;
+
+            sendDataInput.disabled = false;
+            sendBtn.disabled = false;
+            heartbeatBtn.disabled = false;
+            testDataBtn.disabled = false;
+
+            if (isConnected) {
+                addToTerminal(`已选择连接: ${conn.name} (已连接)`, 'success');
+            } else {
+                addToTerminal(`已选择连接: ${conn.name} (未连接)`, 'warning');
+            }
+
+            addToTerminal(`协议: ${conn.protocol} ${conn.mode}, 数据格式: ${conn.data_format}`, 'info');
+        }
+    }
+
+    // 添加消息到终端
+    function addToTerminal(message, type = 'normal') {
+        const terminal = document.getElementById('dataTerminal');
+        const timestamp = new Date().toLocaleTimeString();
+
+        let color = '#00ff00'; // 默认绿色
+        switch (type) {
+            case 'send':
+                color = '#00aaff'; // 蓝色表示发送
+                break;
+            case 'receive':
+                color = '#ffaa00'; // 橙色表示接收
+                break;
+            case 'error':
+                color = '#ff4444'; // 红色表示错误
+                break;
+            case 'warning':
+                color = '#ffff00'; // 黄色表示警告
+                break;
+            case 'info':
+                color = '#888888'; // 灰色表示信息
+                break;
+            case 'success':
+                color = '#00ff00'; // 绿色表示成功
+                break;
+        }
+
+        // 如果消息已经包含时间戳，直接使用；否则添加时间戳
+        const displayMessage = message.startsWith('[') ? message : `[${timestamp}] ${message}`;
+
+        terminal.innerHTML += `<div style="color: ${color};">${displayMessage}</div>`;
+        terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    // 发送数据
+    async function sendData() {
+        const input = document.getElementById('sendData');
+        const data = input.value.trim();
+        const activeIndex = document.getElementById('activeConnection').value;
+
+        if (!data) {
+            showAlert('请输入要发送的数据', 'warning');
+            return;
+        }
+
+        if (activeIndex === '') {
+            showAlert('请先选择一个连接', 'warning');
+            return;
+        }
+
+        const conn = connections[activeIndex];
+        const isConnected = connectionStates[activeIndex] || false;
+
+        if (!isConnected) {
+            showAlert('连接未建立，无法发送数据', 'warning');
+            return;
+        }
+
+        // 验证数据格式
+        if (conn.data_format === 'HEX') {
+            const hexPattern = /^[0-9A-Fa-f\s]+$/;
+            if (!hexPattern.test(data)) {
+                showAlert('十六进制格式错误，请输入有效的十六进制数据', 'danger');
+                return;
+            }
+        }
+
+        try {
+            const response = await fetch('/subEthernet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    type: 'send',
+                    name: conn.name,
+                    data: data
+                })
+            });
+
+            const result = await response.json();
+
+            // if (response.ok && result.success) {
+            //     // 发送成功的消息会通过WebSocket接收
+            //     // 不清空输入框，保留用户输入的数据
+            //     showAlert('数据发送成功', 'success');
+            // } else {
+            //     const errorMsg = result.error || '发送失败';
+            //     addToTerminal(`发送失败: ${errorMsg}`, 'error');
+            //     showAlert(`发送失败: ${errorMsg}`, 'danger');
+            // }
+        } catch (error) {
+            addToTerminal(`发送失败: ${error.message}`, 'error');
+            showAlert(`发送失败: ${error.message}`, 'danger');
+        }
+    }
+
+    // 清空发送数据输入框
+    function clearSendData() {
+        document.getElementById('sendData').value = '';
+    }
+
+    // 清空终端
+    function clearTerminal() {
+        document.getElementById('dataTerminal').innerHTML = '<div style="color: #00ff00;">终端已清空...</div>';
+    }
+
+    // 发送心跳
+    function sendHeartbeat() {
+        const activeIndex = document.getElementById('activeConnection').value;
+        if (activeIndex === '') {
+            showAlert('请先选择一个连接', 'warning');
+            return;
+        }
+
+        const conn = connections[activeIndex];
+        const heartbeatData = conn.data_format === 'HEX' ? 'FF FF 00 00' : 'PING';
+
+        document.getElementById('sendData').value = heartbeatData;
+        sendData();
+    }
+
+    // 发送测试数据
+    function sendTestData() {
+        const activeIndex = document.getElementById('activeConnection').value;
+        if (activeIndex === '') {
+            showAlert('请先选择一个连接', 'warning');
+            return;
+        }
+
+        const conn = connections[activeIndex];
+        const testData = conn.data_format === 'HEX' ? '01 03 00 00 00 0A C5 CD' : 'Hello World Test';
+
+        document.getElementById('sendData').value = testData;
+        sendData();
+    }
+
+    // 刷新连接列表
+    async function refreshConnections() {
+        addToTerminal('正在刷新连接列表...', 'info');
+        await loadConnections();
+        addToTerminal('连接列表已刷新', 'success');
+    }
+
+    // 滚动到表单
+    function scrollToForm() {
+        document.querySelector('.main-content').scrollIntoView({behavior: 'smooth'});
+    }
+
+    // 返回主页
+    function goBack() {
+        window.location.href = "/";
+    }
+
+    // 页面初始化时显示欢迎信息
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            addToTerminal('以太网调试模块已启动', 'success');
+            addToTerminal('支持TCP/UDP协议的数据收发测试', 'info');
+            addToTerminal('连接状态说明: 绿点=已连接, 红点=未连接', 'info');
+            addToTerminal('实时数据通过WebSocket推送显示', 'info');
+        }, 500);
+    });
+</script>
+</body>

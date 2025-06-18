@@ -345,49 +345,47 @@
             }
         };
 
+        // --- START: MODIFIED SECTION ---
         // 接收消息时的处理
         socket.onmessage = function(event) {
             try {
-                // 解析接收到的JSON数据
-                const logData = JSON.parse(event.data);
+                const receivedData = JSON.parse(event.data);
 
-                // 创建新的日志条目
-                for (const log of logData) {
-                    const logEntry = document.createElement('div');
-                    logEntry.className = 'log-entry';
+                // 这个页面只处理数组类型的日志数据
+                if (Array.isArray(receivedData)) {
+                    // 创建新的日志条目
+                    for (const log of receivedData) {
+                        const logEntry = document.createElement('div');
+                        logEntry.className = 'log-entry';
 
-                    // 添加时间戳
-                    const now = new Date();
-                    const timestamp = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+                        // 添加时间戳
+                        const now = new Date();
+                        const timestamp = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
 
-                    logEntry.innerHTML = `<span style="color: #888;">[${timestamp}]</span> ${log}`;
-                    logContainer.appendChild(logEntry);
-                }
+                        logEntry.innerHTML = `<span style="color: #888;">[${timestamp}]</span> ${log}`;
+                        logContainer.appendChild(logEntry);
+                    }
 
-                // 自动滚动到最新日志
-                if (autoScroll) {
-                    logContainer.scrollTop = logContainer.scrollHeight;
-                }
+                    // 自动滚动到最新日志
+                    if (autoScroll) {
+                        logContainer.scrollTop = logContainer.scrollHeight;
+                    }
 
-                // 限制显示的日志数量，防止内存占用过大
-                while (logContainer.children.length > 200) {
-                    logContainer.removeChild(logContainer.firstChild);
+                    // 限制显示的日志数量
+                    while (logContainer.children.length > 200) {
+                        logContainer.removeChild(logContainer.firstChild);
+                    }
+                } else {
+                    // 如果不是数组 (例如，是以太网模块的消息), 则静默忽略
+                    console.log('Ignoring non-log message:', receivedData);
                 }
             } catch (error) {
-                console.error('解析日志数据时出错:', error);
-
-                // 如果不是有效的JSON，直接显示原始数据
-                const logEntry = document.createElement('div');
-                logEntry.className = 'log-entry';
-                logEntry.style.color = '#ff6b6b';
-                logEntry.textContent = `[错误数据] ${event.data}`;
-                logContainer.appendChild(logEntry);
-
-                if (autoScroll) {
-                    logContainer.scrollTop = logContainer.scrollHeight;
-                }
+                console.error('解析或处理WebSocket数据时出错:', error);
+                // 可以选择在这里显示一个通用的错误消息，但通常最好是忽略无法处理的数据
             }
         };
+        // --- END: MODIFIED SECTION ---
+
 
         // 连接关闭时的处理
         socket.onclose = function(event) {

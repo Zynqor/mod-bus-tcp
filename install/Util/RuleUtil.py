@@ -3,7 +3,7 @@ from xml.sax.saxutils import escape
 
 from Util.DataUtil import DataUtil
 from Util.log4p import log4p
-
+import struct
 
 class RuleUtil:
     calculate_type = ['AVG', 'RATIO', 'MAX50', 'MIN50', 'UBALA', 'AVGDIFF', 'MAX/MIN50', 'DIFF', 'None']
@@ -206,16 +206,51 @@ class RuleUtil:
 
         for i in range(0, len(result)):
             if i in used_index:
-                result[i] = int(result[i] * 1000)
-            else:
-                result[i] = -2147483648
+                result[i] = result[i] * 1.0
+
 
         #log4p.logs("计算结果:\t" + str(result))
-        res['data'] = DataUtil.expand_arr_2_demical(result)
+        # res['data'] = DataUtil.expand_arr_2_demical(result)
         res['status'] = True
+        res['data'] = DataUtil.expand_arr_2_float32_decimal(result)
         #log4p.logs("返回的res:\t" + str(res))
         return res
 
 
 if __name__ == '__main__':
-    print(RuleUtil.ratio(1, 2))
+    test_numbers = [10, 20, 30, 40, 3.14159, -5.5, 0.0, 1000.123]
+
+    print("原始数字 -> 32位浮点数 -> Modbus寄存器值")
+    print("=" * 50)
+
+    for num in test_numbers:
+        # 显示原始浮点数的字节表示
+        float_bytes = struct.pack('>f', float(num))
+        hex_repr = float_bytes.hex().upper()
+
+        # 获取寄存器值
+        decimal_regs = DataUtil.expand_arr_2_float32_decimal([num])
+        hex_regs = DataUtil.expand_arr_2_float32_hex([num])
+
+        print(f"{num:>10} -> {hex_repr} -> 十进制: {decimal_regs} | 十六进制: {hex_regs}")
+
+    print("\n批量转换测试:")
+    input_arr = [10, 20, 30, 40]
+    result = DataUtil.expand_arr_2_float32_decimal(input_arr)
+    print(f"输入: {input_arr}")
+    print(f"输出: {result}")
+
+    # 验证：将结果转换回浮点数
+    print("\n验证转换正确性:")
+    for i in range(0, len(result), 2):
+        high_16 = result[i]
+        low_16 = result[i + 1]
+
+        # 重新组合为32位浮点数
+        combined_bytes = struct.pack('>HH', high_16, low_16)
+        recovered_float = struct.unpack('>f', combined_bytes)[0]
+
+        original_num = input_arr[i // 2]
+        print(f"原始: {original_num} -> 恢复: {recovered_float} -> 匹配: {abs(original_num - recovered_float) < 1e-6}")
+
+

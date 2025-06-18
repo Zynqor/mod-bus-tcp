@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,7 +32,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 40px 20px;
         }
@@ -69,8 +69,8 @@
 
         .dashboard {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
             margin-top: 30px;
         }
 
@@ -113,13 +113,19 @@
             margin-bottom: 15px;
         }
 
+        .card-description {
+            color: #6c757d;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
         .btn {
             display: inline-block;
             background-color: var(--primary-color);
             color: white;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 1rem;
             font-weight: 500;
@@ -141,6 +147,23 @@
             background-color: #d62b39;
         }
 
+        .ethernet-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .ethernet-card::before {
+            background-color: #764ba2;
+        }
+
+        .ethernet-card .card-icon {
+            color: white;
+        }
+
+        .ethernet-card .card-description {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
         footer {
             text-align: center;
             margin-top: 50px;
@@ -160,6 +183,10 @@
             .header h1 {
                 font-size: 2rem;
             }
+
+            .card {
+                padding: 20px;
+            }
         }
     </style>
 </head>
@@ -167,7 +194,7 @@
     <div class="container">
         <div class="header">
             <h1>网关管理系统</h1>
-            <p>管理和配置您的网关设备</p>
+            <p>管理和配置您的网关设备，支持串口通信、网络调试和数据转换</p>
         </div>
 
         <div class="dashboard">
@@ -176,7 +203,7 @@
                     <i class="fas fa-network-wired"></i>
                 </div>
                 <h3 class="card-title">修改本机IP</h3>
-                <p>配置设备的网络地址</p>
+                <p class="card-description">配置设备的网络地址和网关设置</p>
                 <button class="btn">访问配置</button>
             </div>
 
@@ -184,8 +211,8 @@
                 <div class="card-icon">
                     <i class="fas fa-server"></i>
                 </div>
-                <h3 class="card-title">添加ModbusTcp从机</h3>
-                <p>配置和管理设备的从站设置</p>
+                <h3 class="card-title">ModbusTcp从机</h3>
+                <p class="card-description">配置和管理设备的从站设置</p>
                 <button class="btn">访问配置</button>
             </div>
 
@@ -194,16 +221,25 @@
                     <i class="fas fa-plug"></i>
                 </div>
                 <h3 class="card-title">串口设置</h3>
-                <p>配置设备的串行通信参数</p>
+                <p class="card-description">配置设备的串行通信参数</p>
                 <button class="btn">访问配置</button>
             </div>
+
+<!--            <div class="card" onclick="goToEthernet()">-->
+<!--                <div class="card-icon">-->
+<!--                    <i class="fas fa-ethernet"></i>-->
+<!--                </div>-->
+<!--                <h3 class="card-title">以太网调试</h3>-->
+<!--                <p class="card-description">TCP/UDP数据收发测试和网络调试工具</p>-->
+<!--                <button class="btn">进入调试</button>-->
+<!--            </div>-->
 
             <div class="card" onclick="goToLogs()">
                 <div class="card-icon">
                     <i class="fas fa-file-alt"></i>
                 </div>
                 <h3 class="card-title">查看串口日志</h3>
-                <p>检查系统通信日志和状态记录</p>
+                <p class="card-description">检查系统通信日志和状态记录</p>
                 <button class="btn">查看日志</button>
             </div>
 
@@ -211,8 +247,8 @@
                 <div class="card-icon">
                     <i class="fas fa-sitemap"></i>
                 </div>
-                <h3 class="card-title">设置ModbusTcp主机</h3>
-                <p>配置设备作为主站的相关参数</p>
+                <h3 class="card-title">ModbusTcp主机</h3>
+                <p class="card-description">配置设备作为主站的相关参数</p>
                 <button class="btn">访问配置</button>
             </div>
 
@@ -221,7 +257,7 @@
                     <i class="fas fa-sync"></i>
                 </div>
                 <h3 class="card-title">重启串口服务</h3>
-                <p>重新启动串口通信服务</p>
+                <p class="card-description">重新启动串口通信服务</p>
                 <button class="btn">重启服务</button>
             </div>
 
@@ -230,13 +266,13 @@
                     <i class="fas fa-power-off"></i>
                 </div>
                 <h3 class="card-title">重启网关设备</h3>
-                <p>完全重启网关设备系统</p>
+                <p class="card-description">完全重启网关设备系统</p>
                 <button class="btn warning-btn">重启设备</button>
             </div>
         </div>
 
         <footer>
-            <p>© 2025 网关管理系统 | 版本 1.0</p>
+            <p>© 2025 网关管理系统 | 版本 1.0 | 支持串口、网络、Modbus协议</p>
         </footer>
     </div>
 
@@ -259,6 +295,11 @@
 
         function goToMaster() {
             window.location.href = "/master";
+        }
+
+        // 新增以太网调试页面导航
+        function goToEthernet() {
+            window.location.href = "/ethernet";
         }
 
         function restartService() {
