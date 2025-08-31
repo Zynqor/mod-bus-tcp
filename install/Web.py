@@ -311,7 +311,7 @@ class RefreshHandler(tornado.web.RequestHandler):
                 for item in config_data:
                     if "\\\"" in item['save_rule']:
                         item['save_rule'] = item['save_rule'].replace("\\\"", "\"")
-            log4p.logs(config_data)
+            # log4p.logs(config_data)
         elif data['type'] == 'master':
             # 读取本地配置文件
             with open("master.json", "r") as f:

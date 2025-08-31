@@ -1,0 +1,591 @@
+{
+    "01": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "02": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "03": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "04": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "05": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "06": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "07": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "08": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "09": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "0A": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "0B": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "0C": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "0D": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "0E": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "0F": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "10": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "11": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "12": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "13": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "14": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "15": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "16": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "17": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "18": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "19": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "1A": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "1B": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "1C": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "1D": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "1E": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    },
+    "1F": {
+        "pressure": {
+            "k": 1,
+            "b": 0
+        },
+        "tempature": {
+            "k": 1,
+            "b": 0
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0
+        },
+        "correct_weishui": {
+            "target": 150,
+            "corr_start": -5,
+            "corr_end": 3
+        }
+    }
+}

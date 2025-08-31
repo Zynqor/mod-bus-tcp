@@ -443,10 +443,10 @@
                 alert("寄存器类型错误，有效值为: co, ir, hr, di");
                 return false;
             }
-            if (!isEvenHexCommand(input_data[4])) {
-                alert("读取命令错误，必须为十六进制格式且长度为偶数");
-                return false;
-            }
+            // if (!isEvenHexCommand(input_data[4])) {
+            //     alert("读取命令错误，必须为十六进制格式且长度为偶数");
+            //     return false;
+            // }
             if (!isInteger(input_data[5])) {
                 alert("读取开始位错误，必须为整数");
                 return false;

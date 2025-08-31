@@ -1,3 +1,5 @@
+import json
+
 import serial.tools.list_ports
 import time
 import threading
@@ -29,6 +31,8 @@ class Serial(threading.Thread):
         self.serial = serial.Serial(port=self.port, baudrate=self.band, timeout=0.2)
         self.history_data = []
         log4p.logs("启动串口读取服务...")
+        with open("correct_data.json", "r") as f:
+            self.correct_data = json.load(f)
 
     def stop(self):
         self.running = False
@@ -42,15 +46,20 @@ class Serial(threading.Thread):
     def read_serial(self):
         if self.serial.in_waiting:
             data = self.serial.read(self.serial.in_waiting)
-            #log4p.logs("收到串口数据:\t" + str(data))
+            # log4p.logs("收到串口数据:\t" + str(data))
             info = self.bytes_to_hex_string(data).upper().replace(" ", "")
             if self.check_crc(info):
                 self.handle_res(info)
 
     def send_serial(self):
-        send_cmd = self.cmd + self.get_crc(self.cmd)
-        log4p.logs("Tx:\t" + str(send_cmd))
-        self.serial.write(bytes.fromhex(send_cmd))
+        cmds = self.cmd.split(';')
+        for cmd in cmds:
+            send_cmd = cmd + self.get_crc(cmd)
+            log4p.logs("Tx:\t" + str(send_cmd))
+            self.serial.write(bytes.fromhex(send_cmd))
+            time.sleep(0.01)
+
+        self.handle_res("010418CCCD41CC3D713F0A000042C43333C235E3543F05999A419141F4")
 
     def convert_two_byte(self, hex_str):
         result = []
@@ -73,78 +82,77 @@ class Serial(threading.Thread):
                 binary_result.append(int(bit))
         return binary_result
 
+    def convert2Tcp(self, raw_data, config):
+        print(config)
+
     def handle_res(self, result):
-        log4p.logs("Rx:" + str(result))
-        reg = self.save_reg
-        if len(result) < self.read_start + self.read_len:
-            result = result + '0' * (self.read_start + self.read_len - len(result))
-        #log4p.logs("读取的数据长度：" + str(len(result)))
-        result = result[self.read_start:self.read_start + self.read_len]
-        if reg == 'co':
-            res = self.convert_each_digit(result)
-            if self.save_rule == "[]":
-                self.server.context[self.as_slave_id].setValues(1, self.save_start, res)
-            else:
-                self.add_data(res)
-                handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
-                if not handle_res['status']:
-                    log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
 
-                datas = handle_res['data']
-                DataUtil.update_global_data(self.port, datas)
-                datas = DataUtil.merge_data()
-                if datas is not None:
-                    self.process_data(datas, 1)
-                
+        self.convert2Tcp(result, self.correct_data[result[0:2]])
 
-        elif reg == 'di':
-            res = self.convert_each_digit(result)
-            if self.save_rule == "[]":
-                self.server.context[self.as_slave_id].setValues(2, self.save_start, res)
-            else:
-                self.add_data(res)
-                handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
-                if not handle_res['status']:
-                    log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
-                datas = handle_res['data']
-                DataUtil.update_global_data(self.port, datas)
-                datas = DataUtil.merge_data()
-                if datas is not None:
-                    self.process_data(datas, 2)
-                
-
-        elif reg == 'hr':
-            res = self.convert_two_byte(result)
-            if self.save_rule == "[]":
-                self.server.context[self.as_slave_id].setValues(3, self.save_start, res)
-            else:
-                self.add_data(res)
-                handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
-
-                if not handle_res['status']:
-                    log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
-                datas = handle_res['data']
-                DataUtil.update_global_data(self.port, datas)
-                datas = DataUtil.merge_data()
-                if datas is not None:
-                    self.process_data(datas, 3)
-               
-
-        elif reg == 'ir':
-            res = self.convert_two_byte(result)
-            if self.save_rule == "[]":
-                self.server.context[self.as_slave_id].setValues(4, self.save_start, res)
-            else:
-                self.add_data(res)
-                handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
-                if not handle_res['status']:
-                    log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
-                datas = handle_res['data']
-                DataUtil.update_global_data(self.port, datas)
-                datas = DataUtil.merge_data()
-                if datas is not None:
-                    self.process_data(datas, 4)
-                
+        # if reg == 'co':
+        #     res = self.convert_each_digit(result)
+        #     if self.save_rule == "[]":
+        #         self.server.context[self.as_slave_id].setValues(1, self.save_start, res)
+        #     else:
+        #         self.add_data(res)
+        #         handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
+        #         if not handle_res['status']:
+        #             log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
+        #
+        #         datas = handle_res['data']
+        #         DataUtil.update_global_data(self.port, datas)
+        #         datas = DataUtil.merge_data()
+        #         if datas is not None:
+        #             self.process_data(datas, 1)
+        #
+        #
+        # elif reg == 'di':
+        #     res = self.convert_each_digit(result)
+        #     if self.save_rule == "[]":
+        #         self.server.context[self.as_slave_id].setValues(2, self.save_start, res)
+        #     else:
+        #         self.add_data(res)
+        #         handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
+        #         if not handle_res['status']:
+        #             log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
+        #         datas = handle_res['data']
+        #         DataUtil.update_global_data(self.port, datas)
+        #         datas = DataUtil.merge_data()
+        #         if datas is not None:
+        #             self.process_data(datas, 2)
+        #
+        #
+        # elif reg == 'hr':
+        #     res = self.convert_two_byte(result)
+        #     if self.save_rule == "[]":
+        #         self.server.context[self.as_slave_id].setValues(3, self.save_start, res)
+        #     else:
+        #         self.add_data(res)
+        #         handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
+        #
+        #         if not handle_res['status']:
+        #             log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
+        #         datas = handle_res['data']
+        #         DataUtil.update_global_data(self.port, datas)
+        #         datas = DataUtil.merge_data()
+        #         if datas is not None:
+        #             self.process_data(datas, 3)
+        #
+        #
+        # elif reg == 'ir':
+        #     res = self.convert_two_byte(result)
+        #     if self.save_rule == "[]":
+        #         self.server.context[self.as_slave_id].setValues(4, self.save_start, res)
+        #     else:
+        #         self.add_data(res)
+        #         handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
+        #         if not handle_res['status']:
+        #             log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
+        #         datas = handle_res['data']
+        #         DataUtil.update_global_data(self.port, datas)
+        #         datas = DataUtil.merge_data()
+        #         if datas is not None:
+        #             self.process_data(datas, 4)
 
     # 定义一个函数，接受一个八位的十六进制字符串作为参数，返回对应的浮点数
     def hex_to_float(self, hex_str):
