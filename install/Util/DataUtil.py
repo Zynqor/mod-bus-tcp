@@ -113,6 +113,12 @@ class DataUtil:
         return res
 
     @staticmethod
+    def to_hex_2_digits_upper(number):
+        """
+        将一个整数转换为固定的两位大写十六进制字符串。
+        """
+        return f"{number:02X}"
+    @staticmethod
     def expand_arr_2_float32_decimal(arr, little_endian=True):
         '''
         将数组中的数转化为32位浮点数,并且拆成两个16位寄存器的十进制值

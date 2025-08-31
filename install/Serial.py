@@ -1,5 +1,7 @@
 import json
-
+import sys
+from platform import system
+import random
 import serial.tools.list_ports
 import time
 import threading
@@ -34,6 +36,8 @@ class Serial(threading.Thread):
         with open("correct_data.json", "r") as f:
             self.correct_data = json.load(f)
 
+        self.counter = 0
+
     def stop(self):
         self.running = False
 
@@ -58,8 +62,11 @@ class Serial(threading.Thread):
             log4p.logs("Tx:\t" + str(send_cmd))
             self.serial.write(bytes.fromhex(send_cmd))
             time.sleep(0.01)
-
-        self.handle_res("010418CCCD41CC3D713F0A000042C43333C235E3543F05999A419141F4")
+        # self.counter += 1
+        # if self.counter == 33:
+        #     self.counter = 0
+        # self.handle_res(
+        #     DataUtil.to_hex_2_digits_upper(self.counter) + "0418CCCD41CC3D713F0A000042C43333C235E3543F05999A419141F4")
 
     def convert_two_byte(self, hex_str):
         result = []
@@ -83,76 +90,57 @@ class Serial(threading.Thread):
         return binary_result
 
     def convert2Tcp(self, raw_data, config):
-        print(config)
+
+        log4p.logs("收到串口数据:\t" + str(raw_data))
+
+        temp = self.hex_to_float(raw_data[10:14] + raw_data[6:10])
+        pressure = self.hex_to_float(raw_data[18:22] + raw_data[14:18])
+        weishui = self.hex_to_float(raw_data[26:30] + raw_data[22:26])
+        ludian = self.hex_to_float(raw_data[34:38] + raw_data[30:34])
+        raw_press = self.hex_to_float(raw_data[42:46] + raw_data[38:42])
+        humid = self.hex_to_float(raw_data[50:54] + raw_data[46:50])
+
+        log4p.logs("Addr:" + raw_data[0:2] + "\t温度:" + str(temp) + "\t压力:" + str(pressure) + "\t微水:" + str(
+            weishui) + "\t露点:" + str(
+            ludian) + "\t原始压力:" + str(raw_press) + "\t湿度:" + str(humid))
+
+        temp = float(config['tempature']['k']) * temp + float(config['tempature']['b'])
+        pressure = float(config['pressure']['k']) * pressure + float(config['pressure']['b'])
+        weishui = float(config['weishui']['k']) * weishui + float(config['weishui']['b'])
+        ludian = float(config['ludian']['k']) * ludian + float(config['ludian']['b'])
+        raw_press = float(config['raw_press']['k']) * raw_press + float(config['raw_press']['b'])
+        humid = float(config['humid']['k']) * humid + float(config['humid']['b'])
+        log4p.logs(
+            "Addr:" + raw_data[0:2] + "\t基础修正后 温度1:" + str(temp) + "\t压力1:" + str(pressure) + "\t微水1:" + str(
+                weishui) + "\t露点1:" + str(ludian) + "\t原始压力1:" + str(raw_press) + "\t湿度1:" + str(humid))
+        # 微水校正
+        if config['correct_weishui']['mode'] == 1:
+            if pressure >= 0.1:
+                if weishui <= 200:
+                    print()
+                elif weishui > 200 and weishui <= 1000:
+                    log4p.logs("压力大于0.1Mpa,微水大于200ppm小于1000ppm,设定值 + 基础处理值 × 0.1")
+                    weishui = weishui * 0.1 + float(config['correct_weishui']['target1'])
+                elif weishui > 1000 and weishui <= 9000:
+                    log4p.logs("压力大于0.1Mpa,微水大于200ppm小于1000ppm,设定值 + 基础处理值 × 0.01")
+                    weishui = weishui * 0.01 + float(config['correct_weishui']['target1'])
+        if config['correct_weishui']['mode'] == 2:
+            weishui = random.uniform(int(config['correct_weishui']['corr_start']),
+                                     int(config['correct_weishui']['corr_end'])) + float(
+                config['correct_weishui']['target2'])
+        log4p.logs("Addr:" + raw_data[0:2] + "\t高级修正后的微水:" + str(
+            weishui))
+        res = DataUtil.expand_arr_2_float32_decimal([temp, pressure, weishui, ludian, raw_press, humid])
+
+        self.server.context[self.as_slave_id].setValues(3, int(config['tempature']['addr'], 16), res[0:2])
+        self.server.context[self.as_slave_id].setValues(3, int(config['pressure']['addr'], 16), res[2:4])
+        self.server.context[self.as_slave_id].setValues(3, int(config['weishui']['addr'], 16), res[4:6])
+        self.server.context[self.as_slave_id].setValues(3, int(config['ludian']['addr'], 16), res[6:8])
+        self.server.context[self.as_slave_id].setValues(3, int(config['raw_press']['addr'], 16), res[8:10])
+        self.server.context[self.as_slave_id].setValues(3, int(config['humid']['addr'], 16), res[10:12])
 
     def handle_res(self, result):
-
         self.convert2Tcp(result, self.correct_data[result[0:2]])
-
-        # if reg == 'co':
-        #     res = self.convert_each_digit(result)
-        #     if self.save_rule == "[]":
-        #         self.server.context[self.as_slave_id].setValues(1, self.save_start, res)
-        #     else:
-        #         self.add_data(res)
-        #         handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
-        #         if not handle_res['status']:
-        #             log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
-        #
-        #         datas = handle_res['data']
-        #         DataUtil.update_global_data(self.port, datas)
-        #         datas = DataUtil.merge_data()
-        #         if datas is not None:
-        #             self.process_data(datas, 1)
-        #
-        #
-        # elif reg == 'di':
-        #     res = self.convert_each_digit(result)
-        #     if self.save_rule == "[]":
-        #         self.server.context[self.as_slave_id].setValues(2, self.save_start, res)
-        #     else:
-        #         self.add_data(res)
-        #         handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
-        #         if not handle_res['status']:
-        #             log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
-        #         datas = handle_res['data']
-        #         DataUtil.update_global_data(self.port, datas)
-        #         datas = DataUtil.merge_data()
-        #         if datas is not None:
-        #             self.process_data(datas, 2)
-        #
-        #
-        # elif reg == 'hr':
-        #     res = self.convert_two_byte(result)
-        #     if self.save_rule == "[]":
-        #         self.server.context[self.as_slave_id].setValues(3, self.save_start, res)
-        #     else:
-        #         self.add_data(res)
-        #         handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
-        #
-        #         if not handle_res['status']:
-        #             log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
-        #         datas = handle_res['data']
-        #         DataUtil.update_global_data(self.port, datas)
-        #         datas = DataUtil.merge_data()
-        #         if datas is not None:
-        #             self.process_data(datas, 3)
-        #
-        #
-        # elif reg == 'ir':
-        #     res = self.convert_two_byte(result)
-        #     if self.save_rule == "[]":
-        #         self.server.context[self.as_slave_id].setValues(4, self.save_start, res)
-        #     else:
-        #         self.add_data(res)
-        #         handle_res = RuleUtil.handle_rule(self.history_data, self.save_rule)
-        #         if not handle_res['status']:
-        #             log4p.logs("结果处理失败...,失败数据:\t" + str(self.history_data))
-        #         datas = handle_res['data']
-        #         DataUtil.update_global_data(self.port, datas)
-        #         datas = DataUtil.merge_data()
-        #         if datas is not None:
-        #             self.process_data(datas, 4)
 
     # 定义一个函数，接受一个八位的十六进制字符串作为参数，返回对应的浮点数
     def hex_to_float(self, hex_str):
