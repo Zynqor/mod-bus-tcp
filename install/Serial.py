@@ -139,13 +139,13 @@ class Serial(threading.Thread):
                     log4p.logs("压力大于0.1Mpa,微水大于200ppm小于1000ppm,设定值 + 基础处理值 × 0.1")
                     weishui = weishui * 0.1 + float(config['correct_weishui']['target1'])
                 elif weishui > 1000 and weishui <= 10000:
-                    
+                    log4p.logs("压力大于0.1Mpa,微水大于1000ppm小于10000ppm,设定值 + 基础处理值 × 0.01")
                     weishui = weishui * 0.01 + float(config['correct_weishui']['target1'])
                 elif weishui > 10000 and weishui <= 100000:
-                    
+                    log4p.logs("压力大于0.1Mpa,微水大于10000ppm小于100000ppm,设定值 + 基础处理值 × 0.001")
                     weishui = weishui * 0.001 + float(config['correct_weishui']['target1'])
                 elif weishui > 100000 and weishui <= 1000000:
-                    
+                    log4p.logs("压力大于0.1Mpa,微水大于100000ppm小于1000000ppm,设定值 + 基础处理值 × 0.0001")
                     weishui = weishui * 0.0001 + float(config['correct_weishui']['target1'])
         if config['correct_weishui']['mode'] == 2:
             weishui = random.uniform(int(config['correct_weishui']['corr_start']),
