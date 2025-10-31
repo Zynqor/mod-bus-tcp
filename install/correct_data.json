@@ -2,79 +2,79 @@
     "01": {
         "tempature": {
             "k": 1,
-            "b": 1,
+            "b": 0,
             "addr": "0x1000"
         },
         "pressure": {
             "k": 1,
-            "b": 1,
+            "b": 0,
             "addr": "0x1002"
         },
         "weishui": {
             "k": 1,
-            "b": 1,
+            "b": 0,
             "addr": "0x1004"
         },
         "ludian": {
             "k": 1,
-            "b": 1,
+            "b": 0,
             "addr": "0x2000"
         },
         "raw_press": {
             "k": 1,
-            "b": 1,
+            "b": 0,
             "addr": "0x2002"
         },
         "humid": {
             "k": 1,
-            "b": 1,
+            "b": 0,
             "addr": "0x2004"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "02": {
         "tempature": {
-            "k": 2,
+            "k": 1,
             "b": 0,
             "addr": "0x1006"
         },
         "pressure": {
-            "k": 2,
+            "k": 1,
             "b": 0,
             "addr": "0x1008"
         },
         "weishui": {
-            "k": 2,
+            "k": 1,
             "b": 0,
             "addr": "0x100a"
         },
         "ludian": {
-            "k": 2,
+            "k": 1,
             "b": 0,
             "addr": "0x2006"
         },
         "raw_press": {
-            "k": 2,
+            "k": 1,
             "b": 0,
             "addr": "0x2008"
         },
         "humid": {
-            "k": 2,
+            "k": 1,
             "b": 0,
             "addr": "0x200a"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
-            "mode": 2,
-            "corr_start": -5,
-            "corr_end": 3
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "03": {
@@ -109,11 +109,11 @@
             "addr": "0x2010"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "04": {
@@ -148,11 +148,11 @@
             "addr": "0x2016"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "05": {
@@ -187,11 +187,11 @@
             "addr": "0x201c"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "06": {
@@ -226,11 +226,11 @@
             "addr": "0x2022"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "07": {
@@ -265,11 +265,11 @@
             "addr": "0x2028"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "08": {
@@ -304,11 +304,11 @@
             "addr": "0x202e"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "09": {
@@ -343,11 +343,11 @@
             "addr": "0x2034"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "0A": {
@@ -382,11 +382,11 @@
             "addr": "0x203a"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "0B": {
@@ -421,11 +421,11 @@
             "addr": "0x2040"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "0C": {
@@ -460,11 +460,11 @@
             "addr": "0x2046"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "0D": {
@@ -499,11 +499,11 @@
             "addr": "0x204c"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "0E": {
@@ -538,11 +538,11 @@
             "addr": "0x2052"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "0F": {
@@ -577,11 +577,11 @@
             "addr": "0x2058"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "10": {
@@ -616,11 +616,11 @@
             "addr": "0x205e"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "11": {
@@ -655,11 +655,11 @@
             "addr": "0x2064"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "12": {
@@ -694,11 +694,11 @@
             "addr": "0x206a"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "13": {
@@ -733,11 +733,11 @@
             "addr": "0x2070"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "14": {
@@ -772,11 +772,11 @@
             "addr": "0x2076"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "15": {
@@ -811,11 +811,11 @@
             "addr": "0x207c"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "16": {
@@ -850,11 +850,11 @@
             "addr": "0x2082"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "17": {
@@ -889,11 +889,11 @@
             "addr": "0x2088"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "18": {
@@ -928,11 +928,11 @@
             "addr": "0x208e"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "19": {
@@ -967,11 +967,11 @@
             "addr": "0x2094"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "1A": {
@@ -1006,11 +1006,11 @@
             "addr": "0x209a"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "1B": {
@@ -1045,11 +1045,11 @@
             "addr": "0x20a0"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "1C": {
@@ -1084,11 +1084,11 @@
             "addr": "0x20a6"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "1D": {
@@ -1123,11 +1123,11 @@
             "addr": "0x20ac"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "1E": {
@@ -1162,11 +1162,11 @@
             "addr": "0x20b2"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
         }
     },
     "1F": {
@@ -1201,11 +1201,1220 @@
             "addr": "0x20b8"
         },
         "correct_weishui": {
-            "target1": 150,
+            "target1": 50,
             "target2": 150,
             "mode": 1,
-            "corr_start": -5,
-            "corr_end": 3
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "20": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10ba"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10bc"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10be"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20ba"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20bc"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20be"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "21": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10c0"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10c2"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10c4"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20c0"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20c2"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20c4"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "22": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10c6"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10c8"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10ca"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20c6"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20c8"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20ca"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "23": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10cc"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10ce"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10d0"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20cc"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20ce"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20d0"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "24": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10d2"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10d4"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10d6"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20d2"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20d4"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20d6"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "25": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10d8"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10da"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10dc"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20d8"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20da"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20dc"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "26": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10de"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10e0"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10e2"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20de"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20e0"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20e2"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "27": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10e8"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10ea"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10ec"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20e8"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20ea"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20ec"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "28": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10ee"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10f0"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10f2"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20ee"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20f0"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20f2"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "29": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10f4"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10f6"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10f8"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20f4"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20f6"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20f8"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "2A": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10fa"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10fc"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x10fe"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20fa"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20fc"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x20fe"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "2B": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1100"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1102"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1104"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2100"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2102"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2104"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "2C": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1106"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1108"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x110a"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2106"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2108"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x210a"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "2D": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x110c"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x110e"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1110"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x210c"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x210e"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2110"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "2E": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1112"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1114"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1116"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2112"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2114"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2116"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "2F": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1118"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x111a"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x111c"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2118"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x211a"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x211c"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "30": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x111e"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1120"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1122"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x211e"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2120"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2122"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "31": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1124"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1126"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1128"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2124"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2126"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2128"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "32": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x112a"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x112c"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x112e"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x212a"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x212c"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x212e"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "33": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1130"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1132"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1134"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2130"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2132"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2134"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "34": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1136"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1138"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x113a"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2136"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2138"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x213a"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "35": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x113c"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x113e"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1140"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x213c"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x213e"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2140"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "36": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1142"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1144"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1146"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2142"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2144"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2146"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "37": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1148"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x114a"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x114c"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2148"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x214a"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x214c"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "38": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x114e"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1150"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1152"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x214e"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2150"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2152"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "39": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1154"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1156"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1158"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2154"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2156"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2158"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "3A": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x115a"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x115c"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x115e"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x215a"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x215c"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x215e"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "3B": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1160"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1162"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1164"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2160"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2162"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2164"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "3C": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1166"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1168"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x116a"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2166"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2168"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x216a"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "3D": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x116c"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x116e"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1170"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x216c"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x216e"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2170"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
+        }
+    },
+    "3E": {
+        "tempature": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1172"
+        },
+        "pressure": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1174"
+        },
+        "weishui": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x1176"
+        },
+        "ludian": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2172"
+        },
+        "raw_press": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2174"
+        },
+        "humid": {
+            "k": 1,
+            "b": 0,
+            "addr": "0x2176"
+        },
+        "correct_weishui": {
+            "target1": 50,
+            "target2": 150,
+            "mode": 1,
+            "corr_start": -2,
+            "corr_end": 1
         }
     }
 }

@@ -2,26 +2,26 @@
     "reg": [
         {
             "reg": "co",
-            "reg_addr": "0x0F",
+            "reg_addr": "0x8000",
             "len": "16"
         },
         {
             "reg": "di",
-            "reg_addr": "0x1F",
+            "reg_addr": "0x7000",
             "len": "16"
         },
         {
             "reg": "ir",
-            "reg_addr": "0x00",
+            "reg_addr": "0x6000",
             "len": "20"
         },
         {
             "reg": "hr",
-            "reg_addr": "0x01",
-            "len": "72"
+            "reg_addr": "0x1000",
+            "len": "8192"
         }
     ],
-    "ip": "192.168.1.230",
+    "ip": "192.168.3.230",
     "port": "502",
     "id": "0x01"
 }

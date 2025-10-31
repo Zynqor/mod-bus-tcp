@@ -180,47 +180,63 @@ class LogsHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("logs.html")
 
-
+def efficient_tail(filepath, n):
+    """高效地获取文件末尾n行，适用于大文件"""
+    try:
+        # 使用系统的 `tail` 命令，这是最高效的方式
+        proc = subprocess.Popen(['tail', '-n', str(n), filepath], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        lines, err = proc.communicate()
+        if proc.returncode == 0:
+            return lines.splitlines()
+        else:
+            print(f"Error using tail command: {err}")
+            return []
+    except FileNotFoundError:
+        # 如果系统中没有tail命令（极少见），可以提供一个备用方案，但性能较差
+        print("tail command not found, using slower Python method.")
+        try:
+            with open(filepath, 'r') as f:
+                return list(deque(f, n)) # 只有在文件不大的情况下才能用
+        except Exception as e:
+            print(f"Error reading file with Python method: {e}")
+            return []
+    except Exception as e:
+        print(f"An unexpected error occurred in efficient_tail: {e}")
+        return []
 # 用于检查日志文件更新并广播给所有WebSocket客户端的函数
 def check_log_updates():
     try:
-        # 获取当前日期的日志文件
         current_log_file = get_current_log_file()
-
-        # 检查日志文件是否存在
         if not os.path.exists(current_log_file):
-            print(f"日志文件不存在: {current_log_file}")
             return
 
-        # 获取文件大小来检测变化，比修改时间更可靠
-        current_size = os.path.getsize(current_log_file)
+        # 使用高效的方式读取最后100行
+        logs = efficient_tail(current_log_file, 100) # <--- 使用新函数替换！
 
-        # 如果文件大小未变化，则返回
-        if hasattr(check_log_updates, 'last_size') and current_size == check_log_updates.last_size:
+        if not logs:
             return
 
-        # 更新大小记录
-        check_log_updates.last_size = current_size
+        global log_queue # 确保我们修改的是全局变量
+        
+        # 这个部分逻辑可以简化
+        # 直接用新读取的100行覆盖旧的队列即可
+        # 因为我们只关心最新的内容
+        
+        new_logs = [log for log in logs if log not in log_queue]
 
-        # 读取日志文件
-        with open(current_log_file, 'r') as f:
-            try:
-                # 读取最后100行
-                logs = deque(f, maxlen=100)
-
-                # 更新日志队列
-                new_logs = []
-                for log in logs:
-                    if log not in log_queue:
-                        log_queue.append(log)
-                        new_logs.append(log)
-
-                # 只广播新的日志内容给所有连接的客户端
-                if websocket_clients and new_logs:
-                    for client in websocket_clients:
-                        client.write_message(json.dumps(new_logs))
-            except Exception as e:
-                print(f"处理日志文件时出错: {e}")
+        if new_logs:
+            log_queue.extend(new_logs) # 更新全局队列
+            # 线程安全地获取客户端列表并推送
+            with websocket_clients_lock:
+                clients_copy = websocket_clients.copy()
+            
+            if clients_copy:
+                message_json = json.dumps(new_logs)
+                for client in clients_copy:
+                    try:
+                        client.write_message(message_json)
+                    except Exception as e:
+                        print(f"Error sending log update to client: {e}")
 
     except Exception as e:
         print(f"检查日志更新时出错: {e}")
@@ -757,9 +773,9 @@ if __name__ == "__main__":
     http_server.listen(port=port, address=address)
     print("URL:http://{}:{}/".format(address, port))
     # 可选：启动测试日志生成线程（实际使用时可以注释掉）
-
+    tornado.ioloop.IOLoop.current().start()
     # 设置周期性日志检查
-    io_loop = ioloop.IOLoop.instance()
-    setup_periodic_log_check()
+    # io_loop = ioloop.IOLoop.instance()
+    # setup_periodic_log_check()
 
-    io_loop.start()
+    # io_loop.start()

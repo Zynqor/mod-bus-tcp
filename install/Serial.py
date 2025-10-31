@@ -15,12 +15,13 @@ from Util.DataUtil import DataUtil
 
 
 class Serial(threading.Thread):
-    def __init__(self, serial_info, server, as_slave_id):
-        # 创建 UI 界面
+    def __init__(self, serial_info, context, as_slave_id):
         super().__init__()
         self.running = True
         self.as_slave_id = as_slave_id
-        self.server = server
+        self.context = context  # <-- 直接保存共享的 context
+
+        # --- 您其他的初始化代码保持不变 ---
         self.port = serial_info['com']
         self.band = int(serial_info['band'])
         self.save_reg = serial_info['save_reg']
@@ -30,18 +31,24 @@ class Serial(threading.Thread):
         self.save_start = int(serial_info['save_start'], 16)
         self.save_rule = serial_info['save_rule']
         self.freq = float(serial_info['freq'])
-        self.serial = serial.Serial(port=self.port, baudrate=self.band, timeout=0.2)
+        try:
+            self.serial = serial.Serial(port=self.port, baudrate=self.band, timeout=0.2)
+            log4p.logs(f"✓ 串口 {self.port} 打开成功")
+        except Exception as e:
+            log4p.logs(f"✗ 串口 {self.port} 打开失败: {e}")
+            self.running = False  # 标记为不运行
+            raise  # 重新抛出异常
         self.history_data = []
-        log4p.logs("启动串口读取服务...")
+        log4p.logs(f"启动串口主机轮询服务 on {self.port}...")
         with open("correct_data.json", "r") as f:
             self.correct_data = json.load(f)
-
         self.counter = 0
 
     def stop(self):
         self.running = False
 
     def run(self):
+        log4p.logs(f"串口线程开始运行: {self.port}")
         while self.running:
             self.send_serial()
             self.read_serial()
@@ -52,8 +59,18 @@ class Serial(threading.Thread):
             data = self.serial.read(self.serial.in_waiting)
             # log4p.logs("收到串口数据:\t" + str(data))
             info = self.bytes_to_hex_string(data).upper().replace(" ", "")
-            if self.check_crc(info):
-                self.handle_res(info)
+
+            # 计算info的长度，并以58为步长进行遍历
+            info_len = len(info)
+            for i in range(0, info_len, 58):
+                # 切割出长度为58的子字符串
+                chunk = info[i:i + 58]
+
+                # 确保切割出的部分长度正好是58
+                if len(chunk) == 58:
+                    # 对每一个切割后的部分进行CRC校验和处理
+                    if self.check_crc(chunk):
+                        self.handle_res(chunk)
 
     def send_serial(self):
         cmds = self.cmd.split(';')
@@ -61,7 +78,7 @@ class Serial(threading.Thread):
             send_cmd = cmd + self.get_crc(cmd)
             log4p.logs("Tx:\t" + str(send_cmd))
             self.serial.write(bytes.fromhex(send_cmd))
-            time.sleep(0.01)
+            time.sleep(0.8)
         # self.counter += 1
         # if self.counter == 33:
         #     self.counter = 0
@@ -91,7 +108,7 @@ class Serial(threading.Thread):
 
     def convert2Tcp(self, raw_data, config):
 
-        log4p.logs("收到串口数据:\t" + str(raw_data))
+        # log4p.logs("收到串口数据:\t" + str(raw_data))
 
         temp = self.hex_to_float(raw_data[10:14] + raw_data[6:10])
         pressure = self.hex_to_float(raw_data[18:22] + raw_data[14:18])
@@ -121,9 +138,15 @@ class Serial(threading.Thread):
                 elif weishui > 200 and weishui <= 1000:
                     log4p.logs("压力大于0.1Mpa,微水大于200ppm小于1000ppm,设定值 + 基础处理值 × 0.1")
                     weishui = weishui * 0.1 + float(config['correct_weishui']['target1'])
-                elif weishui > 1000 and weishui <= 9000:
-                    log4p.logs("压力大于0.1Mpa,微水大于200ppm小于1000ppm,设定值 + 基础处理值 × 0.01")
+                elif weishui > 1000 and weishui <= 10000:
+                    
                     weishui = weishui * 0.01 + float(config['correct_weishui']['target1'])
+                elif weishui > 10000 and weishui <= 100000:
+                    
+                    weishui = weishui * 0.001 + float(config['correct_weishui']['target1'])
+                elif weishui > 100000 and weishui <= 1000000:
+                    
+                    weishui = weishui * 0.0001 + float(config['correct_weishui']['target1'])
         if config['correct_weishui']['mode'] == 2:
             weishui = random.uniform(int(config['correct_weishui']['corr_start']),
                                      int(config['correct_weishui']['corr_end'])) + float(
@@ -132,12 +155,13 @@ class Serial(threading.Thread):
             weishui))
         res = DataUtil.expand_arr_2_float32_decimal([temp, pressure, weishui, ludian, raw_press, humid])
 
-        self.server.context[self.as_slave_id].setValues(3, int(config['tempature']['addr'], 16), res[0:2])
-        self.server.context[self.as_slave_id].setValues(3, int(config['pressure']['addr'], 16), res[2:4])
-        self.server.context[self.as_slave_id].setValues(3, int(config['weishui']['addr'], 16), res[4:6])
-        self.server.context[self.as_slave_id].setValues(3, int(config['ludian']['addr'], 16), res[6:8])
-        self.server.context[self.as_slave_id].setValues(3, int(config['raw_press']['addr'], 16), res[8:10])
-        self.server.context[self.as_slave_id].setValues(3, int(config['humid']['addr'], 16), res[10:12])
+        slave_context = self.context[self.as_slave_id]
+        slave_context.setValues(3, int(config['tempature']['addr'], 16), res[0:2])
+        slave_context.setValues(3, int(config['pressure']['addr'], 16), res[2:4])
+        slave_context.setValues(3, int(config['weishui']['addr'], 16), res[4:6])
+        slave_context.setValues(3, int(config['ludian']['addr'], 16), res[6:8])
+        slave_context.setValues(3, int(config['raw_press']['addr'], 16), res[8:10])
+        slave_context.setValues(3, int(config['humid']['addr'], 16), res[10:12])
 
     def handle_res(self, result):
         self.convert2Tcp(result, self.correct_data[result[0:2]])
