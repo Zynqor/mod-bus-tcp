@@ -1,0 +1,13 @@
+{
+    "broker": "mqtt.example.com",
+    "port": 8883,
+    "client_id": "gateway_client_001",
+    "username": "your_username",
+    "password": "your_password",
+    "use_tls": true,
+    "ca_cert": "/path/to/ca.crt",
+    "reconnect_interval": 5,
+    "command_topic": "gateway/command",
+    "data_topic": "gateway/data",
+    "response_topic": "gateway/response"
+}

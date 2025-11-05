@@ -15,11 +15,12 @@ from Util.DataUtil import DataUtil
 
 
 class Serial(threading.Thread):
-    def __init__(self, serial_info, context, as_slave_id):
+    def __init__(self, serial_info, context, as_slave_id, mqtt_client=None):
         super().__init__()
         self.running = True
         self.as_slave_id = as_slave_id
         self.context = context  # <-- 直接保存共享的 context
+        self.mqtt_client = mqtt_client  # MQTT客户端实例，用于发送数据到云平台
 
         # --- 您其他的初始化代码保持不变 ---
         self.port = serial_info['com']
@@ -153,6 +154,22 @@ class Serial(threading.Thread):
                 config['correct_weishui']['target2'])
         log4p.logs("Addr:" + raw_data[0:2] + "\t高级修正后的微水:" + str(
             weishui))
+
+        # 通过MQTT发送数据到云平台
+        if self.mqtt_client:
+            try:
+                self.mqtt_client.publish_data(
+                    addr=raw_data[0:2],
+                    temp=temp,
+                    pressure=pressure,
+                    weishui=weishui,
+                    ludian=ludian,
+                    raw_press=raw_press,
+                    humid=humid
+                )
+            except Exception as e:
+                log4p.logs(f"MQTT数据发送异常: {e}")
+
         res = DataUtil.expand_arr_2_float32_decimal([temp, pressure, weishui, ludian, raw_press, humid])
 
         slave_context = self.context[self.as_slave_id]

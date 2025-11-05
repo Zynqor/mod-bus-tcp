@@ -1,11 +1,13 @@
 import asyncio
 import json
 import threading
+import os
 from SerialServer import SerialServer
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock
 
 from Serial import Serial
 from TcpServer import TcpServer
+from MqttClient import MqttClient
 
 from Util.log4p import log4p
 
@@ -58,7 +60,22 @@ if __name__ == '__main__':
         )
     }
 
-    # --- 3. 启动所有数据采集/主机轮询线程 ---
+    # --- 3. 启动MQTT客户端（如果配置文件存在） ---
+    mqtt_client = None
+    mqtt_config_file = "mqtt.json"
+    if os.path.exists(mqtt_config_file):
+        try:
+            log4p.logs("检测到MQTT配置文件，正在初始化MQTT客户端...")
+            mqtt_client = MqttClient(mqtt_config_file)
+            mqtt_client.start()
+            log4p.logs("✓ MQTT客户端已启动")
+        except Exception as e:
+            log4p.logs(f"✗ MQTT客户端初始化失败: {e}")
+            mqtt_client = None
+    else:
+        log4p.logs(f"未找到MQTT配置文件({mqtt_config_file})，跳过MQTT功能")
+
+    # --- 4. 启动所有数据采集/主机轮询线程 ---
     # 这些线程都将数据写入上面创建的 shared_context
 
     # a) 启动 TCP 主机轮询线程 (TcpSlave)
@@ -77,12 +94,12 @@ if __name__ == '__main__':
     for serial_info in Sheet2:  # Sheet2 是 serial.json
         if serial_info['activate'] == '0':
             continue
-        # 将共享的 context 传递给 Serial 实例
-        s = Serial(serial_info, shared_context, as_slave_id)
+        # 将共享的 context 和 mqtt_client 传递给 Serial 实例
+        s = Serial(serial_info, shared_context, as_slave_id, mqtt_client)
         s.start()
         serials.append(s)
 
-    # --- 4. 启动所有作为【从机】的服务器 ---
+    # --- 5. 启动所有作为【从机】的服务器 ---
 
     # a) 启动 RTU (RS485) 从机服务器 (放入后台线程)
 
@@ -94,7 +111,7 @@ if __name__ == '__main__':
     # b) 实例化您的 TCP 从机服务器
     tcp_slave_server = TcpServer(shared_context, as_slave_host, as_slave_port)
 
-    # --- 5. 在主线程中运行您的 TCP 从机服务器并保持程序运行 ---
+    # --- 6. 在主线程中运行您的 TCP 从机服务器并保持程序运行 ---
     log4p.logs(f"Starting SLAVE TCP Server on {as_slave_host}:{as_slave_port} in the main thread...")
     try:
         # 使用 asyncio.run() 启动并运行您的异步 TCP 服务器

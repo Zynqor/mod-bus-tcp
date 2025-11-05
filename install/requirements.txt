@@ -4,6 +4,7 @@ future==0.18.3
 iso8601==2.1.0
 numpy==1.26.4
 openpyxl==3.1.2
+paho-mqtt==2.1.0
 pandas==2.2.3
 pymodbus==3.7.2
 pyserial==3.5
