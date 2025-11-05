@@ -155,36 +155,42 @@ class MqttClient(threading.Thread):
             return
 
         try:
-            # 构建数据格式
+            # 构建数据格式 - 使用 payload 数组格式
             data = {
                 "deviceId": addr,
                 "timestamp": int(time.time() * 1000),
-                "data": {
-                    "temperature": {
+                "payload": [
+                    {
+                        "name": "temperature",
                         "value": round(temp, 2),
                         "unit": ""
                     },
-                    "pressure": {
+                    {
+                        "name": "pressure",
                         "value": round(pressure, 2),
                         "unit": ""
                     },
-                    "moisture": {
+                    {
+                        "name": "moisture",
                         "value": round(weishui, 2),
                         "unit": ""
                     },
-                    "dewPoint": {
+                    {
+                        "name": "dewPoint",
                         "value": round(ludian, 2),
                         "unit": ""
                     },
-                    "rawPressure": {
+                    {
+                        "name": "rawPressure",
                         "value": round(raw_press, 2),
                         "unit": ""
                     },
-                    "humidity": {
+                    {
+                        "name": "humidity",
                         "value": round(humid, 2),
                         "unit": ""
                     }
-                }
+                ]
             }
 
             # 发送数据

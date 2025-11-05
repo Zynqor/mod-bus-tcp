@@ -122,32 +122,38 @@ MQTT 客户端连接成功后，需要发送 `startUpload` 命令才会开始上
 {
   "deviceId": "01",
   "timestamp": 1730491502000,
-  "data": {
-    "temperature": {
+  "payload": [
+    {
+      "name": "temperature",
       "value": 25.5,
       "unit": ""
     },
-    "pressure": {
+    {
+      "name": "pressure",
       "value": 1.2,
       "unit": ""
     },
-    "moisture": {
+    {
+      "name": "moisture",
       "value": 150.0,
       "unit": ""
     },
-    "dewPoint": {
+    {
+      "name": "dewPoint",
       "value": -20.5,
       "unit": ""
     },
-    "rawPressure": {
+    {
+      "name": "rawPressure",
       "value": 1.18,
       "unit": ""
     },
-    "humidity": {
+    {
+      "name": "humidity",
       "value": 45.2,
       "unit": ""
     }
-  }
+  ]
 }
 ```
 
