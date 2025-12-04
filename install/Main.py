@@ -28,6 +28,7 @@ def config_handle():
 
 
 if __name__ == '__main__':
+    ## 避雷器分支
     Sheet1, Sheet2, Sheet3 = config_handle()
 
     as_slave_id = int(Sheet1['id'], 16)
