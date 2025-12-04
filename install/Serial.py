@@ -2,6 +2,7 @@ import json
 import sys
 from platform import system
 import random
+import math  # [新增] 用于 sqrt 计算
 import serial.tools.list_ports
 import time
 import threading
@@ -12,6 +13,7 @@ import struct
 from Util.RuleUtil import RuleUtil
 from Util.log4p import log4p
 from Util.DataUtil import DataUtil
+from Util.StorageManager import StorageManager
 
 
 class Serial(threading.Thread):
@@ -19,9 +21,8 @@ class Serial(threading.Thread):
         super().__init__()
         self.running = True
         self.as_slave_id = as_slave_id
-        self.context = context  # <-- 直接保存共享的 context
+        self.context = context
 
-        # --- 您其他的初始化代码保持不变 ---
         self.port = serial_info['com']
         self.band = int(serial_info['band'])
         self.save_reg = serial_info['save_reg']
@@ -36,13 +37,16 @@ class Serial(threading.Thread):
             log4p.logs(f"✓ 串口 {self.port} 打开成功")
         except Exception as e:
             log4p.logs(f"✗ 串口 {self.port} 打开失败: {e}")
-            self.running = False  # 标记为不运行
-            raise  # 重新抛出异常
+            self.running = False
+            raise
         self.history_data = []
         log4p.logs(f"启动串口主机轮询服务 on {self.port}...")
         with open("correct_data.json", "r") as f:
             self.correct_data = json.load(f)
         self.counter = 0
+        self.storage = StorageManager("lightning_cache.json")
+        self.lightning_cache = self.storage.load_data()
+        self.processing_buffer = b''
 
     def stop(self):
         self.running = False
@@ -55,22 +59,48 @@ class Serial(threading.Thread):
             time.sleep(self.freq)
 
     def read_serial(self):
-        if self.serial.in_waiting:
-            data = self.serial.read(self.serial.in_waiting)
-            # log4p.logs("收到串口数据:\t" + str(data))
-            info = self.bytes_to_hex_string(data).upper().replace(" ", "")
+        try:
+            if self.serial.in_waiting:
+                new_data = self.serial.read(self.serial.in_waiting)
+                self.processing_buffer += new_data
 
-            # 计算info的长度，并以58为步长进行遍历
-            info_len = len(info)
-            for i in range(0, info_len, 58):
-                # 切割出长度为58的子字符串
-                chunk = info[i:i + 58]
+                if len(new_data) > 0:
+                    hex_raw = ''.join('{:02X}'.format(byte) for byte in new_data)
+                    log4p.logs(f"[RX-RAW] 收到:{hex_raw} | 缓存总长:{len(self.processing_buffer)}")
 
-                # 确保切割出的部分长度正好是58
-                if len(chunk) == 58:
-                    # 对每一个切割后的部分进行CRC校验和处理
-                    if self.check_crc(chunk):
-                        self.handle_res(chunk)
+                while len(self.processing_buffer) >= 5:
+                    addr = self.processing_buffer[0]
+                    func = self.processing_buffer[1]
+                    expected_len = 0
+
+                    if func in [0x03, 0x04]:
+                        if len(self.processing_buffer) < 3: break
+                        data_len = self.processing_buffer[2]
+                        expected_len = 3 + data_len + 2
+                    elif func >= 0x80:
+                        expected_len = 5
+                    else:
+                        log4p.logs(f"[RX-ERR] 未知功能码 {func:02X}, 丢弃头部1字节")
+                        self.processing_buffer = self.processing_buffer[1:]
+                        continue
+
+                    if len(self.processing_buffer) < expected_len:
+                        break
+
+                    packet_bytes = self.processing_buffer[:expected_len]
+                    packet_hex = ''.join('{:02X}'.format(byte) for byte in packet_bytes)
+
+                    if self.check_crc(packet_hex):
+                        log4p.logs(f"[RX-OK] 切出有效包: {packet_hex}")
+                        self.processing_buffer = self.processing_buffer[expected_len:]
+                        self.handle_res(packet_hex)
+                    else:
+                        log4p.logs(f"[RX-FAIL] CRC校验失败: {packet_hex}")
+                        self.processing_buffer = self.processing_buffer[1:]
+
+        except Exception as e:
+            log4p.logs(f"读取异常: {e}")
+            self.processing_buffer = b''
 
     def send_serial(self):
         cmds = self.cmd.split(';')
@@ -79,138 +109,206 @@ class Serial(threading.Thread):
             log4p.logs("Tx:\t" + str(send_cmd))
             self.serial.write(bytes.fromhex(send_cmd))
             time.sleep(0.8)
-        # self.counter += 1
-        # if self.counter == 33:
-        #     self.counter = 0
-        # self.handle_res(
-        #     DataUtil.to_hex_2_digits_upper(self.counter) + "0418CCCD41CC3D713F0A000042C43333C235E3543F05999A419141F4")
 
-    def convert_two_byte(self, hex_str):
-        result = []
-        for i in range(0, len(hex_str), 4):
-            group = hex_str[i:i + 4]
-            if len(group) == 4:
-                value = int(group, 16)
-                result.append(value)
-        return result
+    def handle_res(self, packet):
+        addr = packet[0:2]
+        func_code = packet[2:4]
 
-    def convert_each_digit(self, hex_str):
-        binary_result = []
-        for char in hex_str:
-            if char.isdigit():
-                decimal_value = int(char)
-            elif char.lower() in 'abcdef':
-                decimal_value = ord(char.lower()) - 87
-            binary_value = bin(decimal_value)[2:].zfill(4)
-            for bit in binary_value:
-                binary_result.append(int(bit))
-        return binary_result
+        if func_code == "04":
+            if addr in self.correct_data.get("devices", {}):
+                log4p.logs(f"[BIZ] 地址 {addr} 匹配成功，开始处理业务...")
+                self.process_arrester_data(packet, addr)
+            else:
+                log4p.logs(f"[WARN] 地址 {addr} 不在配置文件 correct_data.json 中，被忽略！")
 
-    def convert2Tcp(self, raw_data, config):
+        elif func_code == "03":
+            self.process_voltage_data(packet)
 
-        # log4p.logs("收到串口数据:\t" + str(raw_data))
+    def process_arrester_data(self, packet, addr):
+        """
+        [最终修正版]
+        1. 严格按照图片证据: 所有数据(Float/Int)均为 "Low Word First" (CDAB) 格式。
+        2. 先进行字序交换，再进行解析。
+        3. 电流用 Float32, 次数/时间用 Int32。
+        4. [新增] 更新 Ir 和 Ic (阻容比) 的计算公式。
+        """
+        payload = packet[6:-4]
 
-        temp = self.hex_to_float(raw_data[10:14] + raw_data[6:10])
-        pressure = self.hex_to_float(raw_data[18:22] + raw_data[14:18])
-        weishui = self.hex_to_float(raw_data[26:30] + raw_data[22:26])
-        ludian = self.hex_to_float(raw_data[34:38] + raw_data[30:34])
-        raw_press = self.hex_to_float(raw_data[42:46] + raw_data[38:42])
-        humid = self.hex_to_float(raw_data[50:54] + raw_data[46:50])
+        def parse_swapped_float(hex_s):
+            b = unhexlify(hex_s)
+            swapped = b[2:4] + b[0:2]
+            return struct.unpack('>f', swapped)[0]
 
-        log4p.logs("Addr:" + raw_data[0:2] + "\t温度:" + str(temp) + "\t压力:" + str(pressure) + "\t微水:" + str(
-            weishui) + "\t露点:" + str(
-            ludian) + "\t原始压力:" + str(raw_press) + "\t湿度:" + str(humid))
+        def parse_swapped_int32(hex_s):
+            b = unhexlify(hex_s)
+            swapped = b[2:4] + b[0:2]
+            return struct.unpack('>i', swapped)[0]
 
-        temp = float(config['tempature']['k']) * temp + float(config['tempature']['b'])
-        pressure = float(config['pressure']['k']) * pressure + float(config['pressure']['b'])
-        weishui = float(config['weishui']['k']) * weishui + float(config['weishui']['b'])
-        ludian = float(config['ludian']['k']) * ludian + float(config['ludian']['b'])
-        raw_press = float(config['raw_press']['k']) * raw_press + float(config['raw_press']['b'])
-        humid = float(config['humid']['k']) * humid + float(config['humid']['b'])
-        log4p.logs(
-            "Addr:" + raw_data[0:2] + "\t基础修正后 温度1:" + str(temp) + "\t压力1:" + str(pressure) + "\t微水1:" + str(
-                weishui) + "\t露点1:" + str(ludian) + "\t原始压力1:" + str(raw_press) + "\t湿度1:" + str(humid))
-        # 微水校正
-        if config['correct_weishui']['mode'] == 1:
-            if pressure >= 0.1:
-                if weishui <= 200:
-                    print()
-                elif weishui > 200 and weishui <= 1000:
-                    log4p.logs("压力大于0.1Mpa,微水大于200ppm小于1000ppm,设定值 + 基础处理值 × 0.1")
-                    weishui = weishui * 0.1 + float(config['correct_weishui']['target1'])
-                elif weishui > 1000 and weishui <= 10000:
-                    log4p.logs("压力大于0.1Mpa,微水大于1000ppm小于10000ppm,设定值 + 基础处理值 × 0.01")
-                    weishui = weishui * 0.01 + float(config['correct_weishui']['target1'])
-                elif weishui > 10000 and weishui <= 100000:
-                    log4p.logs("压力大于0.1Mpa,微水大于10000ppm小于100000ppm,设定值 + 基础处理值 × 0.001")
-                    weishui = weishui * 0.001 + float(config['correct_weishui']['target1'])
-                elif weishui > 100000 and weishui <= 1000000:
-                    log4p.logs("压力大于0.1Mpa,微水大于100000ppm小于1000000ppm,设定值 + 基础处理值 × 0.0001")
-                    weishui = weishui * 0.0001 + float(config['correct_weishui']['target1'])
-        if config['correct_weishui']['mode'] == 2:
-            weishui = random.uniform(int(config['correct_weishui']['corr_start']),
-                                     int(config['correct_weishui']['corr_end'])) + float(
-                config['correct_weishui']['target2'])
-        log4p.logs("Addr:" + raw_data[0:2] + "\t高级修正后的微水:" + str(
-            weishui))
-        res = DataUtil.expand_arr_2_float32_decimal([temp, pressure, weishui, ludian, raw_press, humid])
+        def int32_to_registers_swapped(val):
+            b = struct.pack('>i', int(val))
+            high_word = struct.unpack('>H', b[0:2])[0]
+            low_word = struct.unpack('>H', b[2:4])[0]
+            return [low_word, high_word]
 
-        slave_context = self.context[self.as_slave_id]
-        slave_context.setValues(3, int(config['tempature']['addr'], 16), res[0:2])
-        slave_context.setValues(3, int(config['pressure']['addr'], 16), res[2:4])
-        slave_context.setValues(3, int(config['weishui']['addr'], 16), res[4:6])
-        slave_context.setValues(3, int(config['ludian']['addr'], 16), res[6:8])
-        slave_context.setValues(3, int(config['raw_press']['addr'], 16), res[8:10])
-        slave_context.setValues(3, int(config['humid']['addr'], 16), res[10:12])
+        try:
+            raw_iq_a = parse_swapped_float(payload[0:8])
+            raw_iq_b = parse_swapped_float(payload[8:16])
+            raw_iq_c = parse_swapped_float(payload[16:24])
 
-    def handle_res(self, result):
-        self.convert2Tcp(result, self.correct_data[result[0:2]])
+            raw_cnt_a = parse_swapped_int32(payload[24:32])
+            raw_cnt_b = parse_swapped_int32(payload[32:40])
+            raw_cnt_c = parse_swapped_int32(payload[40:48])
 
-    # 定义一个函数，接受一个八位的十六进制字符串作为参数，返回对应的浮点数
-    def hex_to_float(self, hex_str):
-        # 将十六进制字符串转换为整数
-        hex_int = int(hex_str, 16)
-        # 将整数转换为四个字节的二进制数据
-        hex_bytes = hex_int.to_bytes(4, "big")
-        # 将二进制数据解析为浮点数
-        hex_float = struct.unpack(">f", hex_bytes)[0]
-        # 返回浮点数
-        return hex_float
+            raw_time_a = parse_swapped_int32(payload[48:56])
+            raw_time_b = parse_swapped_int32(payload[56:64])
+            raw_time_c = parse_swapped_int32(payload[64:72])
 
-    def process_data(self, datas, reg):
-        i = 0
-        while i < len(datas):
-            if i != len(datas) - 1 and i % 2 == 0 and datas[i + 1] == 0 and datas[i] == 32768:
-                i += 2
-                continue
+            phases_data = [
+                {'name': 'A', 'iq': raw_iq_a, 'cnt': raw_cnt_a, 'time': raw_time_a},
+                {'name': 'B', 'iq': raw_iq_b, 'cnt': raw_cnt_b, 'time': raw_time_b},
+                {'name': 'C', 'iq': raw_iq_c, 'cnt': raw_cnt_c, 'time': raw_time_c}
+            ]
 
-            # log4p.logs(f"write to address:\tid={self.save_start + i}\tvalue={datas[i]}")
-            self.server.context[self.as_slave_id].setValues(reg, self.save_start + i, [datas[i]])
-            i += 1
+            device_cache = self.lightning_cache.get(addr, {})
+            cache_changed = False
+            calculated_values = {}
 
-    def split_cmd(self, cmd):
-        if len(cmd) % 2 == 1:
-            return "cmd len error"
-        # 初始化一个空字符串，用来存储结果
-        result = ""
-        # 遍历字符串的每个字符
-        for i in range(len(cmd)):
-            # 把字符添加到结果字符串中
-            result += cmd[i]
-            # 如果是偶数位置的字符，且不是最后一个字符，就在后面添加一个空格
-            if i % 2 == 1 and i < len(cmd) - 1:
-                result += " "
-        # 返回结果字符串
-        return result
+            for p in phases_data:
+                name = p['name']
+                iq = p['iq']  # 全电流 (It)
 
-    # CRC16-MODBUS
+                # =================== [核心计算公式更新] ===================
+                # 1. 阻性电流 (Ir)
+                # 公式: Ir = It * 0.91859 * A (A 为 0.996~1.005 随机值)
+                rand_A = random.uniform(0.996, 1.005)
+                ir = iq * 0.91859 * rand_A
+
+                # 2. "相容性电流" (实际为阻容比 Ir/Ic_real)
+                # 原始容性电流分量 Ic_real = sqrt(It^2 - Ir^2)
+                # 目标值 = Ir / Ic_real
+                ic_val = 0.0
+                try:
+                    # 防止根号下负数 (理论上 iq > ir，但浮点数可能有误差)
+                    val_sq = iq ** 2 - ir ** 2
+                    if val_sq > 0:
+                        ic_real = math.sqrt(val_sq)
+                        if ic_real > 0.000001:  # 防止除以0
+                            ic_val = ir / ic_real
+                        else:
+                            ic_val = 0.0  # 容性分量极小，比值趋于无穷或0处理
+                    else:
+                        ic_val = 0.0  # 数据异常 (Ir > It)
+                except Exception:
+                    ic_val = 0.0
+
+                # 更新 ic 变量以便后续写入 "Capacitive_Current" 对应的寄存器
+                ic = ic_val
+                # =========================================================
+
+                cached_cnt = device_cache.get(f"{name}_cnt", 0)
+                cached_time = device_cache.get(f"{name}_time", 0)
+                final_cnt = cached_cnt
+                final_time = cached_time
+
+                if iq > 0.02:
+                    if p['cnt'] != cached_cnt or p['time'] != cached_time:
+                        final_cnt = p['cnt']
+                        final_time = p['time']
+                        device_cache[f"{name}_cnt"] = final_cnt
+                        device_cache[f"{name}_time"] = final_time
+                        cache_changed = True
+
+                calculated_values[f"{name}_Total_Current"] = iq
+                calculated_values[f"{name}_Resistive_Current"] = ir
+                calculated_values[f"{name}_Capacitive_Current"] = ic  # 这里写入的是计算后的比值
+                calculated_values[f"{name}_Strike_Count"] = final_cnt
+                calculated_values[f"{name}_Strike_Time"] = final_time
+
+            if cache_changed:
+                self.lightning_cache[addr] = device_cache
+                self.storage.save_data(self.lightning_cache)
+
+            device_config = self.correct_data.get("devices", {}).get(addr, {})
+            if not device_config: return
+
+            slave_ctx = self.context[self.as_slave_id]
+
+            for key, value in calculated_values.items():
+                if key in device_config:
+                    item_cfg = device_config[key]
+                    k = float(item_cfg.get("k", 1))
+                    b = float(item_cfg.get("b", 0))
+                    target_addr_str = item_cfg.get("addr")
+
+                    if target_addr_str:
+                        target_addr = int(target_addr_str, 16)
+
+                        if "Count" in key or "Time" in key:
+                            final_val = int(value * k + b)
+                            regs = int32_to_registers_swapped(final_val)
+                            slave_ctx.setValues(3, target_addr, regs)
+                        else:
+                            final_val = value * k + b
+                            # 使用 little_endian=True (CDAB) 转发给 TCP
+                            regs = DataUtil.expand_arr_2_float32_decimal([final_val], little_endian=True)
+                            slave_ctx.setValues(3, target_addr, regs)
+
+        except Exception as e:
+            log4p.logs(f"[ERR] 处理避雷器数据出错 设备{addr}: {e}")
+
+    def process_voltage_data(self, packet):
+        try:
+            addr_hex = packet[0:2]
+            raw_bytes = unhexlify(packet)
+            if len(raw_bytes) < 5: return
+
+            byte_len = raw_bytes[2]
+            data_bytes = raw_bytes[3:-2]
+
+            if len(data_bytes) != byte_len or len(data_bytes) % 4 != 0:
+                log4p.logs(f"[WARN] 电压数据长度异常: 声明{byte_len}, 实际{len(data_bytes)}")
+                return
+
+            all_groups = self.correct_data.get("voltage_monitor_groups", {})
+            config_list = all_groups.get(addr_hex, [])
+
+            if not config_list:
+                log4p.logs(f"[INFO] 电压设备 {addr_hex} 未在 monitor_groups 中配置，忽略。")
+                return
+
+            slave_ctx = self.context[self.as_slave_id]
+            parsed_count = 0
+
+            for i in range(0, len(data_bytes), 4):
+                cfg_idx = i // 4
+                if cfg_idx >= len(config_list): break
+
+                chunk = data_bytes[i: i + 4]
+                swapped_chunk = chunk[2:4] + chunk[0:2]
+                val = struct.unpack('>f', swapped_chunk)[0]
+
+                item_cfg = config_list[cfg_idx]
+                target_addr = int(item_cfg["addr"], 16)
+                k = float(item_cfg.get("k", 1))
+                b = float(item_cfg.get("b", 0))
+
+                final_val = val * k + b
+                regs = DataUtil.expand_arr_2_float32_decimal([final_val], little_endian=True)
+                slave_ctx.setValues(3, target_addr, regs)
+                parsed_count += 1
+
+            log4p.logs(f"[BIZ] 电压设备 {addr_hex} 处理完成: 转发 {parsed_count} 个数据")
+
+        except Exception as e:
+            log4p.logs(f"[ERR] 处理电压数据出错: {e}")
+
     def get_crc(self, read):
         crc16 = crcmod.mkCrcFun(0x18005, rev=True, initCrc=0xFFFF, xorOut=0x0000)
         data = read.replace(" ", "")
         readcrcout = hex(crc16(unhexlify(data))).upper()
         str_list = list(readcrcout)
         if len(str_list) < 6:
-            str_list.insert(2, '0' * (6 - len(str_list)))  # 位数不足补0
+            str_list.insert(2, '0' * (6 - len(str_list)))
         crc_data = "".join(str_list)
         return crc_data[4:] + crc_data[2:4]
 
@@ -222,11 +320,3 @@ class Serial(threading.Thread):
             return True
         else:
             return False
-
-    def bytes_to_hex_string(self, bytes):
-        return ''.join('{:02x}'.format(byte) for byte in bytes)
-
-    def add_data(self, new_data):
-        self.history_data.append(new_data)
-        if len(self.history_data) > 50:
-            self.history_data.pop(0)

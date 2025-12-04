@@ -1,2420 +1,588 @@
 {
+  "devices": {
     "01": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1000"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1002"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1004"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2000"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2002"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2004"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
+      "comment": "1号设备 - A相 (ID:01)",
+      "slave_base_addr": 0,
+      "A_Total_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0000"
+      },
+      "A_Resistive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0002"
+      },
+      "A_Capacitive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0004"
+      },
+      "A_Strike_Count": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0006"
+      },
+      "A_Strike_Time": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0008"
+      }
     },
     "02": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1006"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1008"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x100a"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2006"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2008"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x200a"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
+      "comment": "1号设备 - B相 (ID:02) -> 映射到 TCP 的 1号B相地址",
+      "A_Total_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x000A"
+      },
+      "A_Resistive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x000C"
+      },
+      "A_Capacitive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x000E"
+      },
+      "A_Strike_Count": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0010"
+      },
+      "A_Strike_Time": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0012"
+      }
     },
     "03": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x100c"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x100e"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1010"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x200c"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x200e"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2010"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
+      "comment": "1号设备 - C相 (ID:03) -> 映射到 TCP 的 1号C相地址",
+      "A_Total_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0014"
+      },
+      "A_Resistive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0016"
+      },
+      "A_Capacitive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0018"
+      },
+      "A_Strike_Count": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x001A"
+      },
+      "A_Strike_Time": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x001C"
+      }
     },
     "04": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1012"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1014"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1016"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2012"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2014"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2016"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
+      "comment": "2号设备 - A相 (ID:04)",
+      "A_Total_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x001E"
+      },
+      "A_Resistive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0020"
+      },
+      "A_Capacitive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0022"
+      },
+      "A_Strike_Count": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0024"
+      },
+      "A_Strike_Time": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0026"
+      }
     },
     "05": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1018"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x101a"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x101c"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2018"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x201a"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x201c"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
+      "comment": "2号设备 - B相 (ID:05)",
+      "A_Total_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0028"
+      },
+      "A_Resistive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x002A"
+      },
+      "A_Capacitive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x002C"
+      },
+      "A_Strike_Count": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x002E"
+      },
+      "A_Strike_Time": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0030"
+      }
     },
     "06": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x101e"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1020"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1022"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x201e"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2020"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2022"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
+      "comment": "2号设备 - C相 (ID:06)",
+      "A_Total_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0032"
+      },
+      "A_Resistive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0034"
+      },
+      "A_Capacitive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0036"
+      },
+      "A_Strike_Count": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0038"
+      },
+      "A_Strike_Time": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x003A"
+      }
     },
     "07": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1024"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1026"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1028"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2024"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2026"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2028"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
+      "comment": "3号设备 - A相",
+      "A_Total_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x003C"
+      },
+      "A_Resistive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x003E"
+      },
+      "A_Capacitive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0040"
+      },
+      "A_Strike_Count": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0042"
+      },
+      "A_Strike_Time": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0044"
+      }
     },
     "08": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x102a"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x102c"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x102e"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x202a"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x202c"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x202e"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
+      "comment": "3号设备 - B相",
+      "A_Total_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0046"
+      },
+      "A_Resistive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0048"
+      },
+      "A_Capacitive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x004A"
+      },
+      "A_Strike_Count": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x004C"
+      },
+      "A_Strike_Time": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x004E"
+      }
     },
     "09": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1030"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1032"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1034"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2030"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2032"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2034"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
+      "comment": "3号设备 - C相",
+      "A_Total_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0050"
+      },
+      "A_Resistive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0052"
+      },
+      "A_Capacitive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0054"
+      },
+      "A_Strike_Count": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0056"
+      },
+      "A_Strike_Time": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0058"
+      }
     },
     "0A": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1036"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1038"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x103a"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2036"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2038"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x203a"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
+      "comment": "4号设备 - A相 (ID:10 -> Hex:0A)",
+      "A_Total_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x005A"
+      },
+      "A_Resistive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x005C"
+      },
+      "A_Capacitive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x005E"
+      },
+      "A_Strike_Count": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0060"
+      },
+      "A_Strike_Time": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0062"
+      }
     },
     "0B": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x103c"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x103e"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1040"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x203c"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x203e"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2040"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
+      "comment": "4号设备 - B相 (ID:11 -> Hex:0B)",
+      "A_Total_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0064"
+      },
+      "A_Resistive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0066"
+      },
+      "A_Capacitive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0068"
+      },
+      "A_Strike_Count": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x006A"
+      },
+      "A_Strike_Time": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x006C"
+      }
     },
     "0C": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1042"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1044"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1046"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2042"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2044"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2046"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
+      "comment": "4号设备 - C相 (ID:12 -> Hex:0C)",
+      "A_Total_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x006E"
+      },
+      "A_Resistive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0070"
+      },
+      "A_Capacitive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0072"
+      },
+      "A_Strike_Count": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0074"
+      },
+      "A_Strike_Time": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0076"
+      }
     },
     "0D": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1048"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x104a"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x104c"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2048"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x204a"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x204c"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
+      "comment": "5号设备 - A相 (ID:13 -> Hex:0D)",
+      "A_Total_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0078"
+      },
+      "A_Resistive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x007A"
+      },
+      "A_Capacitive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x007C"
+      },
+      "A_Strike_Count": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x007E"
+      },
+      "A_Strike_Time": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0080"
+      }
     },
     "0E": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x104e"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1050"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1052"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x204e"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2050"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2052"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
+      "comment": "5号设备 - B相 (ID:14 -> Hex:0E)",
+      "A_Total_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0082"
+      },
+      "A_Resistive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0084"
+      },
+      "A_Capacitive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0086"
+      },
+      "A_Strike_Count": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0088"
+      },
+      "A_Strike_Time": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x008A"
+      }
     },
     "0F": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1054"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1056"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1058"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2054"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2056"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2058"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
+      "comment": "5号设备 - C相 (ID:15 -> Hex:0F)",
+      "A_Total_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x008C"
+      },
+      "A_Resistive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x008E"
+      },
+      "A_Capacitive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0090"
+      },
+      "A_Strike_Count": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0092"
+      },
+      "A_Strike_Time": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0094"
+      }
     },
     "10": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x105a"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x105c"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x105e"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x205a"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x205c"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x205e"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
+      "comment": "6号设备 - A相 (ID:16 -> Hex:10)",
+      "A_Total_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0096"
+      },
+      "A_Resistive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x0098"
+      },
+      "A_Capacitive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x009A"
+      },
+      "A_Strike_Count": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x009C"
+      },
+      "A_Strike_Time": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x009E"
+      }
     },
     "11": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1060"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1062"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1064"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2060"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2062"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2064"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
+      "comment": "6号设备 - B相 (ID:17 -> Hex:11)",
+      "A_Total_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x00A0"
+      },
+      "A_Resistive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x00A2"
+      },
+      "A_Capacitive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x00A4"
+      },
+      "A_Strike_Count": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x00A6"
+      },
+      "A_Strike_Time": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x00A8"
+      }
     },
     "12": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1066"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1068"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x106a"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2066"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2068"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x206a"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
+      "comment": "6号设备 - C相 (ID:18 -> Hex:12)",
+      "A_Total_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x00AA"
+      },
+      "A_Resistive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x00AC"
+      },
+      "A_Capacitive_Current": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x00AE"
+      },
+      "A_Strike_Count": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x00B0"
+      },
+      "A_Strike_Time": {
+        "k": 1,
+        "b": 0,
+        "addr": "0x00B2"
+      }
     },
-    "13": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x106c"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x106e"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1070"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x206c"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x206e"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2070"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "14": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1072"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1074"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1076"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2072"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2074"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2076"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "15": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1078"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x107a"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x107c"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2078"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x207a"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x207c"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "16": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x107e"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1080"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1082"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x207e"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2080"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2082"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "17": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1084"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1086"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1088"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2084"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2086"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2088"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "18": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x108a"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x108c"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x108e"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x208a"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x208c"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x208e"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "19": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1090"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1092"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1094"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2090"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2092"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2094"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "1A": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1096"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1098"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x109a"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2096"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2098"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x209a"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "1B": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x109c"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x109e"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10a0"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x209c"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x209e"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20a0"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "1C": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10a2"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10a4"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10a6"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20a2"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20a4"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20a6"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "1D": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10a8"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10aa"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10ac"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20a8"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20aa"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20ac"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "1E": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10ae"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10b0"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10b2"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20ae"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20b0"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20b2"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "1F": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10b4"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10b6"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10b8"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20b4"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20b6"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20b8"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "20": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10ba"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10bc"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10be"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20ba"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20bc"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20be"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "21": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10c0"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10c2"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10c4"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20c0"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20c2"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20c4"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "22": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10c6"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10c8"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10ca"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20c6"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20c8"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20ca"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "23": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10cc"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10ce"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10d0"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20cc"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20ce"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20d0"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "24": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10d2"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10d4"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10d6"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20d2"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20d4"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20d6"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "25": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10d8"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10da"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10dc"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20d8"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20da"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20dc"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "26": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10de"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10e0"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10e2"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20de"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20e0"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20e2"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "27": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10e8"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10ea"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10ec"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20e8"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20ea"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20ec"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "28": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10ee"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10f0"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10f2"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20ee"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20f0"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20f2"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "29": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10f4"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10f6"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10f8"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20f4"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20f6"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20f8"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "2A": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10fa"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10fc"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x10fe"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20fa"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20fc"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x20fe"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "2B": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1100"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1102"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1104"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2100"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2102"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2104"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "2C": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1106"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1108"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x110a"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2106"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2108"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x210a"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "2D": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x110c"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x110e"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1110"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x210c"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x210e"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2110"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "2E": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1112"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1114"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1116"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2112"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2114"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2116"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "2F": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1118"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x111a"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x111c"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2118"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x211a"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x211c"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "30": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x111e"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1120"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1122"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x211e"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2120"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2122"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "31": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1124"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1126"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1128"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2124"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2126"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2128"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "32": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x112a"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x112c"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x112e"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x212a"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x212c"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x212e"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "33": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1130"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1132"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1134"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2130"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2132"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2134"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "34": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1136"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1138"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x113a"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2136"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2138"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x213a"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "35": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x113c"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x113e"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1140"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x213c"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x213e"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2140"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "36": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1142"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1144"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1146"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2142"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2144"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2146"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "37": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1148"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x114a"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x114c"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2148"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x214a"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x214c"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "38": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x114e"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1150"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1152"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x214e"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2150"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2152"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "39": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1154"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1156"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1158"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2154"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2156"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2158"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "3A": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x115a"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x115c"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x115e"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x215a"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x215c"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x215e"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "3B": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1160"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1162"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1164"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2160"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2162"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2164"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "3C": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1166"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1168"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x116a"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2166"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2168"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x216a"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "3D": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x116c"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x116e"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1170"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x216c"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x216e"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2170"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    },
-    "3E": {
-        "tempature": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1172"
-        },
-        "pressure": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1174"
-        },
-        "weishui": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x1176"
-        },
-        "ludian": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2172"
-        },
-        "raw_press": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2174"
-        },
-        "humid": {
-            "k": 1,
-            "b": 0,
-            "addr": "0x2176"
-        },
-        "correct_weishui": {
-            "target1": 50,
-            "target2": 150,
-            "mode": 1,
-            "corr_start": -2,
-            "corr_end": 1
-        }
-    }
+    "note": "关于电压部分: ID 01 对应 1、2号母线; ID 02 对应 3、4号母线"
+  },
+  "voltage_monitor_groups": {
+    "01": [
+      {
+        "name": "1号母线电压1",
+        "addr": "0x07D0",
+        "k": 1,
+        "b": 0
+      },
+      {
+        "name": "1号母线电压2",
+        "addr": "0x07D2",
+        "k": 1,
+        "b": 0
+      },
+      {
+        "name": "1号母线电压3",
+        "addr": "0x07D4",
+        "k": 1,
+        "b": 0
+      },
+      {
+        "name": "2号母线电压1",
+        "addr": "0x07D6",
+        "k": 1,
+        "b": 0
+      },
+      {
+        "name": "2号母线电压2",
+        "addr": "0x07D8",
+        "k": 1,
+        "b": 0
+      },
+      {
+        "name": "2号母线电压3",
+        "addr": "0x07DA",
+        "k": 1,
+        "b": 0
+      }
+    ],
+    "02": [
+      {
+        "name": "3号母线电压1",
+        "addr": "0x07DC",
+        "k": 1,
+        "b": 0
+      },
+      {
+        "name": "3号母线电压2",
+        "addr": "0x07DE",
+        "k": 1,
+        "b": 0
+      },
+      {
+        "name": "3号母线电压3",
+        "addr": "0x07E0",
+        "k": 1,
+        "b": 0
+      },
+      {
+        "name": "4号母线电压1",
+        "addr": "0x07E2",
+        "k": 1,
+        "b": 0
+      },
+      {
+        "name": "4号母线电压2",
+        "addr": "0x07E4",
+        "k": 1,
+        "b": 0
+      },
+      {
+        "name": "4号母线电压3",
+        "addr": "0x07E6",
+        "k": 1,
+        "b": 0
+      }
+    ]
+  }
 }
