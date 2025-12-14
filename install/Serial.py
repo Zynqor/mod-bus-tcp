@@ -151,22 +151,22 @@ class Serial(threading.Thread):
             return [low_word, high_word]
 
         try:
-            raw_iq_a = parse_swapped_float(payload[0:8])
-            raw_iq_b = parse_swapped_float(payload[8:16])
-            raw_iq_c = parse_swapped_float(payload[16:24])
+            raw_iq_a   = parse_swapped_float(payload[72:80])
+            # raw_iq_b = parse_swapped_float(payload[8:16])
+            # raw_iq_c = parse_swapped_float(payload[16:24])
 
-            raw_cnt_a = parse_swapped_int32(payload[24:32])
-            raw_cnt_b = parse_swapped_int32(payload[32:40])
-            raw_cnt_c = parse_swapped_int32(payload[40:48])
+            raw_cnt_a   = parse_swapped_int32(payload[24:32])
+            # raw_cnt_b = parse_swapped_int32(payload[32:40])
+            # raw_cnt_c = parse_swapped_int32(payload[40:48])
 
             raw_time_a = parse_swapped_int32(payload[48:56])
-            raw_time_b = parse_swapped_int32(payload[56:64])
-            raw_time_c = parse_swapped_int32(payload[64:72])
+            # raw_time_b = parse_swapped_int32(payload[56:64])
+            # raw_time_c = parse_swapped_int32(payload[64:72])
 
             phases_data = [
-                {'name': 'A', 'iq': raw_iq_a, 'cnt': raw_cnt_a, 'time': raw_time_a},
-                {'name': 'B', 'iq': raw_iq_b, 'cnt': raw_cnt_b, 'time': raw_time_b},
-                {'name': 'C', 'iq': raw_iq_c, 'cnt': raw_cnt_c, 'time': raw_time_c}
+                {'name': 'A', 'iq': raw_iq_a, 'cnt': raw_cnt_a, 'time': raw_time_a}
+                # {'name': 'B', 'iq': raw_iq_b, 'cnt': raw_cnt_b, 'time': raw_time_b},
+                # {'name': 'C', 'iq': raw_iq_c, 'cnt': raw_cnt_c, 'time': raw_time_c}
             ]
 
             device_cache = self.lightning_cache.get(addr, {})
@@ -265,7 +265,8 @@ class Serial(threading.Thread):
             byte_len = raw_bytes[2]
             data_bytes = raw_bytes[3:-2]
 
-            if len(data_bytes) != byte_len or len(data_bytes) % 4 != 0:
+            # [修改] 现在是2字节(16bit)数据，所以检查是否为2的倍数
+            if len(data_bytes) != byte_len or len(data_bytes) % 2 != 0:
                 log4p.logs(f"[WARN] 电压数据长度异常: 声明{byte_len}, 实际{len(data_bytes)}")
                 return
 
@@ -279,13 +280,19 @@ class Serial(threading.Thread):
             slave_ctx = self.context[self.as_slave_id]
             parsed_count = 0
 
-            for i in range(0, len(data_bytes), 4):
-                cfg_idx = i // 4
+            # [修改] 循环步长改为 2，解析 16 位整数 (Big Endian)
+            for i in range(0, len(data_bytes), 2):
+                cfg_idx = i // 2
                 if cfg_idx >= len(config_list): break
 
-                chunk = data_bytes[i: i + 4]
-                swapped_chunk = chunk[2:4] + chunk[0:2]
-                val = struct.unpack('>f', swapped_chunk)[0]
+                # 提取 2 字节
+                chunk = data_bytes[i: i + 2]
+
+                # 解析 Int16 (假设无符号 Big Endian >H, 根据例子 0001 -> 1)
+                val_int = struct.unpack('>H', chunk)[0]
+
+                # 转为浮点数，以便后续按 float 写入 Modbus TCP
+                val = float(val_int)
 
                 item_cfg = config_list[cfg_idx]
                 target_addr = int(item_cfg["addr"], 16)
@@ -293,11 +300,13 @@ class Serial(threading.Thread):
                 b = float(item_cfg.get("b", 0))
 
                 final_val = val * k + b
+
+                # 写入 Modbus TCP: 转回 4字节 Float32 (CDAB 格式)
                 regs = DataUtil.expand_arr_2_float32_decimal([final_val], little_endian=True)
                 slave_ctx.setValues(3, target_addr, regs)
                 parsed_count += 1
 
-            log4p.logs(f"[BIZ] 电压设备 {addr_hex} 处理完成: 转发 {parsed_count} 个数据")
+            log4p.logs(f"[BIZ] 电压设备 {addr_hex} 处理完成: 转发 {parsed_count} 个数据 (Int16->Float32)")
 
         except Exception as e:
             log4p.logs(f"[ERR] 处理电压数据出错: {e}")
