@@ -243,7 +243,8 @@ class Serial(threading.Thread):
                     if target_addr_str:
                         target_addr = int(target_addr_str, 16)
 
-                        if "Count" in key or "Time" in key:
+                        # if "Count" in key or "Time" in key:
+                        if "Time" in key:
                             final_val = int(value * k + b)
                             regs = int32_to_registers_swapped(final_val)
                             slave_ctx.setValues(3, target_addr, regs)
