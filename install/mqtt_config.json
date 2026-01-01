@@ -1,0 +1,24 @@
+{
+  "broker": {
+    "host": "119.45.181.86",
+    "port": 1883,
+    "username": "admin",
+    "password": "your_strong_password",
+    "client_id": "ENV-001-client",
+    "keepalive": 60
+  },
+  "device": {
+    "deviceId": "ENV-001",
+    "deviceName": "河北六只避雷器",
+    "deviceType": "避雷器"
+  },
+  "topics": {
+    "heartbeat": "iot/devices/heartbeat",
+    "data": "iot/devices/ENV-001/datas",
+    "command_request": "iot/devices/ENV-001/command/request",
+    "command_response": "iot/devices/ENV-001/command/response"
+  },
+  "intervals": {
+    "heartbeat_seconds": 30
+  }
+}

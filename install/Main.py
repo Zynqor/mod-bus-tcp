@@ -8,7 +8,7 @@ from Serial import Serial
 from TcpServer import TcpServer
 
 from Util.log4p import log4p
-
+from MqttClient import MqttClient
 
 def config_handle():
     # 读取本地配置文件
@@ -59,6 +59,14 @@ if __name__ == '__main__':
         )
     }
 
+    # 初始化 MQTT 客户端
+    mqtt_client = None
+    try:
+        mqtt_client = MqttClient("mqtt_config.json")
+        mqtt_client.start()
+    except Exception as e:
+        log4p.logs(f"[Main] MQTT 启动失败: {e}，MQTT 功能禁用")
+
     # --- 3. 启动所有数据采集/主机轮询线程 ---
     # 这些线程都将数据写入上面创建的 shared_context
 
@@ -79,7 +87,7 @@ if __name__ == '__main__':
         if serial_info['activate'] == '0':
             continue
         # 将共享的 context 传递给 Serial 实例
-        s = Serial(serial_info, shared_context, as_slave_id)
+        s = Serial(serial_info, shared_context, as_slave_id, mqtt_client=mqtt_client)
         s.start()
         serials.append(s)
 

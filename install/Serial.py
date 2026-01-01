@@ -17,7 +17,7 @@ from Util.StorageManager import StorageManager
 
 
 class Serial(threading.Thread):
-    def __init__(self, serial_info, context, as_slave_id):
+    def __init__(self, serial_info, context, as_slave_id, mqtt_client=None):
         super().__init__()
         self.running = True
         self.as_slave_id = as_slave_id
@@ -47,6 +47,15 @@ class Serial(threading.Thread):
         self.storage = StorageManager("lightning_cache.json")
         self.lightning_cache = self.storage.load_data()
         self.processing_buffer = b''
+        self.mqtt_client = mqtt_client
+
+    def _publish_mqtt_data(self, data_points: list):
+        if self.mqtt_client and data_points:
+            try:
+                self.mqtt_client.publish_data(data_points)
+            except Exception as e:
+                log4p.logs(f"[MQTT] 数据发布失败: {e}")
+
 
     def stop(self):
         self.running = False
@@ -172,6 +181,7 @@ class Serial(threading.Thread):
             device_cache = self.lightning_cache.get(addr, {})
             cache_changed = False
             calculated_values = {}
+            mqtt_data_points = []
 
             for p in phases_data:
                 name = p['name']
@@ -223,6 +233,19 @@ class Serial(threading.Thread):
                 calculated_values[f"{name}_Capacitive_Current"] = ic  # 这里写入的是计算后的比值
                 calculated_values[f"{name}_Strike_Count"] = final_cnt
                 calculated_values[f"{name}_Strike_Time"] = final_time
+                mqtt_data_points.extend([
+                    {"name": f"{addr}_{name}_Total_Current",
+                     "value": round(calculated_values[f"{name}_Total_Current"], 4), "unit": "mA"},
+                    {"name": f"{addr}_{name}_Resistive_Current",
+                     "value": round(calculated_values[f"{name}_Resistive_Current"], 4), "unit": "mA"},
+                    {"name": f"{addr}_{name}_Capacitive_Ratio",
+                     "value": round(calculated_values[f"{name}_Capacitive_Current"], 4), "unit": ""},
+                    {"name": f"{addr}_{name}_Strike_Count", "value": calculated_values[f"{name}_Strike_Count"],
+                     "unit": "次"},
+                    {"name": f"{addr}_{name}_Strike_Time", "value": calculated_values[f"{name}_Strike_Time"],
+                     "unit": "s"},
+                ])
+
 
             if cache_changed:
                 self.lightning_cache[addr] = device_cache
@@ -253,7 +276,8 @@ class Serial(threading.Thread):
                             # 使用 little_endian=True (CDAB) 转发给 TCP
                             regs = DataUtil.expand_arr_2_float32_decimal([final_val], little_endian=True)
                             slave_ctx.setValues(3, target_addr, regs)
-
+                        mqtt_data_points.append({"name": f"{addr}_{key}_revise","value": round(final_val, 4) if not isinstance(final_val, int) else final_val,"unit": ""})
+            self._publish_mqtt_data(mqtt_data_points)
         except Exception as e:
             log4p.logs(f"[ERR] 处理避雷器数据出错 设备{addr}: {e}")
 
@@ -266,7 +290,6 @@ class Serial(threading.Thread):
             byte_len = raw_bytes[2]
             data_bytes = raw_bytes[3:-2]
 
-            # [修改] 现在是2字节(16bit)数据，所以检查是否为2的倍数
             if len(data_bytes) != byte_len or len(data_bytes) % 2 != 0:
                 log4p.logs(f"[WARN] 电压数据长度异常: 声明{byte_len}, 实际{len(data_bytes)}")
                 return
@@ -281,18 +304,15 @@ class Serial(threading.Thread):
             slave_ctx = self.context[self.as_slave_id]
             parsed_count = 0
 
-            # [修改] 循环步长改为 2，解析 16 位整数 (Big Endian)
+            # MQTT 数据列表
+            mqtt_data_points = []
+
             for i in range(0, len(data_bytes), 2):
                 cfg_idx = i // 2
                 if cfg_idx >= len(config_list): break
 
-                # 提取 2 字节
                 chunk = data_bytes[i: i + 2]
-
-                # 解析 Int16 (假设无符号 Big Endian >H, 根据例子 0001 -> 1)
                 val_int = struct.unpack('>H', chunk)[0]
-
-                # 转为浮点数，以便后续按 float 写入 Modbus TCP
                 val = float(val_int)
 
                 item_cfg = config_list[cfg_idx]
@@ -300,14 +320,33 @@ class Serial(threading.Thread):
                 k = float(item_cfg.get("k", 1))
                 b = float(item_cfg.get("b", 0))
 
+                # 获取数据点名称（如果配置里有的话，否则用索引）
+                point_name = item_cfg.get("name", f"voltage_{cfg_idx}")
+
                 final_val = val * k + b
 
-                # 写入 Modbus TCP: 转回 4字节 Float32 (CDAB 格式)
                 regs = DataUtil.expand_arr_2_float32_decimal([final_val], little_endian=True)
                 slave_ctx.setValues(3, target_addr, regs)
                 parsed_count += 1
 
+                # 添加原始值
+                mqtt_data_points.append({
+                    "name": f"{addr_hex}_{point_name}",
+                    "value": val_int,
+                    "unit": ""
+                })
+
+                # 添加修正后的值
+                mqtt_data_points.append({
+                    "name": f"{addr_hex}_{point_name}_revise",
+                    "value": round(final_val, 4),
+                    "unit": ""
+                })
+
             log4p.logs(f"[BIZ] 电压设备 {addr_hex} 处理完成: 转发 {parsed_count} 个数据 (Int16->Float32)")
+
+            # 发送 MQTT
+            self._publish_mqtt_data(mqtt_data_points)
 
         except Exception as e:
             log4p.logs(f"[ERR] 处理电压数据出错: {e}")
